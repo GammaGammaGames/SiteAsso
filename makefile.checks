@@ -1,0 +1,13 @@
+# vim: nofoldenable: list:
+# PIVARD Julien
+# Dernière modification : Dimanche 30 juillet[07] 2017
+
+# On notifie si le mot de passe de MySql a été changé
+ifeq ($(Mysql_Mdp_Root), mdptropbiensecuretavumagueule)
+    $(error Le mot de passe root de MySql doit être changé dans le fichier mdp_root_mysql.conf)
+endif
+
+# On notifie si le mot de passe de MySql a été changé
+ifeq ($(Mysql_Mdp_Root), )
+    $(error Vous devez choisir un mot de passe root pour MySql dans le fichier mdp_root_mysql.conf)
+endif
