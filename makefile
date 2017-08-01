@@ -37,7 +37,7 @@ run: run_mysql run_php run_nginx
 
 # Permet de redémarrer seulement le container nginx
 .PHONY: restart
-restart: stop run_nginx
+restart: stop_nginx run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
@@ -98,8 +98,8 @@ run_nginx:
 		nginx:stable-alpine
 
 # Pour se connecter au docker mysql lancé en daemon
-.PHONY: connect_bdd
-connect_bdd:
+.PHONY: connect_mysql
+connect_mysql:
 	docker exec --interactive --tty $(Mysql_Nom_Container) /bin/sh
 
 .PHONY: dump_bdd
@@ -114,13 +114,13 @@ connect_php:
 	docker exec --interactive --tty $(Php_Nom_Container) /bin/sh
 
 # Pour se connecter au docker nginx lancé en daemon
-.PHONY: connect
-connect:
+.PHONY: connect_nginx
+connect_nginx:
 	docker exec --interactive --tty $(Nginx_Nom_Container) /bin/sh
 
 # Stop proprement le container nginx le supprime ainsi que son volume lié
-.PHONY: stop
-stop:
+.PHONY: stop_nginx
+stop_nginx:
 	-docker stop $(Nginx_Nom_Container)
 	-docker rm --volumes $(Nginx_Nom_Container)
 
