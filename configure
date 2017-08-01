@@ -54,8 +54,9 @@ exit "${ERREUR}"' ERR
 #┃       --help                                                              ┃#
 #┃  -    --------------------------------------------------                  ┃#
 #┃       Exemples d'utilisation :                                            ┃#
-#┃           script --password='truc'                                        ┃#
-#┃           script --password='cat fic_mpd.txt'                             ┃#
+#┃           ./configure                                                     ┃#
+#┃           ./configure --password='truc'                                   ┃#
+#┃           ./configure --password=`cat fic_mpd.txt`                        ┃#
 #┃                                                                           ┃#
 #┃ Codes d'erreurs :                                                         ┃#
 #┃     - 80  Erreur « afficher_erreur » nécessite au moins un argument       ┃#
