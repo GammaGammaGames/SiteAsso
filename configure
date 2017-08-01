@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Lundi 31 juillet[07] 2017
+# Dernière modification : Mardi 01 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -13,6 +13,7 @@ set -u
 set -E
 # Permet de traiter les erreurs dans les pipeline avec la trap ERR
 set -o pipefail
+set -o posix
 # Pour la gestion des erreurs activer l'une des deux options
 #set -v
 #set -x
@@ -135,7 +136,7 @@ fermeture_terminal()
 ###########################
 
 # Permet de reste le signal d'erreur
-trap ERR
+trap '' ERR
 trap 'ERREUR="${?}";
 gestion_erreurs "${LINENO}";
 exit "${ERREUR}"' ERR
@@ -334,7 +335,7 @@ gestion_err_couleur()
     afficher_erreur "\nLe script à subis une erreur ligne" "${1}"
 }
 
-trap ERR
+trap '' ERR
 trap 'ERREUR="${?}";
 gestion_err_couleur "${LINENO}";
 exit "${ERREUR}"' ERR
@@ -379,7 +380,7 @@ generer_chaine()
             ch0="`date +%s`${$}${RANDOM}"
         else
             afficher_erreur "La commande" "date" "n'est pas disponible"
-            return "${E_COMMANDE_INCONNUE}"
+            exit "${E_COMMANDE_INCONNUE}"
         fi
 
         if test_cmd_exist md5
@@ -391,7 +392,7 @@ generer_chaine()
             ch1=`echo "${ch0}" | md5sum | md5sum`
         else
             afficher_erreur "La commande" "md5" "ou" "md5sum" "ne sont pas disponible"
-            return "${E_COMMANDE_INCONNUE}"
+            exit "${E_COMMANDE_INCONNUE}"
         fi
 
         chainealeatoire="${chainealeatoire}${ch1:$POS:$LEN}"
@@ -416,7 +417,7 @@ configurer_mdp()
         declare -r MDP="${2}"
     else
         afficher_erreur "Trop d'arguments"
-        return "${E_CONFIG_MDP}"
+        exit "${E_CONFIG_MDP}"
     fi
     printf "${MDP}" > "${FICHIER_MDP_ROOT_MYSQL}"
 
