@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Mardi 01 août[08] 2017
+# Dernière modification : Mercredi 02 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -465,7 +465,7 @@ creer_fichier_config_php()
 {
 
     separateur_section "Configuration du lien entre PHP et la BDD"
-    declare -r CHEMIN="${POSITIONSCRIPT}/${FICHIERS_GENERE}/conf_php/"
+    declare -r CHEMIN="${FICHIERS_GENERE}/conf_php"
     mkdir -p -- "${CHEMIN}"
     declare -r FICHIER="${CHEMIN}/mysql_config.php"
 
