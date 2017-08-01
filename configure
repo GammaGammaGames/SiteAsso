@@ -352,12 +352,13 @@ exit "${ERREUR}"' ERR
 ####################################################
 
 declare -r POSITIONSCRIPT="`pwd`"
-declare -r FICHIERS_GENERE="Docker"
-declare -r FICHIER_MDP_ROOT_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mdp_root_mysql.conf"
-declare -r FICHIER_NOM_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mysql_nom_user.conf"
-declare -r FICHIER_MDP_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mysql_mdp_user.conf"
-declare -r FICHIER_BDD_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mysql_bdd.conf"
-declare -r FICHIER_PATH_SOURCES="${POSITIONSCRIPT}/${FICHIERS_GENERE}/chemin_sources.conf"
+declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/Docker"
+declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
+declare -r FICHIER_MDP_ROOT_MYSQL="${FICHIERS_GENERE}/mdp_root_mysql.conf"
+declare -r FICHIER_NOM_MYSQL="${FICHIERS_GENERE}/mysql_nom_user.conf"
+declare -r FICHIER_MDP_MYSQL="${FICHIERS_GENERE}/mysql_mdp_user.conf"
+declare -r FICHIER_BDD_MYSQL="${FICHIERS_GENERE}/mysql_bdd.conf"
+declare -r FICHIER_PATH_SOURCES="${FICHIERS_GENERE}/chemin_sources.conf"
 
 # fonction generer_chaine                   {{{
 generer_chaine()
@@ -634,7 +635,9 @@ fi
 #                   Exécution                     #
 ###################################################
 
-if [[ ! -d "./${FICHIERS_GENERE}" ]]
+# Si une configuration existe déjà on demande à l'utilisateur si il veut la
+# supprimer
+if [[ ! -d "${FICHIERS_GENERE}" ]]
 then
     mkdir -- "${FICHIERS_GENERE}"
 else
