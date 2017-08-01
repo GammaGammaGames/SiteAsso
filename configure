@@ -594,6 +594,21 @@ fi
 if [[ ! -d "./${FICHIERS_GENERE}" ]]
 then
     mkdir -- "${FICHIERS_GENERE}"
+else
+    printf "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ! ${NEUTRE} "
+    printf "Une configuration existe déjà\n"
+    printf "Êtes vous sur de vouloir la générer à nouveau ? (o/n)\n"
+    while read -r -n 1 -s reponse
+    do
+        if [[ "${reponse}" = [Oo] ]]
+        then
+            break
+        elif [[ "${reponse}" = [Nn] ]]
+        then
+            printf "Génération annulée\n"
+            exit "${EXIT_SUCCES}"
+        fi
+    done
 fi
 
 if [[ -n "${OPTION_MDP_ROOT}" ]]
