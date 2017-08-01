@@ -411,40 +411,38 @@ generer_chaine()
 # }}}
 
 # fonction configurer_nom_mdp_bdd           {{{
-configurer_mdp()
+configurer_nom_mdp_bdd ()
 {
-    MDP=""
+    separateur_section "Configuration des utilisateurs Mysql"
+
+    mdp_root="mdptropbiensecuretavumagueule"
     if [[ "${#}" -eq 0 ]]
     then
-        printf "Mot de passe choisi automatiquement par le script : "
-        #declare -r MDP="mdptropbiensecuretavumagueule"
-        declare -r MDP=`generer_chaine 3`
+        printf >&2 "Génération du mot de passe root de mysql \n"
+        declare -r mdp_root=`generer_chaine 3`
     elif [[ "${#}" -eq 1 ]]
     then
-        printf "Mot de passe choisi par l'utilisateur : "
-        declare -r MDP="${2}"
+        printf >&2 "Mot de passe root choisi par l'utilisateur \n"
+        declare -r mdp_root="${2}"
     else
         afficher_erreur "Trop d'arguments"
         exit "${E_CONFIG_MDP}"
     fi
-    printf "${MDP}" > "${FICHIER_MDP_ROOT_MYSQL}"
 
+    printf "${mdp_root}" > "${FICHIER_MDP_ROOT_MYSQL}"
     verifi_reussite "${?}"
-}
 
-configurer_nom_mdp_bdd ()
-{
     declare -r nom=`generer_chaine`
     declare -r mdp=`generer_chaine 2`
     declare -r bdd="${nom}"
 
-    printf "Génération du nom d'utilisateur mysql : "
-    printf "${nom}" > "${FICHIER_NOM_MYSQL}"
-    verifi_reussite "${?}"
-    printf "Génération du mdp d'utilisateur mysql : "
+    printf >&2 "Génération du mdp de l'utilisateur mysql \n"
     printf "${mdp}" > "${FICHIER_MDP_MYSQL}"
     verifi_reussite "${?}"
-    printf "Génération du nom de la base mysql : "
+    printf >&2 "Génération du nom de l'utilisateur mysql \n"
+    printf "${nom}" > "${FICHIER_NOM_MYSQL}"
+    verifi_reussite "${?}"
+    printf >&2 "Génération du nom de la BDD  dans  mysql \n"
     printf "${bdd}" > "${FICHIER_BDD_MYSQL}"
     verifi_reussite "${?}"
 }
@@ -454,7 +452,8 @@ configurer_nom_mdp_bdd ()
 # fonction configurer_chemin_absolu         {{{
 configurer_chemin_absolu()
 {
-    printf "Génération du fichier de chemin absolu : "
+    separateur_section "Configuration du chemin absolu"
+    printf >&2 "Génération du fichier de chemin absolu\n"
     printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
     verifi_reussite "${?}"
 }
@@ -465,15 +464,15 @@ configurer_chemin_absolu()
 creer_fichier_config_php()
 {
 
-    printf "Écriture du fichier de configuration php : "
+    separateur_section "Configuration du lien entre PHP et la BDD"
     declare -r CHEMIN="${POSITIONSCRIPT}/${FICHIERS_GENERE}/conf_php/"
     mkdir -p -- "${CHEMIN}"
     declare -r FICHIER="${CHEMIN}/mysql_config.php"
 
+    printf >&2 "Écriture du fichier de configuration php\n"
+
     printf "<?php\n" > "${FICHIER}"
-
     printf "define( 'MYSQL_HOST', 'mysql_serveur' );\n" >> "${FICHIER}"
-
     printf "define( 'MYSQL_PORT', '3306' );\n" >> "${FICHIER}"
 
     printf "define( 'MYSQL_DB', '" >> "${FICHIER}"
@@ -641,31 +640,67 @@ if [[ ! -d "${FICHIERS_GENERE}" ]]
 then
     mkdir -- "${FICHIERS_GENERE}"
 else
-    printf "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ! ${NEUTRE} "
-    printf "Une configuration existe déjà\n"
-    printf "Êtes vous sur de vouloir la générer à nouveau ? (o/n)\n"
-    while read -r -n 1 -s reponse
-    do
-        if [[ "${reponse}" = [Oo] ]]
-        then
-            break
-        elif [[ "${reponse}" = [Nn] ]]
-        then
-            printf "Génération annulée\n"
-            exit "${E_ANNULATION}"
-        fi
-    done
+    message_avertissement "Une configuration existe déjà"
+    if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
+    then
+        printf >&2 "\n\n"
+    else
+        printf >&2 "Génération annulée\n"
+        exit "${E_ANNULATION}"
+    fi
 fi
 
-if [[ -n "${OPTION_MDP_ROOT}" ]]
-then
-    configurer_mdp "${OPTION_MDP_ROOT}"
-else
-    configurer_mdp
-fi
-configurer_nom_mdp_bdd
 configurer_chemin_absolu
+printf >&2 "\n"
+
+GENERER='n'
+# Si MySql à déjà généré une BDD on demande à l'utilisateur si il veut
+# la supprimer
+if [[ -d "${FICHIERS_MYSQL}" ]]
+then
+    message_avertissement "MySql à déjà configuré une BDD avec un utilisateur"
+    printf >&2 "Si vous générez à nouveau la configuration MySql vous \n"
+    printf >&2 "ne pourrez plus accéder aux données de cet utilisateur\n"
+    if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
+    then
+        printf >&2 "\n\n"
+        GENERER='o'
+        message_avertissement "Toute suppression est définitive !"
+        printf >&2 "Les bases de données actuelle générée par MySql ne seront\n"
+        printf >&2 "plus accessible une fois la configuration faite\n"
+        if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
+        then
+            printf >&2 "\n\n"
+            printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
+            printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
+            rm -rf -- "${FICHIERS_MYSQL}"
+        else
+            printf >&2 "\n\n"
+            printf >&2 "Les bases de données actuelles seront conservées "
+            printf >&2 "mais ne seront plus accessible par MySql\n"
+            printf >&2 "Vous pouvez toujours supprimer manuellement\n"
+        fi
+    else
+        printf >&2 "\n\n"
+        printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} >>>> ${NEUTRE} "
+        printf >&2 "La configuration MySql ne sera pas re-générée\n"
+    fi
+    printf >&2 "\n"
+else
+    GENERER='o'
+fi
+if [[ "${GENERER}" == "o" ]]
+then
+    if [[ -n "${OPTION_MDP_ROOT}" ]]
+    then
+        configurer_nom_mdp_bdd "${OPTION_MDP_ROOT}"
+    else
+        configurer_nom_mdp_bdd
+    fi
+fi
+printf >&2 "\n"
 
 creer_fichier_config_php
+printf >&2 "\n"
 
 exit "${EXIT_SUCCES}";
