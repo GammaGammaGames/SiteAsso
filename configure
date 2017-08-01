@@ -359,6 +359,7 @@ declare -r FICHIER_MDP_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mysql_mdp_use
 declare -r FICHIER_BDD_MYSQL="${POSITIONSCRIPT}/${FICHIERS_GENERE}/mysql_bdd.conf"
 declare -r FICHIER_PATH_SOURCES="${POSITIONSCRIPT}/${FICHIERS_GENERE}/chemin_sources.conf"
 
+# fonction generer_chaine                   {{{
 generer_chaine()
 {
     # Réglage de la taille de la chaine.
@@ -406,6 +407,9 @@ generer_chaine()
     echo "${chainealeatoire}"
 }
 
+# }}}
+
+# fonction configurer_nom_mdp_bdd           {{{
 configurer_mdp()
 {
     MDP=""
@@ -444,6 +448,9 @@ configurer_nom_mdp_bdd ()
     verifi_reussite "${?}"
 }
 
+# }}}
+
+# fonction configurer_chemin_absolu         {{{
 configurer_chemin_absolu()
 {
     printf "Génération du fichier de chemin absolu : "
@@ -451,6 +458,9 @@ configurer_chemin_absolu()
     verifi_reussite "${?}"
 }
 
+# }}}
+
+# fonction creer_fichier_config_php         {{{
 creer_fichier_config_php()
 {
 
@@ -482,6 +492,8 @@ creer_fichier_config_php()
     verifi_reussite "${?}"
 
 }
+
+# }}}
 
 # fonction générales de fonctionnement      {{{
 separateur_section()
@@ -519,6 +531,7 @@ verifi_reussite()
 
 # }}}
 
+# fonction des options                      {{{
 afficher_aide()
 {
     declare -r NOM_SCRIPT=`basename "${0}"`
@@ -533,6 +546,8 @@ traitement_option_p()
     local ARGUMENT="${1}"
     OPTION_MDP_ROOT="${ARGUMENT}"
 }
+
+# }}}
 
 # }}}
 
