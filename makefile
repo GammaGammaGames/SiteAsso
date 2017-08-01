@@ -60,14 +60,14 @@ build_php:
 run_mysql:
 	docker run --detach \
 		--publish $(Mysql_Port_Exterieur):$(Mysql_Port_Interne) \
-		--name $(Mysql_Nom_Container) \
 		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
 		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
 		--env MYSQL_USER='$(Mysql_Utilisateur)' \
 		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
-		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne) \
-		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne) \
-		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) mysql:latest
+		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
+		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
+		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
+		--name $(Mysql_Nom_Container) mysql:latest
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
@@ -89,13 +89,12 @@ run_php: build_php
 run_nginx:
 	docker run --detach \
 		--publish $(Nginx_Port_Externe):$(Nginx_Port_Interne) \
-		--name $(Nginx_Nom_Container) \
 		-v $(Nginx_Site_Externe):$(Nginx_Site_Interne):ro \
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
-		nginx:stable-alpine
+		--name $(Nginx_Nom_Container) nginx:stable-alpine
 
 # Pour se connecter au docker mysql lancé en daemon
 .PHONY: connect_mysql
