@@ -64,6 +64,8 @@ run_mysql:
 		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
 		--env MYSQL_USER='$(Mysql_Utilisateur)' \
 		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
 		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
 		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
@@ -75,6 +77,8 @@ run_mysql:
 run_php: build_php
 	docker run --detach \
 		--publish $(Php_Port_Exterieur):$(Php_Port_Interne) \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Php_Volume_Ext):$(Php_Volume_Int):ro \
 		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
 		-v $(Php_Php_Ini_Externe):$(Php_Php_Ini_Interne):ro \
@@ -89,6 +93,8 @@ run_php: build_php
 run_nginx:
 	docker run --detach \
 		--publish $(Nginx_Port_Externe):$(Nginx_Port_Interne) \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Nginx_Site_Externe):$(Nginx_Site_Interne):ro \
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
