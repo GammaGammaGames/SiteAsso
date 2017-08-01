@@ -392,7 +392,7 @@ generer_chaine()
         then
             ch1=`echo "${ch0}" | md5sum | md5sum`
         else
-            afficher_erreur "La commande" "md5" "ou" "md5sum" "ne sont pas disponible"
+            afficher_erreur "Les commandes" "md5" "et" "md5sum" "ne sont pas disponible"
             exit "${E_COMMANDE_INCONNUE}"
         fi
 
@@ -409,12 +409,12 @@ configurer_mdp()
     MDP=""
     if [[ "${#}" -eq 0 ]]
     then
-        printf "Mot de passe choisis par le script : "
+        printf "Mot de passe choisi automatiquement par le script : "
         #declare -r MDP="mdptropbiensecuretavumagueule"
         declare -r MDP=`generer_chaine 3`
     elif [[ "${#}" -eq 1 ]]
     then
-        printf "Mot de passe choisis par l'utilisateuri : "
+        printf "Mot de passe choisi par l'utilisateur : "
         declare -r MDP="${2}"
     else
         afficher_erreur "Trop d'arguments"
