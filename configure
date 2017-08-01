@@ -70,6 +70,7 @@ exit "${ERREUR}"' ERR
 #┃          Erreurs lors de l'exécution du code                              ┃#
 #┃     - 90  une commande pour générer le mdp n'est pas disponible           ┃#
 #┃     - 91  erreur de configuration de mdp                                  ┃#
+#┃     - 92  annulation de la configuration                                  ┃#
 #┃                                                                           ┃#
 #┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛#
 
@@ -93,6 +94,7 @@ declare -r E_OPT_NON_TRAITEE=86
 
 declare -r E_COMMANDE_INCONNUE=90
 declare -r E_CONFIG_MDP=91
+declare -r E_ANNULATION=92
 
 #}}}
 
@@ -607,7 +609,7 @@ else
         elif [[ "${reponse}" = [Nn] ]]
         then
             printf "Génération annulée\n"
-            exit "${EXIT_SUCCES}"
+            exit "${E_ANNULATION}"
         fi
     done
 fi
