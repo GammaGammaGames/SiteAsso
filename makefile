@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Lundi 31 juillet[07] 2017
+# Dernière modification : Mardi 01 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -9,10 +9,19 @@ SHELL		= /bin/sh
 
 srcdir		= .
 
-.PHONY: clean
-clean:
+# Stoppe toutes les machines virtuelles en cours.
+.PHONY: stop
+stop:
 	-docker stop `docker ps --quiet`
+
+# Stoppe les machines virtuel et les supprimes toutes
+.PHONY: clean
+clean: stop
 	-docker rm --force --volumes `docker ps --all --quiet`
+
+# Stoppe, supprime et nettoie les fichiers temporaires.
+.PHONY: distclean
+distclean: clean
 	$(RM) -rf ./Docker
 
 # Configuration des variables et des chemins
