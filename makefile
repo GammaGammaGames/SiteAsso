@@ -45,6 +45,11 @@ restart: stop_nginx run_nginx
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
+Nom_Php_Construit = php-mysql-alpine
+.PHONY: build_php
+build_php:
+	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
+
 # Démarrage de la BDD avec une configuration particulière :
 # - un mdp pour root
 # - Une base de données
@@ -63,11 +68,6 @@ run_mysql:
 		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne) \
 		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne) \
 		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) mysql:latest
-
-Nom_Php_Construit = php-mysql-alpine
-.PHONY: build_php
-build_php:
-	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
