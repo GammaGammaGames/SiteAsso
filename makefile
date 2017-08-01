@@ -102,12 +102,6 @@ run_nginx:
 connect_mysql:
 	docker exec --interactive --tty $(Mysql_Nom_Container) /bin/sh
 
-.PHONY: dump_bdd
-dump_bdd:
-	docker exec $(Mysql_Nom_Container) sh -c \
-		'exec mysqldump --all-databases -uroot -p"$(Mysql_Mdp_Root)"' \
-		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
-
 # Pour se connecter au docker php lancé en daemon
 .PHONY: connect_php
 connect_php:
@@ -117,6 +111,13 @@ connect_php:
 .PHONY: connect_nginx
 connect_nginx:
 	docker exec --interactive --tty $(Nginx_Nom_Container) /bin/sh
+
+# Permet de créer un dump des bases de données
+.PHONY: dump_bdd
+dump_bdd:
+	docker exec $(Mysql_Nom_Container) sh -c \
+		'exec mysqldump --all-databases -uroot -p"$(Mysql_Mdp_Root)"' \
+		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
 
 # Stop proprement le container nginx le supprime ainsi que son volume lié
 .PHONY: stop_nginx
