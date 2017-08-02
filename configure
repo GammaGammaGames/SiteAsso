@@ -705,6 +705,14 @@ then
         if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
         then
             printf >&2 "\n\n"
+            message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
+            if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
+            then
+                printf "Dump de la BDD en cours\n"
+                make dump_bdd
+                message_ok
+            fi
+            printf >&2 "\n\n"
             printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
             printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
             rm -rf -- "${FICHIERS_MYSQL}"
