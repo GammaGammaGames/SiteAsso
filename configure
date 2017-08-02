@@ -430,7 +430,7 @@ configurer_nom_mdp_bdd ()
     fi
 
     printf "${mdp_root}" > "${FICHIER_MDP_ROOT_MYSQL}"
-    verifi_reussite "${?}"
+    message_ok
 
     declare -r nom=`generer_chaine`
     declare -r mdp=`generer_chaine 2`
@@ -438,13 +438,13 @@ configurer_nom_mdp_bdd ()
 
     printf >&2 "Génération du mdp de l'utilisateur mysql \n"
     printf "${mdp}" > "${FICHIER_MDP_MYSQL}"
-    verifi_reussite "${?}"
+    message_ok
     printf >&2 "Génération du nom de l'utilisateur mysql \n"
     printf "${nom}" > "${FICHIER_NOM_MYSQL}"
-    verifi_reussite "${?}"
+    message_ok
     printf >&2 "Génération du nom de la BDD  dans  mysql \n"
     printf "${bdd}" > "${FICHIER_BDD_MYSQL}"
-    verifi_reussite "${?}"
+    message_ok
 }
 
 # }}}
@@ -455,7 +455,7 @@ configurer_chemin_absolu()
     separateur_section "Configuration du chemin absolu"
     printf >&2 "Génération du fichier de chemin absolu\n"
     printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
-    verifi_reussite "${?}"
+    message_ok
 }
 
 # }}}
@@ -489,7 +489,7 @@ creer_fichier_config_php()
 
     printf "?>\n" >> "${FICHIER}"
 
-    verifi_reussite "${?}"
+    message_ok
 
 }
 
@@ -501,9 +501,26 @@ separateur_section()
     echo >&2 "--- ${M__DIM}${M_GRAS}${*}${NEUTRE} ---"
 }
 
-message_avertissement()
+message_ok()
+{
+    printf >&2 "${C_SUR___VERT}${C__BLANC}${M_GRAS} OK ${NEUTRE}\n"
+}
+
+message_erreur()
+{
+    printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} ERREUR ${NEUTRE} "
+    echo >&2 "${*}"
+}
+
+message_attention()
 {
     printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ! ${NEUTRE} "
+    echo >&2 "${*}"
+}
+
+message_avertissement()
+{
+    printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} Avertissement ! ${NEUTRE} "
     echo >&2 "${*}"
 }
 
@@ -515,18 +532,6 @@ demander_utilisateur()
         [[ "${reponse}" = [Oo] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
     done
-}
-
-verifi_reussite()
-{
-    declare -i FAIL="${1}"
-    if [[ "${FAIL}" -eq 0 ]]
-    then
-        printf >&2 "${C_SUR___VERT}${C__BLANC}${M_GRAS} OK ${NEUTRE}\n"
-    else
-        printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} ERREUR ${NEUTRE}\n"
-        exit "${FAIL}"
-    fi
 }
 
 # }}}
@@ -639,7 +644,7 @@ if [[ ! -d "${FICHIERS_GENERE}" ]]
 then
     mkdir -- "${FICHIERS_GENERE}"
 else
-    message_avertissement "Une configuration existe déjà"
+    message_attention "Une configuration existe déjà"
     if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
     then
         printf >&2 "\n\n"
@@ -657,14 +662,14 @@ GENERER='n'
 # la supprimer
 if [[ -d "${FICHIERS_MYSQL}" ]]
 then
-    message_avertissement "MySql à déjà configuré une BDD avec un utilisateur"
+    message_attention "MySql à déjà configuré une BDD avec un utilisateur"
     printf >&2 "Si vous générez à nouveau la configuration MySql vous \n"
     printf >&2 "ne pourrez plus accéder aux données de cet utilisateur\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
         printf >&2 "\n\n"
         GENERER='o'
-        message_avertissement "Toute suppression est définitive !"
+        message_attention "Toute suppression est définitive !"
         printf >&2 "Les bases de données actuelle générée par MySql ne seront\n"
         printf >&2 "plus accessible une fois la configuration faite\n"
         if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
