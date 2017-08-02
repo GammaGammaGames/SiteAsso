@@ -560,7 +560,6 @@ declare OPTION_MDP_ROOT=""
 #  Affiche l'aide si aucun arguments n'est donné
 if [[ "${#}" -eq 1 ]]
 then
-    printf "${C_SUR__JAUNE} ${C___NOIR}Afficher l'aide ${NEUTRE}\n"
     afficher_aide
     exit "${EXIT_SUCCES}";
 fi
