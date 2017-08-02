@@ -71,6 +71,8 @@ exit "${ERREUR}"' ERR
 #┃     - 90  une commande pour générer le mdp n'est pas disponible           ┃#
 #┃     - 91  erreur de configuration de mdp                                  ┃#
 #┃     - 92  annulation de la configuration                                  ┃#
+#┃     - 93  le programme docker n'est pas installé                          ┃#
+#┃     - 94  le programme make et gnumake ne sont pas installé               ┃#
 #┃                                                                           ┃#
 #┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛#
 
@@ -95,6 +97,8 @@ declare -r E_OPT_NON_TRAITEE=86
 declare -r E_COMMANDE_INCONNUE=90
 declare -r E_CONFIG_MDP=91
 declare -r E_ANNULATION=92
+declare -r E_PROG_DOCKER_ABSENT=93
+declare -r E_PROG_MAKE_ABSENT=94
 
 #}}}
 
@@ -637,6 +641,32 @@ fi
 ###################################################
 #                   Exécution                     #
 ###################################################
+
+if ! test_cmd_exist docker
+then
+    message_erreur "Configuration inutilisable"
+    printf >&2 "${C_VIOLET}${M_GRAS}Docker ${C__ROUGE}n'est pas installé sur "
+    printf >&2 "votre système ! \nLes différents serveur ne pourront pas être"
+    printf >&2 " lancé.${NEUTRE}\n"
+    exit "${E_PROG_DOCKER_ABSENT}"
+fi
+
+if ! test_cmd_exist gnumake
+then
+    if test_cmd_exist make
+    then
+        message_avertissement "GNUmake n'est pas installé."
+        printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
+        printf >&2 "GNUmake est recommandé pour exécuter les makefile.\n"
+        printf >&2 "\n"
+    else
+        message_erreur "Le lancement du serveur ne pourra pas se faire"
+        printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
+        printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
+        printf >&2 "pour continuer.${NEUTRE}\n"
+        exit "${E_PROG_MAKE_ABSENT}"
+    fi
+fi
 
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
 # supprimer
