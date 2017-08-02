@@ -712,7 +712,7 @@ then
             printf >&2 "\n\n"
             printf >&2 "Les bases de données actuelles seront conservées "
             printf >&2 "mais ne seront plus accessible par MySql\n"
-            printf >&2 "Vous pouvez toujours supprimer manuellement\n"
+            printf >&2 "Vous pouvez toujours les supprimer manuellement\n"
         fi
     else
         printf >&2 "\n\n"
