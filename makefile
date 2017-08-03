@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mardi 01 août[08] 2017
+# Dernière modification : Jeudi 03 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -101,6 +101,21 @@ run_nginx:
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
+
+.PHONY: start
+start: start_mysql start_php start_nginx
+
+.PHONY: start_mysql
+start_mysql:
+	docker start $(Mysql_Nom_Container)
+
+.PHONY: start_php
+start_php:
+	docker start $(Php_Nom_Container)
+
+.PHONY: start_nginx
+start_nginx:
+	docker start $(Nginx_Nom_Container)
 
 # Pour se connecter au docker mysql lancé en daemon
 .PHONY: connect_mysql
