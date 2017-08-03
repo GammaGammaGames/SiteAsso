@@ -54,6 +54,10 @@ Nom_Php_Construit = php-mysql-alpine
 build_php:
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
 
+# ---------------------------------------- #
+# Construction et démarrage des conteneurs #
+# ---------------------------------------- #
+
 # Démarrage de la BDD avec une configuration particulière :
 # - un mdp pour root
 # - Une base de données
@@ -106,6 +110,10 @@ run_nginx:
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
 
+# -------------------------------------- #
+# Démarrer les conteneurs déjà construit #
+# -------------------------------------- #
+
 .PHONY: start
 start: start_mysql start_php start_nginx
 
@@ -120,6 +128,10 @@ start_php:
 .PHONY: start_nginx
 start_nginx:
 	docker start $(Nginx_Nom_Container)
+
+# ------------------------------------- #
+# Connections à un conteneur déjà lancé #
+# ------------------------------------- #
 
 # Pour se connecter au docker mysql lancé en daemon
 .PHONY: connect_mysql
