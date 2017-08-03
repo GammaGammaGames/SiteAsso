@@ -1,5 +1,6 @@
 <?php
-$test="test";
+
+echo "cacaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ! le pipi c'est nul !";
 
 ?>
 
