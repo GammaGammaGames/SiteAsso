@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Jeudi 03 août[08] 2017
+# Dernière modification : Vendredi 04 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -40,8 +40,8 @@ all: run
 run: run_mysql run_php run_nginx
 
 # Permet de redémarrer seulement le container nginx
-.PHONY: restart
-restart: stop_nginx run_nginx
+.PHONY: restart_nginx
+restart_nginx: stop_nginx run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
