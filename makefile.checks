@@ -11,3 +11,15 @@ endif
 ifeq ($(Mysql_Mdp_Root), )
     $(error "Vous devez configurer un mot de passe root pour MySql avec ./configure")
 endif
+
+ifeq ($(Mysql_Utilisateur), )
+    $(error "Vous devez configurer un nom d'utilisateur pour MySql avec ./configure")
+endif
+
+ifeq ($(Mysql_Pass_Utilisateur), )
+    $(error "Vous devez configurer un mdp pour l'utilisateur avec ./configure")
+endif
+
+ifeq ($(Mysql_Nom_Bdd), )
+    $(error "Vous devez configurer un nom de BDD pour MySql avec ./configure")
+endif
