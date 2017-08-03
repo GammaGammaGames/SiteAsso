@@ -136,6 +136,27 @@ connect_php:
 connect_nginx:
 	docker exec --interactive --tty $(Nginx_Nom_Container) /bin/sh
 
+# --------------------------------- #
+# Consulter les logs des conteneurs #
+# --------------------------------- #
+
+# Pour pouvoir inspecter facilement le container mysql en cours d'exécution
+.PHONY: logs_mysql
+logs_mysql:
+	docker logs $(Mysql_Nom_Container)
+
+# Pour pouvoir inspecter facilement le container php en cours d'exécution
+.PHONY: logs_php
+logs_php:
+	docker logs $(Php_Nom_Container)
+
+# Pour pouvoir inspecter facilement le container nginx en cours d'exécution
+.PHONY: logs_nginx
+logs_nginx:
+	docker logs $(Nginx_Nom_Container)
+
+# --------------------------------- #
+
 # Permet de créer un dump des bases de données
 .PHONY: dump_bdd
 dump_bdd:
@@ -148,8 +169,3 @@ dump_bdd:
 stop_nginx:
 	-docker stop $(Nginx_Nom_Container)
 	-docker rm --volumes $(Nginx_Nom_Container)
-
-# Pour pouvoir inspecter facilement le container nginx en cours d'exécution
-.PHONY: logs
-logs:
-	docker logs $(Nginx_Nom_Container)
