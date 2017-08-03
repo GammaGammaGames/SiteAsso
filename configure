@@ -1,0 +1,748 @@
+#! /bin/bash
+# vim:foldmethod=marker:foldlevel=0
+# Changer les droits avec chmod u+x fichier
+
+# Dernière modification : Mercredi 02 août[08] 2017
+
+# Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
+# Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
+# Arrête le script si une variable non initialisé est utilisée
+set -u
+# Équivalent à set -o errtrace pour s'assurer que les trap sont bien
+# hérité dans les sous shell
+set -E
+# Permet de traiter les erreurs dans les pipeline avec la trap ERR
+set -o pipefail
+set -o posix
+# Pour la gestion des erreurs activer l'une des deux options
+#set -v
+#set -x
+# Gestion des erreurs
+trap 'ERREUR="${?}";
+printf >&2 "\nErreur dans les définitions préliminaire ligne : ${LINENO}\n";
+exit "${ERREUR}"' ERR
+
+###############################################################################
+#                   ___                             __                        #
+#                  /   |  _________ ___  ____  ____/ /__  ___                 #
+#                 / /| | / ___/ __ `__ \/ __ \/ __  / _ \/ _ \                #
+#                / ___ |(__  ) / / / / / /_/ / /_/ /  __/  __/                #
+#               /_/  |_/____/_/ /_/ /_/\____/\__,_/\___/\___/                 #
+#                                                                             #
+###############################################################################
+
+#(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)#
+#                                   configure                                 #
+#                          écrit par : PIVARD Julien                          #
+#                       contact : pivardjulien@gmail.com                      #
+#                             Jeudi 27 juillet 2017                           #
+#                                                                             #
+#             Configure les fichiers de fonctionnement pour docker            #
+#(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)(=^.^=)#
+
+# Documentation                     #{{{
+#┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓#
+#┃                                                                           ┃#
+#┃           Écrit les fichiers de configurations en s'occupant des          ┃#
+#┃                    chemins absolus et relatif                             ┃#
+#┃       Option minimal                                                      ┃#
+#┃  -    --------------------------------------------------                  ┃#
+#┃       Options                                                             ┃#
+#┃       -p Le mot de passe root pour la base de données                     ┃#
+#┃       --password                                                          ┃#
+#┃       -h affiche l'aide                                                   ┃#
+#┃       --help                                                              ┃#
+#┃  -    --------------------------------------------------                  ┃#
+#┃       Exemples d'utilisation :                                            ┃#
+#┃           ./configure                                                     ┃#
+#┃           ./configure --password='truc'                                   ┃#
+#┃           ./configure --password=`cat fic_mpd.txt`                        ┃#
+#┃                                                                           ┃#
+#┃ Codes d'erreurs :                                                         ┃#
+#┃     - 80  Erreur « afficher_erreur » nécessite au moins un argument       ┃#
+#┃          Erreurs dans les options de la ligne de commande                 ┃#
+#┃     - 81  l'option longue ne prend PAS d'argument                         ┃#
+#┃     - 82  l'option longue nécessite un argument                           ┃#
+#┃     - 83  l'option longue n'existe pas                                    ┃#
+#┃     - 84  l'option nécessite un argument                                  ┃#
+#┃     - 85  l'option n'existe pas                                           ┃#
+#┃     - 86  des options qui sont invalides ont été donnée                   ┃#
+#┃          Erreurs lors de l'exécution du code                              ┃#
+#┃     - 90  une commande pour générer le mdp n'est pas disponible           ┃#
+#┃     - 91  erreur de configuration de mdp                                  ┃#
+#┃     - 92  annulation de la configuration                                  ┃#
+#┃     - 93  le programme docker n'est pas installé                          ┃#
+#┃     - 94  le programme make et gnumake ne sont pas installé               ┃#
+#┃                                                                           ┃#
+#┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛#
+
+#}}}
+
+# Vérifie la syntaxe : bash -n
+
+#########################################
+#{{{ Constante de sortie et d'erreur    #
+#########################################
+declare -r EXIT_SUCCES=0
+
+declare -r E_ARG_AFF_ERR_M=80
+
+declare -r E_ARG_SUPERFLUS_OPT_LONGUE=81
+declare -r E_OPT_LONGUE_NECESSITE_ARG=82
+declare -r E_OPT_LONGUE_INCONNUE=83
+declare -r E_OPT_NECESSITE_ARG=84
+declare -r E_OPT_INCONNUE=85
+declare -r E_OPT_NON_TRAITEE=86
+
+declare -r E_COMMANDE_INCONNUE=90
+declare -r E_CONFIG_MDP=91
+declare -r E_ANNULATION=92
+declare -r E_PROG_DOCKER_ABSENT=93
+declare -r E_PROG_MAKE_ABSENT=94
+
+#}}}
+
+#####################################
+#  Fonction de gestion des signaux  # {{{
+#####################################
+
+# Réception d'un signal pour quitter l'app normalement
+fin()
+{
+    exit
+}
+
+# Le script à été interrompu par l'utilisateur
+interruption()
+{
+    exit
+}
+
+# Une erreur c'est produit durant l'exécution
+gestion_erreurs()
+{
+    printf >&2 "\nLe script à subis une erreur ligne [ ${1} ]\n"
+}
+
+# On ferme le script. Cette fonction sera exécutée en dernière
+nettoyage_fin_script()
+{
+    exit
+}
+
+# Le terminal qui a lancé le processus à été fermé
+fermeture_terminal()
+{
+    exit
+}
+
+# }}}
+
+###########################
+# {{{ Attrape erreurs     #
+###########################
+
+# Permet de reste le signal d'erreur
+trap '' ERR
+trap 'ERREUR="${?}";
+gestion_erreurs "${LINENO}";
+exit "${ERREUR}"' ERR
+
+# Gestion des interruption CTRL-C
+trap 'interruption' INT
+
+# Gestion de la fermeture du terminal
+trap 'fermeture_terminal' HUP
+
+# Gestion des autres signaux de fin
+trap 'fin' QUIT TERM
+
+# Sera toujours exécuté quand une instruction exit est rencontré
+trap 'nettoyage_fin_script' EXIT
+
+# }}}
+
+#############################################
+# {{{ Fonctions de gestions généraliste     #
+#############################################
+
+declare -i NB_COULEURS=0
+declare -i NB_COLONNES=0
+declare -i NB_LIGNES=0
+
+which_cmd()
+{
+    which "${1}" 2>/dev/null || command -v "${1}" 2>/dev/null
+}
+
+test_cmd_exist()
+{
+    which_cmd "${1}" >/dev/null 2>&1 && return 0
+    return 1
+}
+
+#}}}
+
+######################################################
+# {{{ Gestion du redimensionnement de la fenêtre     #
+######################################################
+maj_taille()
+{
+    if test_cmd_exist tput
+    then
+        NB_LIGNES=`tput lines`
+        NB_COLONNES=`tput cols`
+    else
+        NB_LIGNES=-1
+        NB_COLONNES=-1
+    fi
+}
+
+maj_taille
+
+trap 'maj_taille' WINCH
+
+#}}}
+
+####################################
+# {{{  Définition des couleurs     #
+####################################
+
+NEUTRE=""
+M_GRAS=""
+D_SOUL=""
+F_SOUL=""
+INVERS=""
+M__DIM=""
+
+# Création des couleurs du front et du back
+declare -a COULEURS=()
+# Vérification de l'existence de la commande tput           #{{{
+if test_cmd_exist tput
+then
+
+    if [[ `tput colors 2>/dev/null` -ge 8 ]]
+    then
+        declare -r NB_COULEURS=`tput colors`
+    else
+        declare -r NB_COULEURS=0
+    fi
+
+    declare -r NEUTRE="`tput sgr 0`"
+
+    declare -r M_GRAS="`tput bold`"
+
+    declare -r D_SOUL="`tput smul`"
+    declare -r F_SOUL="`tput rmul`"
+
+    declare -r INVERS="`tput rev`"
+
+    declare -r M__DIM="`tput dim`"
+
+    declare -i POSITION=0
+    for i in 'f' 'b'
+    do
+        COMM="tput seta${i}"
+        for j in `seq 0 15`
+        do
+            COULEURS[$((j + POSITION))]="`${COMM} ${j}`"
+        done
+        POSITION=$((POSITION + 16))
+    done
+
+else
+
+    for i in `seq 0 31`
+    do
+        COULEURS[${i}]=""
+    done
+
+fi
+
+#}}}
+
+# Couleurs normale                          #{{{
+declare -r C___NOIR="${COULEURS[0]}"        # Noir
+declare -r C__ROUGE="${COULEURS[1]}"        # Rouge
+declare -r C___VERT="${COULEURS[2]}"        # Vert
+declare -r C__JAUNE="${COULEURS[3]}"        # Jaune
+declare -r C___BLEU="${COULEURS[4]}"        # Bleu
+declare -r C_VIOLET="${COULEURS[5]}"        # Violet
+declare -r C___CYAN="${COULEURS[6]}"        # Cyan
+declare -r C__BLANC="${COULEURS[7]}"        # Blanc
+
+#}}}
+
+# Haute intensité                           #{{{
+declare -r C___INOIR="${COULEURS[8]}"       # Noir
+declare -r C__IROUGE="${COULEURS[9]}"       # Rouge
+declare -r C___IVERT="${COULEURS[10]}"      # Vert
+declare -r C__IJAUNE="${COULEURS[11]}"      # Jaune
+declare -r C___IBLEU="${COULEURS[12]}"      # Bleu
+declare -r C_IVIOLET="${COULEURS[13]}"      # Violet
+declare -r C___ICYAN="${COULEURS[14]}"      # Cyan
+declare -r C__IBLANC="${COULEURS[15]}"      # Blanc
+
+#}}}
+
+# Couleur de fond                           #{{{
+declare -r C_SUR___NOIR="${COULEURS[16]}"   # Noir
+declare -r C_SUR__ROUGE="${COULEURS[17]}"   # Rouge
+declare -r C_SUR___VERT="${COULEURS[18]}"   # Vert
+declare -r C_SUR__JAUNE="${COULEURS[19]}"   # Jaune
+declare -r C_SUR___BLEU="${COULEURS[20]}"   # Bleu
+declare -r C_SUR_VIOLET="${COULEURS[21]}"   # Violet
+declare -r C_SUR___CYAN="${COULEURS[22]}"   # Cyan
+declare -r C_SUR__BLANC="${COULEURS[23]}"   # Blanc
+
+#}}}
+
+# Couleur de fond haute intensité           #{{{
+declare -r C_SUR___INOIR="${COULEURS[24]}"  # Noir
+declare -r C_SUR__IROUGE="${COULEURS[25]}"  # Rouge
+declare -r C_SUR___IVERT="${COULEURS[26]}"  # Vert
+declare -r C_SUR__IJAUNE="${COULEURS[27]}"  # Jaune
+declare -r C_SUR___IBLEU="${COULEURS[28]}"  # Bleu
+declare -r C_SUR_IVIOLET="${COULEURS[29]}"  # Violet
+declare -r C_SUR___ICYAN="${COULEURS[30]}"  # Cyan
+declare -r C_SUR__IBLANC="${COULEURS[31]}"  # Blanc
+
+#}}}
+
+# Affichage simplifié des erreurs           #{{{
+# L'argument 1 affiche le texte en rouge
+# L'argument 2 est fait pour afficher le contenu d'une variable
+# L'argument 3 affiche le texte en rouge à la suite de l'argument 2
+# .....
+afficher_erreur()
+{
+    [[ -n "${1}" ]] && local AFFICHAGE="${1}" || exit "${E_ARG_AFF_ERR_M}"
+    if [[ "${#}" -ge 2 ]]
+    then
+        AFFICHAGE="${AFFICHAGE} [ ${C_VIOLET}${M_GRAS}"
+        AFFICHAGE="${AFFICHAGE}${2}"
+        AFFICHAGE="${AFFICHAGE}${NEUTRE}${C__ROUGE} ] "
+    fi
+    [[ "${#}" -ge 3 ]] && AFFICHAGE="${AFFICHAGE}${3}"
+    if [[ "${#}" -ge 4 ]]
+    then
+        AFFICHAGE="${AFFICHAGE} [ ${C_VIOLET}${M_GRAS}"
+        AFFICHAGE="${AFFICHAGE}${4}"
+        AFFICHAGE="${AFFICHAGE}${NEUTRE}${C__ROUGE} ] "
+    fi
+    [[ "${#}" -ge 5 ]] && AFFICHAGE="${AFFICHAGE}${5}"
+    printf >&2 "${NEUTRE}${C__ROUGE}${AFFICHAGE}${NEUTRE}\n"
+}
+
+#}}}
+
+# Une erreur c'est produit durant l'exécution
+gestion_err_couleur()
+{
+    afficher_erreur "\nLe script à subis une erreur ligne" "${1}"
+}
+
+trap '' ERR
+trap 'ERREUR="${?}";
+gestion_err_couleur "${LINENO}";
+exit "${ERREUR}"' ERR
+
+# }}}
+
+# Retirer l'extension %.* un % par extension à retirer.
+# Ne garder que l'extension avec #*. Voila.
+####################################################
+# {{{                   Code                       #
+####################################################
+
+declare -r POSITIONSCRIPT="`pwd`"
+declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/Docker"
+declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
+declare -r FICHIER_MDP_ROOT_MYSQL="${FICHIERS_GENERE}/mdp_root_mysql.conf"
+declare -r FICHIER_NOM_MYSQL="${FICHIERS_GENERE}/mysql_nom_user.conf"
+declare -r FICHIER_MDP_MYSQL="${FICHIERS_GENERE}/mysql_mdp_user.conf"
+declare -r FICHIER_BDD_MYSQL="${FICHIERS_GENERE}/mysql_bdd.conf"
+declare -r FICHIER_PATH_SOURCES="${FICHIERS_GENERE}/chemin_sources.conf"
+
+# fonction generer_chaine                   {{{
+generer_chaine()
+{
+    # Réglage de la taille de la chaine.
+    # La taille sera un multiple de 15
+    if [[ "${#}" -eq 1 ]]
+    then
+        declare -i taille_chaine="${1}"
+    else
+        declare -i taille_chaine=1
+    fi
+
+    declare -r POS=2    # À partir de la position 2 du script.
+    declare -r LEN=15   # Extraire huit caractères.
+
+    declare chainealeatoire=""
+    declare -i i=0
+    while [[ "${i}" -lt "${taille_chaine}" ]]
+    do
+        # Permet de récupérer la date en secondes
+        if test_cmd_exist date
+        then
+            ch0="`date +%s`${$}${RANDOM}"
+        else
+            afficher_erreur "La commande" "date" "n'est pas disponible"
+            exit "${E_COMMANDE_INCONNUE}"
+        fi
+
+        if test_cmd_exist md5
+        then
+            ch1=`echo "${ch0}" | md5 | md5`
+            # Brouiller 2 fois:  ^^^   ^^^
+        elif test_cmd_exist md5sum
+        then
+            ch1=`echo "${ch0}" | md5sum | md5sum`
+        else
+            afficher_erreur "Les commandes" "md5" "et" "md5sum" "ne sont pas disponible"
+            exit "${E_COMMANDE_INCONNUE}"
+        fi
+
+        chainealeatoire="${chainealeatoire}${ch1:$POS:$LEN}"
+        # On peut paramétriser                    ^^^  ^^^
+        (( i++ )) || true
+    done
+
+    echo "${chainealeatoire}"
+}
+
+# }}}
+
+# fonction configurer_nom_mdp_bdd           {{{
+configurer_nom_mdp_bdd ()
+{
+    separateur_section "Configuration des utilisateurs Mysql"
+
+    mdp_root="mdptropbiensecuretavumagueule"
+    if [[ "${#}" -eq 0 ]]
+    then
+        printf >&2 "Génération du mot de passe root de mysql \n"
+        declare -r mdp_root=`generer_chaine 3`
+    elif [[ "${#}" -eq 1 ]]
+    then
+        printf >&2 "Mot de passe root choisi par l'utilisateur \n"
+        declare -r mdp_root="${2}"
+    else
+        afficher_erreur "Trop d'arguments"
+        exit "${E_CONFIG_MDP}"
+    fi
+
+    printf "${mdp_root}" > "${FICHIER_MDP_ROOT_MYSQL}"
+    message_ok
+
+    declare -r nom=`generer_chaine`
+    declare -r mdp=`generer_chaine 2`
+    declare -r bdd="${nom}"
+
+    printf >&2 "Génération du mdp de l'utilisateur mysql \n"
+    printf "${mdp}" > "${FICHIER_MDP_MYSQL}"
+    message_ok
+    printf >&2 "Génération du nom de l'utilisateur mysql \n"
+    printf "${nom}" > "${FICHIER_NOM_MYSQL}"
+    message_ok
+    printf >&2 "Génération du nom de la BDD  dans  mysql \n"
+    printf "${bdd}" > "${FICHIER_BDD_MYSQL}"
+    message_ok
+}
+
+# }}}
+
+# fonction configurer_chemin_absolu         {{{
+configurer_chemin_absolu()
+{
+    separateur_section "Configuration du chemin absolu"
+    printf >&2 "Génération du fichier de chemin absolu\n"
+    printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
+    message_ok
+}
+
+# }}}
+
+# fonction creer_fichier_config_php         {{{
+creer_fichier_config_php()
+{
+
+    separateur_section "Configuration du lien entre PHP et la BDD"
+    declare -r CHEMIN="${FICHIERS_GENERE}/conf_php"
+    mkdir -p -- "${CHEMIN}"
+    declare -r FICHIER="${CHEMIN}/mysql_config.php"
+
+    printf >&2 "Écriture du fichier de configuration php\n"
+
+    printf "<?php\n" > "${FICHIER}"
+    printf "define( 'MYSQL_HOST', 'mysql_serveur' );\n" >> "${FICHIER}"
+    printf "define( 'MYSQL_PORT', '3306' );\n" >> "${FICHIER}"
+
+    printf "define( 'MYSQL_DB', '" >> "${FICHIER}"
+    printf "`head -n1 ${FICHIER_BDD_MYSQL} | tr -d '\n*'`" >> "${FICHIER}"
+    printf "' );\n" >> "${FICHIER}"
+
+    printf "define( 'MYSQL_USER', '" >> "${FICHIER}"
+    printf "`head -n1 ${FICHIER_NOM_MYSQL} | tr -d '\n*'`" >> "${FICHIER}"
+    printf "' );\n" >> "${FICHIER}"
+
+    printf "define( 'MYSQL_PASSWORD', '" >> "${FICHIER}"
+    printf "`head -n1 ${FICHIER_MDP_MYSQL} | tr -d '\n*'`" >> "${FICHIER}"
+    printf "' );\n" >> "${FICHIER}"
+
+    printf "?>\n" >> "${FICHIER}"
+
+    message_ok
+
+}
+
+# }}}
+
+# fonction générales de fonctionnement      {{{
+separateur_section()
+{
+    echo >&2 "--- ${M__DIM}${M_GRAS}${*}${NEUTRE} ---"
+}
+
+message_ok()
+{
+    printf >&2 "${C_SUR___VERT}${C__BLANC}${M_GRAS} OK ${NEUTRE}\n"
+}
+
+message_erreur()
+{
+    printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} ERREUR ${NEUTRE} "
+    echo >&2 "${*}"
+}
+
+message_attention()
+{
+    printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ! ${NEUTRE} "
+    echo >&2 "${*}"
+}
+
+message_avertissement()
+{
+    printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} Avertissement ! ${NEUTRE} "
+    echo >&2 "${*}"
+}
+
+demander_utilisateur()
+{
+    printf "${1} (o/n)\n"
+    while read -r -n 1 -s reponse
+    do
+        [[ "${reponse}" = [Oo] ]] && return 0
+        [[ "${reponse}" = [Nn] ]] && return 1
+    done
+}
+
+# }}}
+
+# fonction des options                      {{{
+afficher_aide()
+{
+    declare -r NOM_SCRIPT=`basename "${0}"`
+    printf "${NOM_SCRIPT} [-h][-p mdp_root_mysql]\n"
+    printf "    -h --help\n        Affiche l'aide et quitte\n"
+    printf "    -p --password\n        Permet de régler le mot "
+    printf "de passe root de mysql\n"
+}
+
+traitement_option_p()
+{
+    local ARGUMENT="${1}"
+    OPTION_MDP_ROOT="${ARGUMENT}"
+}
+
+# }}}
+
+# }}}
+
+####################################################
+# {{{            Gestion des options               #
+####################################################
+
+declare OPTION_MDP_ROOT=""
+
+#  Affiche l'aide si aucun arguments n'est donné
+if [[ "${#}" -eq 1 ]]
+then
+    afficher_aide
+    exit "${EXIT_SUCCES}";
+fi
+
+# option o ne nécessite pas d'arguments en plus u si.
+# Le premier : permet de gérer manuellement les erreurs
+while getopts ":hp:-:" option
+do
+    case "${option}" in
+        p)
+            traitement_option_p "${OPTARG}"
+            ;;
+        h)
+            afficher_aide
+            exit "${EXIT_SUCCES}"
+            ;;
+        -)
+            LONG_OPTARG="${OPTARG#*=}"
+            case "${OPTARG}" in
+                help )
+                    afficher_aide
+                    exit "${EXIT_SUCCES}"
+                    ;;
+                password=?* )
+                    traitement_option_p "${LONG_OPTARG}"
+                    ;;
+                help* )
+                    afficher_erreur "L'option longue" "--${OPTARG}" "ne prend pas d'arguments."
+                    afficher_aide
+                    exit "${E_ARG_SUPERFLUS_OPT_LONGUE}"
+                    ;;
+                password* )
+                    afficher_erreur "L'option longue" "--${OPTARG}" "nécessite un argument."
+                    afficher_aide
+                    exit "${E_OPT_LONGUE_NECESSITE_ARG}"
+                    ;;
+                *)
+                    afficher_erreur "L'option longue" "--${OPTARG}" "n'existe pas !"
+                    afficher_aide
+                    exit "${E_OPT_LONGUE_INCONNUE}"
+                    ;;
+            esac
+            ;;
+        :)
+            afficher_erreur "L'option" "${OPTARG}" "nécessite un argument."
+            afficher_aide
+            exit "${E_OPT_NECESSITE_ARG}"
+            ;;
+        ?)
+            afficher_erreur "L'option" "${OPTARG}" "n'existe pas."
+            afficher_aide
+            exit "${E_OPT_INCONNUE}"
+            ;;
+    esac
+done
+
+# Vérifie que toutes les options ont été traitées
+# OPTIND indique la position de l'argument suivant à traiter par getopt
+shift $((OPTIND-1))
+# Si toutes les options n'ont pas été traitée on affiche une erreur
+if [[ "${#}" -ne 0 ]]
+then
+    afficher_erreur "Le ou Les arguments suivant ne sont pas valide :" "${*}"
+    afficher_aide
+    exit "${E_OPT_NON_TRAITEE}"
+fi
+
+# }}}
+
+###################################################
+#                   Exécution                     #
+###################################################
+
+if ! test_cmd_exist docker
+then
+    message_erreur "Configuration inutilisable"
+    printf >&2 "${C_VIOLET}${M_GRAS}Docker ${C__ROUGE}n'est pas installé sur "
+    printf >&2 "votre système ! \nLes différents serveur ne pourront pas être"
+    printf >&2 " lancé.${NEUTRE}\n"
+    exit "${E_PROG_DOCKER_ABSENT}"
+fi
+
+if ! test_cmd_exist gnumake
+then
+    if test_cmd_exist make
+    then
+        message_avertissement "GNUmake n'est pas installé."
+        printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
+        printf >&2 "GNUmake est recommandé pour exécuter les makefile.\n"
+        printf >&2 "\n"
+    else
+        message_erreur "Le lancement du serveur ne pourra pas se faire"
+        printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
+        printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
+        printf >&2 "pour continuer.${NEUTRE}\n"
+        exit "${E_PROG_MAKE_ABSENT}"
+    fi
+fi
+
+# Si une configuration existe déjà on demande à l'utilisateur si il veut la
+# supprimer
+if [[ ! -d "${FICHIERS_GENERE}" ]]
+then
+    mkdir -- "${FICHIERS_GENERE}"
+else
+    message_attention "Une configuration existe déjà"
+    if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
+    then
+        printf >&2 "\n\n"
+    else
+        printf >&2 "Génération annulée\n"
+        exit "${E_ANNULATION}"
+    fi
+fi
+
+configurer_chemin_absolu
+printf >&2 "\n"
+
+GENERER='n'
+# Si MySql à déjà généré une BDD on demande à l'utilisateur si il veut
+# la supprimer
+if [[ -d "${FICHIERS_MYSQL}" ]]
+then
+    message_attention "MySql à déjà configuré une BDD avec un utilisateur"
+    printf >&2 "Si vous générez à nouveau la configuration MySql vous \n"
+    printf >&2 "ne pourrez plus accéder aux données de cet utilisateur\n"
+    if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
+    then
+        printf >&2 "\n\n"
+        GENERER='o'
+        message_attention "Toute suppression est définitive !"
+        printf >&2 "Les bases de données actuelle générée par MySql ne seront\n"
+        printf >&2 "plus accessible une fois la configuration faite\n"
+        if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
+        then
+            printf >&2 "\n\n"
+            message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
+            if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
+            then
+                printf "Dump de la BDD en cours\n"
+                make dump_bdd
+                message_ok
+            fi
+            printf >&2 "\n\n"
+            printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
+            printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
+            rm -rf -- "${FICHIERS_MYSQL}"
+        else
+            printf >&2 "\n\n"
+            printf >&2 "Les bases de données actuelles seront conservées "
+            printf >&2 "mais ne seront plus accessible par MySql\n"
+            printf >&2 "Vous pouvez toujours les supprimer manuellement\n"
+        fi
+    else
+        printf >&2 "\n\n"
+        printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} >>>> ${NEUTRE} "
+        printf >&2 "La configuration MySql ne sera pas re-générée\n"
+    fi
+    printf >&2 "\n"
+else
+    GENERER='o'
+fi
+if [[ "${GENERER}" == "o" ]]
+then
+    if [[ -n "${OPTION_MDP_ROOT}" ]]
+    then
+        configurer_nom_mdp_bdd "${OPTION_MDP_ROOT}"
+    else
+        configurer_nom_mdp_bdd
+    fi
+fi
+printf >&2 "\n"
+
+creer_fichier_config_php
+printf >&2 "\n"
+
+exit "${EXIT_SUCCES}";
