@@ -24,6 +24,10 @@ clean: stop
 distclean: clean
 	$(RM) -rf ./Docker
 
+ifeq ($(wildcard Docker/*), )
+    $(error "Vous devez générer la configuration avec ./configure")
+endif
+
 # Configuration des variables et des chemins
 include ./makefile.conf
 # Vérifications automatique de la configuration
