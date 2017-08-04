@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS equipes(
     id_capitaine INTEGER NOT NULL,
     nom CHAR(30) NOT NULL,
     places_libres INTEGER NOT NULL,
-    PRIMARY KEY(id));
+    PRIMARY KEY(id),
+    FOREIGN KEY (id_capitaine) REFERENCES joueurs (id));
 
 
 CREATE TABLE IF NOT EXISTS tournois(
@@ -26,7 +27,8 @@ CREATE TABLE IF NOT EXISTS tournois(
     nom CHAR(30) NOT NULL,
     debut DATETIME NOT NULL,
     nb_joueurs INTEGER NOT NULL,
-    PRIMARY KEY(id));
+    PRIMARY KEY(id),
+    FOREIGN KEY (id_evenement) REFERENCES evenements (id));
 
 CREATE TABLE IF NOT EXISTS evenements(
     id INTEGER NOT NULL AUTO_INCREMENT, 
@@ -42,12 +44,17 @@ CREATE TABLE IF NOT EXISTS lien_joueur_equipe_tournoi(
     id_joueur INTEGER NOT NULL,
     id_equipe INTEGER NOT NULL DEFAULT -1,
     id_tournoi INTEGER NOT NULL,
-    PRIMARY KEY(id_joueur,id_equipe,id_tournoi));
+    PRIMARY KEY(id_joueur,id_equipe,id_tournoi),
+    FOREIGN KEY (id_joueur) REFERENCES joueurs (id),
+    FOREIGN KEY (id_equipe) REFERENCES equipes (id),
+    FOREIGN KEY (id_tournoi) REFERENCES tournois (id));
 
 CREATE TABLE IF NOT EXISTS benevoles(
     id_joueur INTEGER NOT NULL,
     id_evenement INTEGER NOT NULL,
-    PRIMARY KEY(id_joueur,id_evenement));
+    PRIMARY KEY(id_joueur,id_evenement),
+    FOREIGN KEY (id_joueur) REFERENCES joueurs (id),
+    FOREIGN KEY (id_evenement) REFERENCES evenements (id));
 
 -- Changement à venir sur le placement --
 CREATE TABLE IF NOT EXISTS placement(
@@ -56,11 +63,16 @@ CREATE TABLE IF NOT EXISTS placement(
     colonne CHAR(2),
     rang INTEGER NOT NULL,
     id_joueur INTEGER NOT NULL,
-    PRIMARY KEY(id_evenement,id_tournoi, id_joueur));
+    PRIMARY KEY(id_evenement,id_tournoi, id_joueur),
+    FOREIGN KEY (id_evenement) REFERENCES evenements (id),
+    FOREIGN KEY (id_tournoi) REFERENCES tournois (id),
+    FOREIGN KEY (id_joueur) REFERENCES joueurs (id));
 
 CREATE TABLE IF NOT EXISTS facturation(
     id_joueur INTEGER NOT NULL,
     id_evenement INTEGER NOT NULL,
     num_facture CHAR(50) DEFAULT NULL, -- NULL SI PAS PAYE --
-    PRIMARY KEY(id_joueur, id_evenement));
+    PRIMARY KEY(id_joueur, id_evenement),
+    FOREIGN KEY (id_joueur) REFERENCES joueurs (id),
+    FOREIGN KEY (id_evenement) REFERENCES evenements (id));
 
