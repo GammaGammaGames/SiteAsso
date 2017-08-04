@@ -544,10 +544,12 @@ demander_utilisateur()
 afficher_aide()
 {
     declare -r NOM_SCRIPT=`basename "${0}"`
-    printf "${NOM_SCRIPT} [-h][-p mdp_root_mysql]\n"
+    printf "${NOM_SCRIPT} [-hc][-p mdp_root_mysql]\n"
     printf "    -h --help\n        Affiche l'aide et quitte\n"
     printf "    -p --password\n        Permet de régler le mot "
     printf "de passe root de mysql\n"
+    printf "    -c --clean\n        Supprime tout les fichiers "
+    printf "généré automatiquement\n"
 }
 
 traitement_option_p()
@@ -565,21 +567,25 @@ traitement_option_p()
 ####################################################
 
 declare OPTION_MDP_ROOT=""
+declare CLEAN="keep"
 
 #  Affiche l'aide si aucun arguments n'est donné
-if [[ "${#}" -eq 1 ]]
-then
-    afficher_aide
-    exit "${EXIT_SUCCES}";
-fi
+#if [[ "${#}" -eq 3 ]]
+#then
+#    afficher_aide
+#    exit "${EXIT_SUCCES}";
+#fi
 
 # option o ne nécessite pas d'arguments en plus u si.
 # Le premier : permet de gérer manuellement les erreurs
-while getopts ":hp:-:" option
+while getopts ":hcp:-:" option
 do
     case "${option}" in
         p)
             traitement_option_p "${OPTARG}"
+            ;;
+        c)
+            declare -r CLEAN="clean"
             ;;
         h)
             afficher_aide
@@ -592,10 +598,13 @@ do
                     afficher_aide
                     exit "${EXIT_SUCCES}"
                     ;;
+                clean )
+                    declare -r CLEAN="clean"
+                    ;;
                 password=?* )
                     traitement_option_p "${LONG_OPTARG}"
                     ;;
-                help* )
+                clean* | help* )
                     afficher_erreur "L'option longue" "--${OPTARG}" "ne prend pas d'arguments."
                     afficher_aide
                     exit "${E_ARG_SUPERFLUS_OPT_LONGUE}"
