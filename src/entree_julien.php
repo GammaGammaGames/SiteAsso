@@ -79,7 +79,7 @@ try
     }
     elseif ($affichage === "jolie")
     {
-        $tableau = $s->fetchAll( PDO::FETCH_FUNC,"afficher_base" );
+        $s->fetchAll( PDO::FETCH_FUNC,"afficher_base" );
     }
     else
     {
