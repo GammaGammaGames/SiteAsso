@@ -19,11 +19,6 @@ stop:
 clean: stop
 	-docker rm --force --volumes `docker ps --all --quiet`
 
-# Stoppe, supprime et nettoie les fichiers temporaires.
-.PHONY: distclean
-distclean: clean
-	$(RM) -rf ./Docker
-
 ifeq ($(wildcard Docker/*), )
     $(error "Vous devez générer la configuration avec ./configure")
 endif
