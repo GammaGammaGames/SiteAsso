@@ -1,10 +1,26 @@
 <?php
 require_once("/var/private/mysql_config.php");
 
+function afficher_base($id, $nom, $categorie, $nb)
+{
+    echo ("<h3>");
+    echo ("$nom");
+    echo ("</h3>");
+    echo ("<ul>\n");
+    echo ("<li>$id</li>\n");
+    echo ("<li>$categorie</li>\n");
+    echo ("<li>$nb</li>\n");
+    echo ("</ul>\n");
+}
+
+echo ("<h1>Les driver PDO</h1>");
+
 echo ("<p>");
 echo ("Driver disponible avec pdo : ");
 print_r(PDO::getAvailableDrivers());
 echo ("</p>");
+
+echo ("<h1>Résultat de l'exécution de la requête</h1>");
 
 try
 {
@@ -22,14 +38,67 @@ try
     $s = $pdo->prepare( $r );
     $s->execute();
 
-    echo ("<p>");
-    var_dump ($s->fetchAll());
-    echo ("</p>");
+    // Récupération de la requête de l'utilisateur
+    $requete = $_GET["req"]?? "";
+
+    $affichage = "";
+    $pos = 0;
+
+    if ($requete != "")
+    {
+        $val = explode ("/", $requete);
+
+        $nb_arg = count( $val );
+        if ($nb_arg >= 1)
+        {
+            $affichage = $val[0];
+            if ($affichage === "position" and $nb_arg >= 2)
+            {
+                $pos = $val[1];
+            }
+        }
+    }
+
+    if ($affichage === "complet")
+    {
+        $tableau = $s->fetchAll();
+
+        foreach ($tableau as $e)
+        {
+            echo ("<p>");
+            var_dump ($e);
+            echo ("</p>");
+        }
+    }
+    elseif ($affichage === "position")
+    {
+        $tableau = $s->fetchAll();
+        echo ("<p>");
+        var_dump ($tableau[$pos]);
+        echo ("</p>");
+    }
+    elseif ($affichage === "jolie")
+    {
+        $tableau = $s->fetchAll( PDO::FETCH_FUNC,"afficher_base" );
+    }
+    else
+    {
+        $debut = $_SERVER["HTTP_HOST"];
+        $debut_adresse = "http://$debut/gamma";
+        echo ("<ul>");
+        echo ("    <li><a href='$debut_adresse/complet' >var dump de la base</a></li>");
+        echo ("    <li><a href='$debut_adresse/position/6' >Afficher item 6</a></li>");
+        echo ("    <li><a href='$debut_adresse/jolie' >Affichage lisible</a></li>");
+        echo ("</ul>");
+    }
+
 }
 catch(PDOException $e) {
     $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
     die($msg);
 }
+
+echo ("<h1>Contenu des variables get post request</h1>");
 
 echo ("<p>");
 var_dump ($_GET);
