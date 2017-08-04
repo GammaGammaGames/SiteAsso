@@ -98,14 +98,17 @@ catch(PDOException $e) {
     die($msg);
 }
 
-echo ("<h1>Contenu des variables get post request</h1>");
+echo ("<h1>Contenu des variables GET POST REQUEST</h1>");
 
 echo ("<p>");
+echo ("GET : ");
 var_dump ($_GET);
 echo ("</p>");
 echo ("<p>");
+echo ("POST : ");
 var_dump ($_POST);
 echo ("</p>");
 echo ("<p>");
+echo ("REQUEST : ");
 var_dump ($_REQUEST);
 echo ("</p>");
