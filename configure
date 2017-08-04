@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Mercredi 02 août[08] 2017
+# Dernière modification : Vendredi 04 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -651,21 +651,21 @@ then
     exit "${E_PROG_DOCKER_ABSENT}"
 fi
 
-if ! test_cmd_exist gnumake
+if test_cmd_exist make
 then
-    if test_cmd_exist make
+    if ! make -v | grep -q "GNU Make 4.*" 2>/dev/null
     then
         message_avertissement "GNUmake n'est pas installé."
         printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
-        printf >&2 "GNUmake est recommandé pour exécuter les makefile.\n"
+        printf >&2 "GNUmake 4.x est recommandé pour exécuter les makefile.\n"
         printf >&2 "\n"
-    else
-        message_erreur "Le lancement du serveur ne pourra pas se faire"
-        printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
-        printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
-        printf >&2 "pour continuer.${NEUTRE}\n"
-        exit "${E_PROG_MAKE_ABSENT}"
     fi
+else
+    message_erreur "Le lancement du serveur ne pourra pas se faire"
+    printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
+    printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
+    printf >&2 "pour continuer.${NEUTRE}\n"
+    exit "${E_PROG_MAKE_ABSENT}"
 fi
 
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
@@ -731,6 +731,7 @@ then
 else
     GENERER='o'
 fi
+
 if [[ "${GENERER}" == "o" ]]
 then
     if [[ -n "${OPTION_MDP_ROOT}" ]]
