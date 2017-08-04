@@ -651,8 +651,10 @@ then
     exit "${E_PROG_DOCKER_ABSENT}"
 fi
 
+# Vérifie l'existence de la commande make
 if test_cmd_exist make
 then
+    # Vérifie le numéro de version de make
     if ! make -v | grep -q "GNU Make 4.*" 2>/dev/null
     then
         message_avertissement "GNUmake n'est pas installé."
