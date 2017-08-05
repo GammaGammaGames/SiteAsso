@@ -850,42 +850,19 @@ GENERER='n'
 if [[ -d "${FICHIERS_MYSQL}" ]]
 then
     message_attention "MySql à déjà configuré une BDD avec un utilisateur"
-    printf >&2 "Si vous générez à nouveau la configuration MySql vous \n"
-    printf >&2 "ne pourrez plus accéder aux données de cet utilisateur\n"
+    printf >&2 "Pour pouvoir générer à nouveau la configuration \n"
+    printf >&2 "MySql vous devez supprimer la BDD actuelle.\n"
+    printf >&2 "Il vous sera demandé de la sauvegarder avant.\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
         printf >&2 "\n\n"
-        GENERER='o'
-        message_attention "Toute suppression est définitive !"
-        printf >&2 "Les bases de données actuelle générée par MySql ne seront\n"
-        printf >&2 "plus accessible une fois la configuration faite\n"
-        if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
+        if supprimer_fichiers_mysql_genere
         then
-            printf >&2 "\n\n"
-            message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
-            if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
-            then
-                printf "Dump de la BDD en cours\n"
-                make dump_bdd
-                message_ok
-            else
-                message_avertissement "Pas de sauvegarde"
-            fi
-            printf >&2 "\n\n"
-            printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
-            printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
-            rm -rf -- "${FICHIERS_MYSQL}"
-            message_ok
-        else
-            printf >&2 "\n\n"
-            printf >&2 "Les bases de données actuelles seront conservées "
-            printf >&2 "mais ne seront plus accessible par MySql\n"
-            printf >&2 "Vous pouvez toujours les supprimer manuellement\n"
+            GENERER='o'
         fi
     else
         printf >&2 "\n\n"
-        printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} >>>> ${NEUTRE} "
-        printf >&2 "La configuration MySql ne sera pas re-générée\n"
+        message_avertissement "La configuration MySql ne sera pas re-générée"
     fi
     printf >&2 "\n"
 else
