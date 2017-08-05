@@ -523,6 +523,27 @@ supprimer_fichier()
 
 # }}}
 
+# fonction supprimer_dossier                {{{
+supprimer_dossier()
+{
+    declare -r dossier_cible="${1}"
+    if [[ -d "${dossier_cible}" ]]
+    then
+        if rm -rf -- "${dossier_cible}"
+        then
+            printf >&2 "Suppression de"
+            printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
+            message_ok
+        else
+            afficher_erreur "Le dossier " "${dossier_cible}" \
+                " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+            message_erreur
+        fi
+    fi
+}
+
+# }}}
+
 # fonction générales de fonctionnement      {{{
 separateur_section()
 {
