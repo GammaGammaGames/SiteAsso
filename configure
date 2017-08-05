@@ -513,7 +513,12 @@ message_ok()
 message_erreur()
 {
     printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} ERREUR ${NEUTRE} "
-    echo >&2 "${*}"
+    if [[ "${#}" -gt 0 ]]
+    then
+        echo >&2 "${*}"
+    else
+        printf "\n"
+    fi
 }
 
 message_attention()
