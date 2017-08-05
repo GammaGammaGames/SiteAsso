@@ -789,6 +789,42 @@ else
     exit "${E_PROG_MAKE_ABSENT}"
 fi
 
+# Suppression de tous les fichiers généré
+if [[ "${CLEAN}" == "clean" ]]
+then
+    if [[ -d "${FICHIERS_GENERE}" ]]
+    then
+        message_attention "Vous allez supprimer la configuration généré aléatoirement"
+        if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
+        then
+            printf >&2 "\n\n"
+            supprimer_logs_conf
+            if supprimer_fichiers_mysql_genere
+            then
+                supprimer_configuration
+                if rmdir -- "${FICHIERS_GENERE}"
+                then
+                    exit "${EXIT_SUCCES}"
+                else
+                    message_erreur "Le dossier de fichier généré n'a pas pu être supprimé"
+                    exit "${E_ANNULATION}"
+                fi
+            else
+                message_avertissement "Suppression annulée"
+                exit "${E_ANNULATION}"
+            fi
+        else
+            printf >&2 "\n\n"
+            message_avertissement "Suppression annulé"
+            exit "${E_ANNULATION}"
+        fi
+    else
+        printf >&2 "Aucun fichier généré à supprimer\n"
+        message_ok
+        exit "${EXIT_SUCCES}"
+    fi
+fi
+
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
 # supprimer
 if [[ ! -d "${FICHIERS_GENERE}" ]]
