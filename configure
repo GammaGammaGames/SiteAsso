@@ -502,6 +502,27 @@ creer_fichier_config_php()
 
 # }}}
 
+# fonction supprimer_fichier                {{{
+supprimer_fichier()
+{
+    declare -r fichier_cible="${1}"
+    if [[ -e "${fichier_cible}" ]]
+    then
+        if rm -f -- "${fichier_cible}"
+        then
+            printf >&2 "Suppression de"
+            printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
+            message_ok
+        else
+            afficher_erreur "Le fichier " "${fichier_cible}" \
+                " ne peut pas être supprimé vérifiez que vous avez les droits dessus"
+            message_erreur
+        fi
+    fi
+}
+
+# }}}
+
 # fonction générales de fonctionnement      {{{
 separateur_section()
 {
