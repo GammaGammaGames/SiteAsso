@@ -566,6 +566,44 @@ supprimer_configuration()
 
 # }}}
 
+# fonction supprimer_fichiers_mysql_genere  {{{
+supprimer_fichiers_mysql_genere()
+{
+    if [[ -d "${FICHIERS_MYSQL}" ]]
+    then
+        message_attention "Toute suppression est définitive !"
+        if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
+        then
+            printf >&2 "\n\n"
+            message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
+            if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
+            then
+                printf "Dump de la BDD en cours\n"
+                make dump_bdd
+                message_ok
+            else
+                message_avertissement "Pas de sauvegarde"
+            fi
+            printf >&2 "\n\n"
+            printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
+            printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
+            rm -rf -- "${FICHIERS_MYSQL}"
+            message_ok
+        else
+            printf >&2 "\n\n"
+            message_avertissement "Suppression annulée"
+            printf >&2 "Les bases de données actuelles seront conservées\n"
+            printf >&2 "Ainsi que les fichiers de configurations de MySql\n"
+            return 1
+        fi
+    else
+        printf >&2 "Pas de BDD à supprimer\n"
+    fi
+    return 0
+}
+
+# }}}
+
 # fonction générales de fonctionnement      {{{
 separateur_section()
 {
