@@ -544,6 +544,28 @@ supprimer_dossier()
 
 # }}}
 
+# fonction supprimer_logs_conf              {{{
+supprimer_logs_conf()
+{
+    supprimer_dossier "${LOGS_PHP}"
+    supprimer_dossier "${LOGS_NGINX}"
+    supprimer_dossier "${CONF_PHP_GENERE}"
+}
+
+# }}}
+
+# fonction supprimer_configuration          {{{
+supprimer_configuration()
+{
+    supprimer_fichier "${FICHIER_MDP_ROOT_MYSQL}"
+    supprimer_fichier "${FICHIER_NOM_MYSQL}"
+    supprimer_fichier "${FICHIER_MDP_MYSQL}"
+    supprimer_fichier "${FICHIER_BDD_MYSQL}"
+    supprimer_fichier "${FICHIER_PATH_SOURCES}"
+}
+
+# }}}
+
 # fonction générales de fonctionnement      {{{
 separateur_section()
 {
