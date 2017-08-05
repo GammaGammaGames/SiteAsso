@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Jeudi 03 août[08] 2017
+# Dernière modification : Vendredi 04 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -19,11 +19,6 @@ stop:
 clean: stop
 	-docker rm --force --volumes `docker ps --all --quiet`
 
-# Stoppe, supprime et nettoie les fichiers temporaires.
-.PHONY: distclean
-distclean: clean
-	$(RM) -rf ./Docker
-
 ifeq ($(wildcard Docker/*), )
     $(error "Vous devez générer la configuration avec ./configure")
 endif
@@ -40,8 +35,8 @@ all: run
 run: run_mysql run_php run_nginx
 
 # Permet de redémarrer seulement le container nginx
-.PHONY: restart
-restart: stop_nginx run_nginx
+.PHONY: restart_nginx
+restart_nginx: stop_nginx run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
@@ -53,6 +48,10 @@ Nom_Php_Construit = php-mysql-alpine
 .PHONY: build_php
 build_php:
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
+
+# ---------------------------------------- #
+# Construction et démarrage des conteneurs #
+# ---------------------------------------- #
 
 # Démarrage de la BDD avec une configuration particulière :
 # - un mdp pour root
@@ -106,6 +105,10 @@ run_nginx:
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
 
+# -------------------------------------- #
+# Démarrer les conteneurs déjà construit #
+# -------------------------------------- #
+
 .PHONY: start
 start: start_mysql start_php start_nginx
 
@@ -120,6 +123,10 @@ start_php:
 .PHONY: start_nginx
 start_nginx:
 	docker start $(Nginx_Nom_Container)
+
+# ------------------------------------- #
+# Connections à un conteneur déjà lancé #
+# ------------------------------------- #
 
 # Pour se connecter au docker mysql lancé en daemon
 .PHONY: connect_mysql
@@ -136,6 +143,27 @@ connect_php:
 connect_nginx:
 	docker exec --interactive --tty $(Nginx_Nom_Container) /bin/sh
 
+# --------------------------------- #
+# Consulter les logs des conteneurs #
+# --------------------------------- #
+
+# Pour pouvoir inspecter facilement le container mysql en cours d'exécution
+.PHONY: logs_mysql
+logs_mysql:
+	docker logs $(Mysql_Nom_Container)
+
+# Pour pouvoir inspecter facilement le container php en cours d'exécution
+.PHONY: logs_php
+logs_php:
+	docker logs $(Php_Nom_Container)
+
+# Pour pouvoir inspecter facilement le container nginx en cours d'exécution
+.PHONY: logs_nginx
+logs_nginx:
+	docker logs $(Nginx_Nom_Container)
+
+# --------------------------------- #
+
 # Permet de créer un dump des bases de données
 .PHONY: dump_bdd
 dump_bdd:
@@ -148,8 +176,3 @@ dump_bdd:
 stop_nginx:
 	-docker stop $(Nginx_Nom_Container)
 	-docker rm --volumes $(Nginx_Nom_Container)
-
-# Pour pouvoir inspecter facilement le container nginx en cours d'exécution
-.PHONY: logs
-logs:
-	docker logs $(Nginx_Nom_Container)
