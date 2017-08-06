@@ -508,7 +508,7 @@ supprimer_fichier()
     declare -r fichier_cible="${1}"
     if [[ -e "${fichier_cible}" ]]
     then
-        if rm -f -- "${fichier_cible}"
+        if rm -- "${fichier_cible}"
         then
             printf >&2 "Suppression de"
             printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
@@ -529,7 +529,7 @@ supprimer_dossier()
     declare -r dossier_cible="${1}"
     if [[ -d "${dossier_cible}" ]]
     then
-        if rm -rf -- "${dossier_cible}"
+        if rm -r -- "${dossier_cible}"
         then
             printf >&2 "Suppression de"
             printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
