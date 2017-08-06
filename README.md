@@ -8,11 +8,13 @@ Prérequis :
 
 Pour générer automatiquement la configuration des containers mysql et php.
 Les fichiers de configurations seront écrits dans le dossier **Docker**.
+
 ```sh
 ./configure
 ```
 
 Puis pour lancer les containers.
+
 ```sh
 make
 ```
@@ -24,6 +26,7 @@ make
 ## Stopper les conteneurs
 
 La configuration sera conservée
+
 ```sh
 make stop
 ```
@@ -36,7 +39,10 @@ make start
 
 ## Pour supprimer les conteneurs et toutes les données générées
 
-Tous les conteneurs seront stoppé et le dossier Docker sera supprimé.
+Tous les conteneurs seront stoppé et le dossier Docker sera supprimé. Une
+confirmation sera demandée pour la suppression des bases de données. Le
+script laisse une possibilité de sauvegarder les bases avant de supprimer.
+
 ```sh
-make distclean
+make clean; ./configure --clean
 ```
