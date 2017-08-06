@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Samedi 05 août[08] 2017
+# Dernière modification : Dimanche 06 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -561,6 +561,7 @@ supprimer_configuration()
     supprimer_fichier "${FICHIER_NOM_MYSQL}"
     supprimer_fichier "${FICHIER_MDP_MYSQL}"
     supprimer_fichier "${FICHIER_BDD_MYSQL}"
+    printf >&2 "\n"
     supprimer_fichier "${FICHIER_PATH_SOURCES}"
 }
 
@@ -574,23 +575,23 @@ supprimer_fichiers_mysql_genere()
         message_attention "Toute suppression est définitive !"
         if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
         then
-            printf >&2 "\n\n"
+            printf >&2 "\n"
             message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
             if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
             then
-                printf "Dump de la BDD en cours\n"
+                printf >&2 "Dump de la BDD en cours\n"
                 make dump_bdd
                 message_ok
             else
                 message_avertissement "Pas de sauvegarde"
             fi
-            printf >&2 "\n\n"
+            printf >&2 "\n"
             printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
             printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
             rm -rf -- "${FICHIERS_MYSQL}"
             message_ok
         else
-            printf >&2 "\n\n"
+            printf >&2 "\n"
             message_avertissement "Suppression annulée"
             printf >&2 "Les bases de données actuelles seront conservées\n"
             printf >&2 "Ainsi que les fichiers de configurations de MySql\n"
@@ -598,6 +599,7 @@ supprimer_fichiers_mysql_genere()
         fi
     else
         printf >&2 "Pas de BDD à supprimer\n"
+        printf >&2 "\n"
     fi
     return 0
 }
@@ -622,7 +624,7 @@ message_erreur()
     then
         echo >&2 "${*}"
     else
-        printf "\n"
+        printf >&2 "\n"
     fi
 }
 
@@ -640,7 +642,7 @@ message_avertissement()
 
 demander_utilisateur()
 {
-    printf "${1} (o/n)\n"
+    printf >&2 "${1} (o/n)\n"
     while read -r -n 1 -s reponse
     do
         [[ "${reponse}" = [Oo] ]] && return 0
@@ -797,10 +799,11 @@ then
         message_attention "Vous allez supprimer la configuration généré aléatoirement"
         if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
         then
-            printf >&2 "\n\n"
+            printf >&2 "\n"
             supprimer_logs_conf
             if supprimer_fichiers_mysql_genere
             then
+                printf >&2 "\n"
                 supprimer_configuration
                 if rmdir -- "${FICHIERS_GENERE}"
                 then
@@ -814,7 +817,7 @@ then
                 exit "${E_ANNULATION}"
             fi
         else
-            printf >&2 "\n\n"
+            printf >&2 "\n"
             message_avertissement "Suppression annulé"
             exit "${E_ANNULATION}"
         fi
@@ -834,9 +837,10 @@ else
     message_attention "Une configuration existe déjà"
     if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
     then
-        printf >&2 "\n\n"
+        printf >&2 "\n"
     else
-        printf >&2 "Génération annulée\n"
+        printf >&2 "\n"
+        message_avertissement "Génération annulée"
         exit "${E_ANNULATION}"
     fi
 fi
@@ -855,13 +859,12 @@ then
     printf >&2 "Il vous sera demandé de la sauvegarder avant.\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
-        printf >&2 "\n\n"
         if supprimer_fichiers_mysql_genere
         then
             GENERER='o'
         fi
     else
-        printf >&2 "\n\n"
+        printf >&2 "\n"
         message_avertissement "La configuration MySql ne sera pas re-générée"
     fi
     printf >&2 "\n"
