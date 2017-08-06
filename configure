@@ -557,6 +557,8 @@ supprimer_logs_conf()
 # fonction supprimer_configuration          {{{
 supprimer_configuration()
 {
+    separateur_section "Suppression configuration MYSQL"
+    printf >&2 "\n"
     supprimer_fichier "${FICHIER_MDP_ROOT_MYSQL}"
     supprimer_fichier "${FICHIER_NOM_MYSQL}"
     supprimer_fichier "${FICHIER_MDP_MYSQL}"
@@ -572,6 +574,9 @@ supprimer_fichiers_mysql_genere()
 {
     if [[ -d "${FICHIERS_MYSQL}" ]]
     then
+        printf >&2 "\n"
+        separateur_section "Suppression de la BDD"
+        printf >&2 "\n"
         message_attention "Toute suppression est définitive !"
         if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
         then
@@ -794,6 +799,8 @@ fi
 # Suppression de tous les fichiers généré
 if [[ "${CLEAN}" == "clean" ]]
 then
+    separateur_section "Suppression configuration"
+    printf >&2 "\n"
     if [[ -d "${FICHIERS_GENERE}" ]]
     then
         message_attention "Vous allez supprimer la configuration généré aléatoirement"
@@ -828,6 +835,8 @@ then
     fi
 fi
 
+separateur_section "Génération de la configuration"
+printf >&2 "\n"
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
 # supprimer
 if [[ ! -d "${FICHIERS_GENERE}" ]]
