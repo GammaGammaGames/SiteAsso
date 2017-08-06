@@ -531,7 +531,7 @@ supprimer_dossier()
     then
         if rm -r -- "${dossier_cible}"
         then
-            printf >&2 "Suppression de"
+            printf >&2 "Suppression du dossier"
             printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
             message_ok
         else
@@ -593,8 +593,7 @@ supprimer_fichiers_mysql_genere()
             printf >&2 "\n"
             printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
             printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
-            rm -rf -- "${FICHIERS_MYSQL}"
-            message_ok
+            supprimer_dossier "${FICHIERS_MYSQL}"
         else
             printf >&2 "\n"
             message_avertissement "Suppression annulée"
