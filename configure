@@ -510,15 +510,23 @@ supprimer_fichier()
     declare -r fichier_cible="${1}"
     if [[ -f "${fichier_cible}" ]]
     then
-        if rm -- "${fichier_cible}"
+        # Si le fichier nous appartient ou que on est root
+        if [[ -O "${fichier_cible}" || "${UID}" -eq 0 ]]
         then
-            printf >&2 "Suppression de"
-            printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
-            message_ok
+            if rm -- "${fichier_cible}"
+            then
+                printf >&2 "Suppression de"
+                printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
+                message_ok
+            else
+                afficher_erreur "Le fichier " "${fichier_cible}" \
+                    " ne peut pas être supprimé. Vérifiez que vous avez les droits dessus"
+                message_erreur
+            fi
         else
-            afficher_erreur "Le fichier " "${fichier_cible}" \
-                " ne peut pas être supprimé vérifiez que vous avez les droits dessus"
+            afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            exit "${E_PROPRIO_FICHIER}"
         fi
     fi
 }
@@ -531,15 +539,23 @@ supprimer_dossier()
     declare -r dossier_cible="${1}"
     if [[ -d "${dossier_cible}" ]]
     then
-        if rm -r -- "${dossier_cible}"
+        # Si le dossier nous appartient ou que on est root
+        if [[ -O "${dossier_cible}" || "${UID}" -eq 0 ]]
         then
-            printf >&2 "Suppression du dossier"
-            printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
-            message_ok
+            if rm -r -- "${dossier_cible}"
+            then
+                printf >&2 "Suppression du dossier"
+                printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
+                message_ok
+            else
+                afficher_erreur "Le dossier " "${dossier_cible}" \
+                    " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+                message_erreur
+            fi
         else
-            afficher_erreur "Le dossier " "${dossier_cible}" \
-                " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+            afficher_erreur "Le dossier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            exit "${E_PROPRIO_FICHIER}"
         fi
     fi
 }
