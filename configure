@@ -508,7 +508,7 @@ creer_fichier_config_php()
 supprimer_fichier()
 {
     declare -r fichier_cible="${1}"
-    if [[ -e "${fichier_cible}" ]]
+    if [[ -f "${fichier_cible}" ]]
     then
         if rm -- "${fichier_cible}"
         then
