@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Lundi 07 août[08] 2017
+# Dernière modification : Mardi 08 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -368,6 +368,7 @@ declare -r FICHIER_PATH_SOURCES="${FICHIERS_GENERE}/chemin_sources.conf"
 declare -r LOGS_PHP="${FICHIERS_GENERE}/logs_php"
 declare -r LOGS_NGINX="${FICHIERS_GENERE}/logs_nginx"
 declare -r CONF_PHP_GENERE="${FICHIERS_GENERE}/conf_php"
+declare -r LOGS_PHPUNIT="${FICHIERS_GENERE}/logs_phpunit"
 
 # fonction generer_chaine                   {{{
 generer_chaine()
@@ -568,6 +569,7 @@ supprimer_logs_conf()
     supprimer_dossier "${LOGS_PHP}"
     supprimer_dossier "${LOGS_NGINX}"
     supprimer_dossier "${CONF_PHP_GENERE}"
+    supprimer_dossier "${LOGS_PHPUNIT}"
 }
 
 # }}}
@@ -829,7 +831,7 @@ then
             then
                 printf >&2 "\n"
                 supprimer_configuration
-                if rmdir -- "${FICHIERS_GENERE}"
+                if rm -r -- "${FICHIERS_GENERE}"
                 then
                     exit "${EXIT_SUCCES}"
                 else

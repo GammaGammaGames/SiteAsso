@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit
+    colors        = "true"
+    backupGlobals = "false"
+    strict        = "true"
+    verbose       = "true"
+>
+
+    <testsuites>
+        <testsuite name = "Application Test Suite">
+            <directory suffix="Test.php" >/app/Test</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <ini name="error_log" value="/log_php/error.txt"/>
+        <ini name="log_errors" value="On"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="error_reporting" value="E_ALL"/>
+    </php>
+
+    <logging>
+        <log type = "coverage-html"   target = "/log_php/coverage"/>
+        <log type = "coverage-clover" target = "/log_php/logs/clover.xml"/>
+        <log type = "coverage-crap4j" target = "/log_php/logs/crap4j.xml"/>
+        <log type = "coverage-text"   target = "/log_php/logs/couverture.txt" />
+        <log type = "testdox-text"    target = "/log_php/logs/dox.txt" />
+        <log type = "testdox-html"    target = "/log_php/logs/dox.html" />
+    </logging>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory suffix = ".php">/src</directory>
+        </whitelist>
+    </filter>
+
+</phpunit>

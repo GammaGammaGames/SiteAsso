@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Vendredi 04 août[08] 2017
+# Dernière modification : Mardi 08 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -161,6 +161,18 @@ logs_php:
 .PHONY: logs_nginx
 logs_nginx:
 	docker logs $(Nginx_Nom_Container)
+
+# --------------------------------- #
+#    Exécuter les tests unitaire    #
+# --------------------------------- #
+
+.PHONY: unitaire_php
+unitaire_php:
+	docker run --rm \
+		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
+		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
+		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
+		phpunit/phpunit -c ./phpunit.xml
 
 # --------------------------------- #
 
