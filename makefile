@@ -172,7 +172,7 @@ unitaire_php:
 		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
 		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
-		phpunit/phpunit --testdox -c ./phpunit.xml
+		phpunit/phpunit -c ./phpunit.xml
 
 # --------------------------------- #
 
