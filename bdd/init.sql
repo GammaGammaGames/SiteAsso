@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS equipes (
     id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT, 
     id_capitaine INTEGER UNSIGNED NOT NULL,
     nom CHAR(30) NOT NULL,
-    places_libres INTEGER NOT NULL,
+    places_libres INTEGER UNSIGNED NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (id_capitaine) REFERENCES joueurs (id));
 
@@ -36,8 +36,8 @@ CREATE TABLE IF NOT EXISTS tournois (
     id_evenement INTEGER UNSIGNED NOT NULL,
     nom CHAR(30) NOT NULL,
     debut DATETIME NOT NULL,
-    nb_joueurs INTEGER NOT NULL,
-    joueur_par_equipe INTEGER NOT NULL,
+    nb_joueurs INTEGER UNSIGNED NOT NULL,
+    joueur_par_equipe INTEGER UNSIGNED NOT NULL,
     PRIMARY KEY(id),
     FOREIGN KEY (id_evenement) REFERENCES evenements (id));
 

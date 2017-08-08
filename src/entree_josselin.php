@@ -1,14 +1,7 @@
 <?php
 require_once("/var/private/mysql_config.php");
+require_once("/var/www/html/acces_bdd/acces_bdd.php");
 
-$pdo = new PDO('mysql:host='
-    . MYSQL_HOST
-    . ';port='
-    . MYSQL_PORT
-    .';dbname='
-    . MYSQL_DB
-    . ';charset=utf8'
-    , MYSQL_USER, MYSQL_PASSWORD);
 
 $req_test=$pdo->query('SELECT * FROM joueurs;');
 //$req_test->setFetchMode(PDO::FETCH_ASSOC);
