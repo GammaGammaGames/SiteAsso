@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Dimanche 06 août[08] 2017
+# Dernière modification : Lundi 07 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -73,6 +73,7 @@ exit "${ERREUR}"' ERR
 #┃     - 92  annulation de la configuration                                  ┃#
 #┃     - 93  le programme docker n'est pas installé                          ┃#
 #┃     - 94  le programme make et gnumake ne sont pas installé               ┃#
+#┃     - 95  le fichier n'est pas la propriété de l'utilisateur              ┃#
 #┃                                                                           ┃#
 #┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛#
 
@@ -99,6 +100,7 @@ declare -r E_CONFIG_MDP=91
 declare -r E_ANNULATION=92
 declare -r E_PROG_DOCKER_ABSENT=93
 declare -r E_PROG_MAKE_ABSENT=94
+declare -r E_PROPRIO_FICHIER=95
 
 #}}}
 
@@ -506,17 +508,25 @@ creer_fichier_config_php()
 supprimer_fichier()
 {
     declare -r fichier_cible="${1}"
-    if [[ -e "${fichier_cible}" ]]
+    if [[ -f "${fichier_cible}" ]]
     then
-        if rm -f -- "${fichier_cible}"
+        # Si le fichier nous appartient ou que on est root
+        if [[ -O "${fichier_cible}" || "${UID}" -eq 0 ]]
         then
-            printf >&2 "Suppression de"
-            printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
-            message_ok
+            if rm -- "${fichier_cible}"
+            then
+                printf >&2 "Suppression de"
+                printf >&2 "${C_VIOLET}${M_GRAS} ${fichier_cible} ${NEUTRE}\n"
+                message_ok
+            else
+                afficher_erreur "Le fichier " "${fichier_cible}" \
+                    " ne peut pas être supprimé. Vérifiez que vous avez les droits dessus"
+                message_erreur
+            fi
         else
-            afficher_erreur "Le fichier " "${fichier_cible}" \
-                " ne peut pas être supprimé vérifiez que vous avez les droits dessus"
+            afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            exit "${E_PROPRIO_FICHIER}"
         fi
     fi
 }
@@ -529,15 +539,23 @@ supprimer_dossier()
     declare -r dossier_cible="${1}"
     if [[ -d "${dossier_cible}" ]]
     then
-        if rm -rf -- "${dossier_cible}"
+        # Si le dossier nous appartient ou que on est root
+        if [[ -O "${dossier_cible}" || "${UID}" -eq 0 ]]
         then
-            printf >&2 "Suppression de"
-            printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
-            message_ok
+            if rm -r -- "${dossier_cible}"
+            then
+                printf >&2 "Suppression du dossier"
+                printf >&2 "${C_VIOLET}${M_GRAS} ${dossier_cible} ${NEUTRE}\n"
+                message_ok
+            else
+                afficher_erreur "Le dossier " "${dossier_cible}" \
+                    " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+                message_erreur
+            fi
         else
-            afficher_erreur "Le dossier " "${dossier_cible}" \
-                " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+            afficher_erreur "Le dossier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            exit "${E_PROPRIO_FICHIER}"
         fi
     fi
 }
@@ -593,8 +611,7 @@ supprimer_fichiers_mysql_genere()
             printf >&2 "\n"
             printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
             printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
-            rm -rf -- "${FICHIERS_MYSQL}"
-            message_ok
+            supprimer_dossier "${FICHIERS_MYSQL}"
         else
             printf >&2 "\n"
             message_avertissement "Suppression annulée"
