@@ -46,3 +46,9 @@ script laisse une possibilité de sauvegarder les bases avant de supprimer.
 ```sh
 make clean; ./configure --clean
 ```
+
+## Lancer les tests uitaire
+
+```sh
+make unitaire_php
+```
