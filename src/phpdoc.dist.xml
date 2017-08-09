@@ -5,6 +5,10 @@
     <parser>
         <target>/out</target>
         <encoding>utf8</encoding>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
     </parser>
     <transformer>
         <target>/out</target>
