@@ -184,6 +184,7 @@ unitaire_php:
 		phpunit/phpunit -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
+	@echo "La couverture des tests unitaires : $(PhpUnit_Logs_Externe)/coverage/index.html"
 	@echo "───────────────────────────────────────────"
 
 # --------------------------------- #
