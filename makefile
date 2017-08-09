@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mardi 08 août[08] 2017
+# Dernière modification : Mercredi 09 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -173,6 +173,20 @@ unitaire_php:
 		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
 		phpunit/phpunit -c ./phpunit.xml
+
+# --------------------------------- #
+#      Générer la documentation     #
+# --------------------------------- #
+
+.PHONY: generer_doc
+generer_doc:
+	docker run --rm \
+		-v $(Documentation_Src_Ext):$(Documentation_Src_Int):ro \
+		-v $(Documentation_Res_Ext):$(Documentation_Res_Int) \
+		instrumentisto/phpdoc -c $(Documentation_Src_Int)/phpdoc.dist.xml
+	@echo "───────────────────────────"
+	@echo "Documentation généré dans : [$(Documentation_Res_Ext)]"
+	@echo "───────────────────────────"
 
 # --------------------------------- #
 
