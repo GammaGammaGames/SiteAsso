@@ -73,6 +73,9 @@ run_mysql:
 		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
 		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
 		--name $(Mysql_Nom_Container) mysql:latest
+	@echo "──────────────────────────────────────────"
+	@echo "Les bases de données seront écrites dans : [$(Mysql_Volume_Ext)] "
+	@echo "──────────────────────────────────────────"
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
@@ -88,6 +91,9 @@ run_php: build_php
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
 		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
 		--name $(Php_Nom_Container) $(Nom_Php_Construit)
+	@echo "──────────────────────────────────"
+	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
+	@echo "──────────────────────────────────"
 
 # Démarrage du serveur nginx avec ces fichiers de configurations;
 # un accès au sources du site; et des logs accessible sans avoir à
@@ -104,6 +110,9 @@ run_nginx:
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
+	@echo "──────────────────────────────────────"
+	@echo "Les logs de nginx seront écrits dans : [$(Nginx_Log_Externe)] "
+	@echo "──────────────────────────────────────"
 
 # -------------------------------------- #
 # Démarrer les conteneurs déjà construit #
@@ -173,6 +182,9 @@ unitaire_php:
 		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
 		phpunit/phpunit -c ./phpunit.xml
+	@echo "───────────────────────────────────────────"
+	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
+	@echo "───────────────────────────────────────────"
 
 # --------------------------------- #
 #      Générer la documentation     #
