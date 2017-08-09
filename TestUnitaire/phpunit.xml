@@ -32,6 +32,11 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix = ".php">/src</directory>
+            <exclude>
+                <file>/src/entree_julien.php</file>
+                <file>/src/entree_josselin.php</file>
+                <file>/src/index.php</file>
+            </exclude>
         </whitelist>
     </filter>
 
