@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Mardi 08 août[08] 2017
+// Dernière modification : Mercredi 09 août[08] 2017
 
 /**
  * Stock les données d'un joueur en provenance de la BDD.
@@ -280,7 +280,7 @@ class Joueur
      * */
     public function set_adresse( string $adresse ) : void
     {
-        $this->adresse = $address;
+        $this->adresse = $adresse;
     }
 
     /**
@@ -339,6 +339,7 @@ class Joueur
         $debogage .= "<li>code_postal=$this->code_postal</li>";
         $debogage .= "<li>pays=$this->pays</li>";
         $debogage .= "</ul>";
+
         return $debogage;
 
     }
