@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Jeudi 10 août[08] 2017
+// Dernière modification : Vendredi 11 août[08] 2017
 
 /**
  * Stock une adresse.
@@ -157,7 +157,7 @@ class Adresse
     public function __toString() : string
     {
 
-        $debogage = "<p>Débogage de Utilisateur</p>";
+        $debogage = "<p>Débogage Adresse</p>";
 
         $debogage .= "<ul>";
         $debogage .= "<li>adresse=$this->adresse</li>";
