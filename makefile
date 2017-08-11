@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mercredi 09 août[08] 2017
+# Dernière modification : Vendredi 11 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -184,7 +184,8 @@ unitaire_php:
 		phpunit/phpunit -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
-	@echo "La couverture des tests unitaires : $(PhpUnit_Logs_Externe)/coverage/index.html"
+	@echo "La couverture des tests unitaires : file://$(PhpUnit_Logs_Externe)/coverage/index.html"
+	@echo "Résumé html des tests réussi et raté : file://$(PhpUnit_Logs_Externe)/logs/dox.html"
 	@echo "───────────────────────────────────────────"
 
 # --------------------------------- #
