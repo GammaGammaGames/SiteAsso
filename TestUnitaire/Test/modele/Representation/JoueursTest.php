@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Mercredi 09 août[08] 2017
+// Dernière modification : Samedi 12 août[08] 2017
 
 declare( strict_types = 1 );
 
@@ -214,16 +214,16 @@ class JoueursTest extends TestCase
 
         $attendu = "<p>Débogage de Joueur</p>";
         $attendu .= "<ul>";
-        $attendu .= "<li>id=$id</li>";
-        $attendu .= "<li>email=$email</li>";
-        $attendu .= "<li>tel=$tel</li>";
-        $attendu .= "<li>nom=$nom</li>";
-        $attendu .= "<li>prenom=$prenom</li>";
-        $attendu .= "<li>anniv=$anniv</li>";
-        $attendu .= "<li>adresse=$adr</li>";
-        $attendu .= "<li>ville=$ville</li>";
-        $attendu .= "<li>code_postal=$code</li>";
-        $attendu .= "<li>pays=$pays</li>";
+        $attendu .= "<li>id          = $id</li>";
+        $attendu .= "<li>email       = $email</li>";
+        $attendu .= "<li>tel         = $tel</li>";
+        $attendu .= "<li>nom         = $nom</li>";
+        $attendu .= "<li>prenom      = $prenom</li>";
+        $attendu .= "<li>anniv       = $anniv</li>";
+        $attendu .= "<li>adresse     = $adr</li>";
+        $attendu .= "<li>ville       = $ville</li>";
+        $attendu .= "<li>code_postal = $code</li>";
+        $attendu .= "<li>pays        = $pays</li>";
         $attendu .= "</ul>";
 
         $this->j->set_id( $id );

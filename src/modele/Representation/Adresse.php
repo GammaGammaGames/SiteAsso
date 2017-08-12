@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Vendredi 11 août[08] 2017
+// Dernière modification : Samedi 12 août[08] 2017
 
 /**
  * Stock une adresse.
@@ -160,10 +160,10 @@ class Adresse
         $debogage = "<p>Débogage Adresse</p>";
 
         $debogage .= "<ul>";
-        $debogage .= "<li>adresse=$this->adresse</li>";
-        $debogage .= "<li>ville=$this->ville</li>";
-        $debogage .= "<li>code_postal=$this->code_postal</li>";
-        $debogage .= "<li>pays=$this->pays</li>";
+        $debogage .= "<li>adresse     = $this->adresse</li>";
+        $debogage .= "<li>ville       = $this->ville</li>";
+        $debogage .= "<li>code_postal = $this->code_postal</li>";
+        $debogage .= "<li>pays        = $this->pays</li>";
         $debogage .= "</ul>";
 
         return $debogage;

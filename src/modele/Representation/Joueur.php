@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Mercredi 09 août[08] 2017
+// Dernière modification : Samedi 12 août[08] 2017
 
 /**
  * Stock les données d'un joueur en provenance de la BDD.
@@ -328,16 +328,16 @@ class Joueur
         $debogage = "<p>Débogage de Joueur</p>";
 
         $debogage .= "<ul>";
-        $debogage .= "<li>id=$this->id</li>";
-        $debogage .= "<li>email=$this->email</li>";
-        $debogage .= "<li>tel=$this->tel</li>";
-        $debogage .= "<li>nom=$this->nom</li>";
-        $debogage .= "<li>prenom=$this->prenom</li>";
-        $debogage .= "<li>anniv=$this->anniv</li>";
-        $debogage .= "<li>adresse=$this->adresse</li>";
-        $debogage .= "<li>ville=$this->ville</li>";
-        $debogage .= "<li>code_postal=$this->code_postal</li>";
-        $debogage .= "<li>pays=$this->pays</li>";
+        $debogage .= "<li>id          = $this->id</li>";
+        $debogage .= "<li>email       = $this->email</li>";
+        $debogage .= "<li>tel         = $this->tel</li>";
+        $debogage .= "<li>nom         = $this->nom</li>";
+        $debogage .= "<li>prenom      = $this->prenom</li>";
+        $debogage .= "<li>anniv       = $this->anniv</li>";
+        $debogage .= "<li>adresse     = $this->adresse</li>";
+        $debogage .= "<li>ville       = $this->ville</li>";
+        $debogage .= "<li>code_postal = $this->code_postal</li>";
+        $debogage .= "<li>pays        = $this->pays</li>";
         $debogage .= "</ul>";
 
         return $debogage;

@@ -1,8 +1,9 @@
 <?php
-// Dernière modification : Vendredi 11 août[08] 2017
+// Dernière modification : Samedi 12 août[08] 2017
 
 /**
- * Petite explication du fichier @TODO
+ * Représentation d'un évènement.
+ *
  * @author PIVARD Julien
  * @license GPL-v3
  * @version 0.1
@@ -13,6 +14,8 @@ declare( strict_types = 1 );
 include_once "/src/modele/Representation/Adresse.php";
 
 /**
+ * Représente un évènement.
+ *
  * @category Modèle
  * @package Représentation
  * */
@@ -183,8 +186,16 @@ class Evenement
     public function __toString() : string
     {
 
-        $debogage = "<p>Débogage de Utilisateur</p>";
-        $debogage .= "";
+        $debogage = "<p>Débogage de Evenement</p>";
+
+        $debogage .= "<ul>";
+        $debogage .= "<li>id            = $this->id</li>";
+        $debogage .= "<li>nom           = $this->nom</li>";
+        $debogage .= "<li>date de début = $this->debut</li>";
+        $debogage .= "<li>date de fin   = $this->fin</li>";
+        $debogage .= "<li>adresse       = $this->adresse</li>";
+        $debogage .= "</ul>";
+
         return $debogage;
 
     }
