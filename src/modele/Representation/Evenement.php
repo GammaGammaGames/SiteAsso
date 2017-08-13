@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 12 août[08] 2017
+// Dernière modification : Dimanche 13 août[08] 2017
 
 /**
  * Représentation d'un évènement.
@@ -58,6 +58,7 @@ class Evenement
     public function __construct()
     {
         $this->id = 0;
+        $this->adresse = new Adresse();
     }
 
     // =============================== //
