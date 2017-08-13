@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 12 août[08] 2017
+// Dernière modification : Dimanche 13 août[08] 2017
 
 /**
  * Stock une adresse.
@@ -49,7 +49,6 @@ class Adresse
      * */
     public function __construct()
     {
-        $this->bidule = 0;
     }
 
     // =============================== //
