@@ -194,7 +194,7 @@ class Evenement
         $debogage .= "<li>nom           = $this->nom</li>";
         $debogage .= "<li>date de début = $this->debut</li>";
         $debogage .= "<li>date de fin   = $this->fin</li>";
-        $debogage .= "<li>adresse       = $this->adresse</li>";
+        $debogage .= "<li>$this->adresse</li>";
         $debogage .= "</ul>";
 
         return $debogage;
