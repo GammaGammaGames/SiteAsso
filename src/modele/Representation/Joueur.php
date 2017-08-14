@@ -10,6 +10,7 @@
 
 declare( strict_types = 1 );
 
+include_once "/src/modele/Representation/RepresentationAvecId.php";
 include_once "/src/modele/Representation/Adresse.php";
 
 /**
@@ -18,15 +19,8 @@ include_once "/src/modele/Representation/Adresse.php";
  * @category Modèle
  * @package Représentation
  * */
-class Joueur
+class Joueur extends RepresentationAvecId
 {
-
-    /**
-     * @var int
-     * L'identifiant unique du joueur en BDD.
-     * Si la valeur vaut 0 alors le joueur n'a pas été ajouté à la BDD
-     * */
-    protected $id;
 
     /**
      * @var string
@@ -75,17 +69,6 @@ class Joueur
     // =============================== //
     //          Les Guetteurs          //
     // =============================== //
-
-    /**
-     * Récupère l'id du joueur.
-     *
-     * @return int
-     * L'identifiant du joueur
-     * */
-    public function get_id() : int
-    {
-        return $this->id;
-    }
 
     /**
      * Récupère l'email du joueur.
@@ -156,17 +139,6 @@ class Joueur
     // =============================== //
     //           Les Setteurs          //
     // =============================== //
-
-    /**
-     * Modifie l'identifiant du joueur.
-     *
-     * @param int $id
-     * L'identifiant du joueur.
-     * */
-    public function set_id( int $id ) : void
-    {
-        $this->id = $id;
-    }
 
     /**
      * Modifie l'email du joueur.
