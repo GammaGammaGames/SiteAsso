@@ -10,6 +10,8 @@
 
 declare( strict_types = 1 );
 
+include_once "/src/modele/Representation/Adresse.php";
+
 /**
  * Représente un joueur avec toutes ces données.
  *
@@ -60,32 +62,14 @@ class Joueur
      * @var string
      * L'adresse du joueur.
      * */
-    protected $adresse = "";
-
-    /**
-     * @var string
-     * La ville du joueur.
-     * */
-    protected $ville = "";
-
-    /**
-     * @var string
-     * Le code postal du joueur
-     * */
-    protected $code_postal = "";
-
-    /**
-     * @var string
-     * Le pays du joueur
-     * */
-    protected $pays = "";
+    protected $adresse;
 
     /**
      * Construit un joueur inexistant.
      * */
     public function __construct()
     {
-        $this->id = 0;
+        $this->adresse = new Adresse();
     }
 
     // =============================== //
@@ -161,45 +145,12 @@ class Joueur
     /**
      * Récupère l'adresse du joueur.
      *
-     * @return string
+     * @return Adresse
      * L'adresse du joueur
      * */
-    public function get_adresse() : string
+    public function get_adresse() : Adresse
     {
         return $this->adresse;
-    }
-
-    /**
-     * Récupère la ville du joueur.
-     *
-     * @return string
-     * La ville du joueur
-     * */
-    public function get_ville() : string
-    {
-        return $this->ville;
-    }
-
-    /**
-     * Récupère le code postal du joueur.
-     *
-     * @return string
-     * Le code postal du joueur
-     * */
-    public function get_code_postal() : string
-    {
-        return $this->code_postal;
-    }
-
-    /**
-     * Récupère le pays du joueur.
-     *
-     * @return string
-     * Le pays du joueur
-     * */
-    public function get_pays() : string
-    {
-        return $this->pays;
     }
 
     // =============================== //
@@ -275,45 +226,12 @@ class Joueur
     /**
      * Modifie l'adresse du joueur.
      *
-     * @param string $adresse
+     * @param Adresse $adresse
      * L'adresse du joueur.
      * */
-    public function set_adresse( string $adresse ) : void
+    public function set_adresse( Adresse $adresse ) : void
     {
         $this->adresse = $adresse;
-    }
-
-    /**
-     * Modifie la ville du joueur.
-     *
-     * @param string $ville
-     * La ville du joueur.
-     * */
-    public function set_ville( string $ville ) : void
-    {
-        $this->ville = $ville;
-    }
-
-    /**
-     * Modifie le code postal du joueur.
-     *
-     * @param string $code_postal
-     * Le code postal du joueur.
-     * */
-    public function set_code_postal( string $code_postal ) : void
-    {
-        $this->code_postal = $code_postal;
-    }
-
-    /**
-     * Modifie le pays du joueur.
-     *
-     * @param string $pays
-     * Le pays du joueur.
-     * */
-    public function set_pays( string $pays ) : void
-    {
-        $this->pays = $pays;
     }
 
     /**
@@ -334,10 +252,7 @@ class Joueur
         $debogage .= "<li>nom         = $this->nom</li>";
         $debogage .= "<li>prenom      = $this->prenom</li>";
         $debogage .= "<li>anniv       = $this->anniv</li>";
-        $debogage .= "<li>adresse     = $this->adresse</li>";
-        $debogage .= "<li>ville       = $this->ville</li>";
-        $debogage .= "<li>code_postal = $this->code_postal</li>";
-        $debogage .= "<li>pays        = $this->pays</li>";
+        $debogage .= "<li>$this->adresse</li>";
         $debogage .= "</ul>";
 
         return $debogage;

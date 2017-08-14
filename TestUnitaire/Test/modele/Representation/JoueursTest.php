@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 12 août[08] 2017
+// Dernière modification : Lundi 14 août[08] 2017
 
 declare( strict_types = 1 );
 
@@ -33,10 +33,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerId() : void
@@ -49,10 +46,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerAdresseEmail() : void
@@ -65,10 +59,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerNumeroTelephone() : void
@@ -81,10 +72,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerNom() : void
@@ -97,10 +85,7 @@ class JoueursTest extends TestCase
         $this->assertEquals( $attendu, $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerPrenom() : void
@@ -113,10 +98,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEquals( $attendu, $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerDateAnnivairsaire() : void
@@ -129,15 +111,17 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEquals( $attendu, $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
+        $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerAdresse() : void
     {
-        $attendu = "42 rue des caribous";
+        $attendu = new Adresse();
+        $attendu->set_adresse( "42 rue des caribous" );
+        $attendu->set_ville( "Gattaca" );
+        $attendu->set_code_postal( "42000" );
+        $attendu->set_ville( "Gallifrey" );
+
         $this->j->set_adresse( $attendu );
         $this->assertEquals( 0, $this->j->get_id() );
         $this->assertEmpty( $this->j->get_email() );
@@ -146,57 +130,6 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_prenom() );
         $this->assertEmpty( $this->j->get_anniv() );
         $this->assertEquals( $attendu, $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
-    }
-
-    public function testChangerVille() : void
-    {
-        $attendu = "Gattaca";
-        $this->j->set_ville( $attendu );
-        $this->assertEquals( 0, $this->j->get_id() );
-        $this->assertEmpty( $this->j->get_email() );
-        $this->assertEmpty( $this->j->get_tel() );
-        $this->assertEmpty( $this->j->get_nom() );
-        $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEquals( $attendu, $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
-    }
-
-    public function testChangerCodePostal() : void
-    {
-        $attendu = "42000";
-        $this->j->set_code_postal( $attendu );
-        $this->assertEquals( 0, $this->j->get_id() );
-        $this->assertEmpty( $this->j->get_email() );
-        $this->assertEmpty( $this->j->get_tel() );
-        $this->assertEmpty( $this->j->get_nom() );
-        $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEquals( $attendu, $this->j->get_code_postal() );
-        $this->assertEmpty( $this->j->get_pays() );
-    }
-
-    public function testChangerPays() : void
-    {
-        $attendu = "Gallifrey";
-        $this->j->set_pays( $attendu );
-        $this->assertEquals( 0, $this->j->get_id() );
-        $this->assertEmpty( $this->j->get_email() );
-        $this->assertEmpty( $this->j->get_tel() );
-        $this->assertEmpty( $this->j->get_nom() );
-        $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
-        $this->assertEmpty( $this->j->get_adresse() );
-        $this->assertEmpty( $this->j->get_ville() );
-        $this->assertEmpty( $this->j->get_code_postal() );
-        $this->assertEquals( $attendu, $this->j->get_pays() );
     }
 
     public function testAffichageDeboguage() : void
@@ -212,6 +145,12 @@ class JoueursTest extends TestCase
         $code = "40200";
         $pays = "France";
 
+        $adresse = new Adresse();
+        $adresse->set_adresse( $adr );
+        $adresse->set_ville( $ville );
+        $adresse->set_code_postal( $code );
+        $adresse->set_pays( $pays );
+
         $attendu = "<p>Débogage de Joueur</p>";
         $attendu .= "<ul>";
         $attendu .= "<li>id          = $id</li>";
@@ -220,10 +159,7 @@ class JoueursTest extends TestCase
         $attendu .= "<li>nom         = $nom</li>";
         $attendu .= "<li>prenom      = $prenom</li>";
         $attendu .= "<li>anniv       = $anniv</li>";
-        $attendu .= "<li>adresse     = $adr</li>";
-        $attendu .= "<li>ville       = $ville</li>";
-        $attendu .= "<li>code_postal = $code</li>";
-        $attendu .= "<li>pays        = $pays</li>";
+        $attendu .= "<li>$adresse</li>";
         $attendu .= "</ul>";
 
         $this->j->set_id( $id );
@@ -232,10 +168,7 @@ class JoueursTest extends TestCase
         $this->j->set_nom( $nom );
         $this->j->set_prenom( $prenom );
         $this->j->set_anniv( $anniv );
-        $this->j->set_adresse( $adr );
-        $this->j->set_ville( $ville );
-        $this->j->set_code_postal( $code );
-        $this->j->set_pays( $pays );
+        $this->j->set_adresse( $adresse );
 
         $this->assertEquals( $attendu, $this->j->__toString() );
     }
