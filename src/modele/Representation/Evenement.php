@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Dimanche 13 août[08] 2017
+// Dernière modification : Lundi 14 août[08] 2017
 
 /**
  * Représentation d'un évènement.
@@ -202,5 +202,3 @@ class Evenement
     }
 
 }
-
-?>

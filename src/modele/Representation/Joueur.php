@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 12 août[08] 2017
+// Dernière modification : Lundi 14 août[08] 2017
 
 /**
  * Stock les données d'un joueur en provenance de la BDD.
@@ -345,5 +345,3 @@ class Joueur
     }
 
 }
-
-?>
