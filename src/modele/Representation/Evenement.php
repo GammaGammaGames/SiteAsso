@@ -11,6 +11,7 @@
 
 declare( strict_types = 1 );
 
+include_once "/src/modele/Representation/RepresentationAvecId.php";
 include_once "/src/modele/Representation/Adresse.php";
 
 /**
@@ -19,14 +20,8 @@ include_once "/src/modele/Representation/Adresse.php";
  * @category Modèle
  * @package Représentation
  * */
-class Evenement
+class Evenement extends RepresentationAvecId
 {
-
-    /**
-     * @var integer
-     * L'identifiant unique de l'évènement.
-     * */
-    protected $id;
 
     /**
      * @var string
@@ -57,24 +52,12 @@ class Evenement
      * */
     public function __construct()
     {
-        $this->id = 0;
         $this->adresse = new Adresse();
     }
 
     // =============================== //
     //          Les Guetteurs          //
     // =============================== //
-
-    /**
-     * Récupère l'id de l'évènement.
-     *
-     * @return int
-     * L'identifiant de l'évènement.
-     * */
-    public function get_id() : int
-    {
-        return $this->id;
-    }
 
     /**
      * Récupère le nom de l'évènement.
@@ -123,17 +106,6 @@ class Evenement
     // =============================== //
     //           Les Setteurs          //
     // =============================== //
-
-    /**
-     * Change l'id de l'évènement.
-     *
-     * @param integer
-     * Le nouvel identifiant de l'évènement.
-     * */
-    public function set_id( int $id ) : void
-    {
-        $this->id = $id;
-    }
 
     /**
      * Change le nom de l'évènement.
