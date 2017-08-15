@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Lundi 14 août[08] 2017
+// Dernière modification : Mercredi 16 août[08] 2017
 
 /**
  * Représentation d'un évènement.
@@ -110,7 +110,7 @@ class Evenement extends RepresentationAvecId
     /**
      * Change le nom de l'évènement.
      *
-     * @param string
+     * @param string $nom
      * Le nom de l'évènement.
      * */
     public function set_nom( string $nom ) : void
@@ -121,7 +121,7 @@ class Evenement extends RepresentationAvecId
     /**
      * Change la date de début de l'évènement.
      *
-     * @param string
+     * @param string $date
      * La date de début.
      * */
     public function set_date_debut( string $date ) : void
@@ -132,7 +132,7 @@ class Evenement extends RepresentationAvecId
     /**
      * Change la date de fin de l'évènement.
      *
-     * @param string
+     * @param string $date
      * La date de fin
      * */
     public function set_date_fin( string $date ) : void
@@ -143,7 +143,7 @@ class Evenement extends RepresentationAvecId
     /**
      * Change l'adresse de l'évènement.
      *
-     * @param Adresse
+     * @param Adresse $adr
      * L'adresse.
      * */
     public function set_adresse( Adresse $adr ) : void
