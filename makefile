@@ -44,7 +44,6 @@ restart_nginx: stop_nginx run_nginx
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
-Nom_Php_Construit = php-mysql-alpine
 .PHONY: construire_php
 construire_php:
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
