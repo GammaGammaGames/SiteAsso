@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<phpdoc>
+    <title>Site Association</title>
+    <parser>
+        <target>/out</target>
+        <encoding>utf8</encoding>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+    </parser>
+    <transformer>
+        <target>/out</target>
+    </transformer>
+    <files>
+        <directory>./modele</directory>
+    </files>
+</phpdoc>
+

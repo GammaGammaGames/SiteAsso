@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mardi 08 août[08] 2017
+# Dernière modification : Mercredi 16 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -44,10 +44,12 @@ restart_nginx: stop_nginx run_nginx
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
-Nom_Php_Construit = php-mysql-alpine
-.PHONY: build_php
-build_php:
+# La construction de l'image n'est lancée que si elle n'existe pas.
+.PHONY: construire_php
+construire_php:
+ifeq ($(shell docker images -q $(Nom_Php_Construit) ), )
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
+endif
 
 # ---------------------------------------- #
 # Construction et démarrage des conteneurs #
@@ -73,11 +75,14 @@ run_mysql:
 		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
 		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
 		--name $(Mysql_Nom_Container) mysql:latest
+	@echo "──────────────────────────────────────────"
+	@echo "Les bases de données seront écrites dans : [$(Mysql_Volume_Ext)] "
+	@echo "──────────────────────────────────────────"
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
 .PHONY: run_php
-run_php: build_php
+run_php: construire_php
 	docker run --detach \
 		--publish $(Php_Port_Exterieur):$(Php_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
@@ -88,6 +93,9 @@ run_php: build_php
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
 		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
 		--name $(Php_Nom_Container) $(Nom_Php_Construit)
+	@echo "──────────────────────────────────"
+	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
+	@echo "──────────────────────────────────"
 
 # Démarrage du serveur nginx avec ces fichiers de configurations;
 # un accès au sources du site; et des logs accessible sans avoir à
@@ -104,6 +112,9 @@ run_nginx:
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
+	@echo "──────────────────────────────────────"
+	@echo "Les logs de nginx seront écrits dans : [$(Nginx_Log_Externe)] "
+	@echo "──────────────────────────────────────"
 
 # -------------------------------------- #
 # Démarrer les conteneurs déjà construit #
@@ -173,6 +184,32 @@ unitaire_php:
 		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
 		phpunit/phpunit -c ./phpunit.xml
+	@echo "───────────────────────────────────────────"
+	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
+	@echo "La couverture des tests unitaires : file://$(PhpUnit_Logs_Externe)/coverage/index.html"
+	@echo "Résumé html des tests réussi et raté : file://$(PhpUnit_Logs_Externe)/logs/dox.html"
+	@echo "───────────────────────────────────────────"
+
+# --------------------------------- #
+#      Générer la documentation     #
+# --------------------------------- #
+
+# La construction de l'image n'est lancée que si elle n'existe pas.
+.PHONY: construire_doc
+construire_doc:
+ifeq ($(shell docker images -q $(Nom_Doc_Php_Construit) ), )
+	docker build --tag $(Nom_Doc_Php_Construit) $(srcdir)/Fichiers_Configuration/conf_documentation/
+endif
+
+.PHONY: generer_doc
+generer_doc: construire_doc
+	docker run --rm \
+		-v $(Documentation_Src_Ext):$(Documentation_Src_Int):ro \
+		-v $(Documentation_Res_Ext):$(Documentation_Res_Int) \
+		$(Nom_Doc_Php_Construit) -c $(Documentation_Src_Int)/phpdoc.xml
+	@echo "───────────────────────────"
+	@echo "Documentation généré dans : [$(Documentation_Res_Ext)]"
+	@echo "───────────────────────────"
 
 # --------------------------------- #
 
