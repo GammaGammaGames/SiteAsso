@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Vendredi 11 août[08] 2017
+# Dernière modification : Mercredi 16 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -45,8 +45,8 @@ reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
 Nom_Php_Construit = php-mysql-alpine
-.PHONY: build_php
-build_php:
+.PHONY: construire_php
+construire_php:
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
 
 # ---------------------------------------- #
@@ -80,7 +80,7 @@ run_mysql:
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
 .PHONY: run_php
-run_php: build_php
+run_php: construire_php
 	docker run --detach \
 		--publish $(Php_Port_Exterieur):$(Php_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
