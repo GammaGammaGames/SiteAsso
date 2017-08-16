@@ -44,9 +44,12 @@ restart_nginx: stop_nginx run_nginx
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
+# La construction de l'image n'est lancée que si elle n'existe pas.
 .PHONY: construire_php
 construire_php:
+ifeq ($(shell docker images -q $(Nom_Php_Construit) ), )
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
+endif
 
 # ---------------------------------------- #
 # Construction et démarrage des conteneurs #
