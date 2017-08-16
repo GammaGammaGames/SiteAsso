@@ -822,7 +822,7 @@ then
     printf >&2 "\n"
     if [[ -d "${FICHIERS_GENERE}" ]]
     then
-        message_attention "Vous allez supprimer la configuration généré aléatoirement"
+        message_attention "Vous allez supprimer la configuration générée aléatoirement"
         if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
         then
             printf >&2 "\n"
