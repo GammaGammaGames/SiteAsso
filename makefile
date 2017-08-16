@@ -194,12 +194,19 @@ unitaire_php:
 #      Générer la documentation     #
 # --------------------------------- #
 
+# La construction de l'image n'est lancée que si elle n'existe pas.
+.PHONY: construire_doc
+construire_doc:
+ifeq ($(shell docker images -q $(Nom_Doc_Php_Construit) ), )
+	docker build --tag $(Nom_Doc_Php_Construit) $(srcdir)/Fichiers_Configuration/conf_documentation/
+endif
+
 .PHONY: generer_doc
-generer_doc:
+generer_doc: construire_doc
 	docker run --rm \
 		-v $(Documentation_Src_Ext):$(Documentation_Src_Int):ro \
 		-v $(Documentation_Res_Ext):$(Documentation_Res_Int) \
-		instrumentisto/phpdoc -c $(Documentation_Src_Int)/phpdoc.dist.xml
+		$(Nom_Doc_Php_Construit) -c $(Documentation_Src_Int)/phpdoc.xml
 	@echo "───────────────────────────"
 	@echo "Documentation généré dans : [$(Documentation_Res_Ext)]"
 	@echo "───────────────────────────"

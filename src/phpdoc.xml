@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpdoc>
+    <title>Site Association Gamma Games</title>
+
+    <parser>
+        <target>/out/cache</target>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+    </parser>
+
+    <transformer>
+        <target>/out</target>
+    </transformer>
+
+    <files>
+        <directory>modele</directory>
+    </files>
+
+    <transformations>
+        <template name="clean" />
+    </transformations>
+</phpdoc>
