@@ -127,7 +127,7 @@ class Tournoi extends RepresentationAvecId
     /**
      * Permet de changer l'Evenement durant lequel se déroule le Tournoi
      *
-     * @param Evenement $Evenement
+     * @param Evenement $evenement
      * L'Evenement durant lequel se déroule le tournoi.
      */
     public function set_evenement( Evenement $evenement ) : void
