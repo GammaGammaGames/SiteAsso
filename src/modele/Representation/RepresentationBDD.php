@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Lundi 14 août[08] 2017
+// Dernière modification : Jeudi 24 août[08] 2017
 
 /**
  * Interface des objets présents en base de données.
@@ -10,6 +10,8 @@
  * */
 
 declare( strict_types = 1 );
+
+namespace Modele\Representation;
 
 /**
  * Une interface pour tous les objets présents en base de données.

@@ -1,7 +1,9 @@
 <?php
-// Dernière modification : Samedi 12 août[08] 2017
+// Dernière modification : Jeudi 24 août[08] 2017
 
 declare( strict_types = 1 );
+
+namespace Modele\Representation;
 
 include_once "/src/modele/Representation/Adresse.php";
 

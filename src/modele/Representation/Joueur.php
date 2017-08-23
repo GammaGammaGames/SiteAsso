@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Lundi 14 août[08] 2017
+// Dernière modification : Jeudi 24 août[08] 2017
 
 /**
  * Stock les données d'un joueur en provenance de la BDD.
@@ -9,6 +9,8 @@
  * */
 
 declare( strict_types = 1 );
+
+namespace Modele\Representation;
 
 include_once "/src/modele/Representation/RepresentationAvecId.php";
 include_once "/src/modele/Representation/Adresse.php";

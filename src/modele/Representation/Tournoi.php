@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Mercredi 16 août[08] 2017
+// Dernière modification : Jeudi 24 août[08] 2017
 
 /**
  * Contient la représentation d'un tournoi.
@@ -10,6 +10,8 @@
  * */
 
 declare( strict_types = 1 );
+
+namespace Modele\Representation;
 
 include_once "/src/modele/Representation/RepresentationAvecId.php";
 include_once "/src/modele/Representation/Evenement.php";
