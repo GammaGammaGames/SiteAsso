@@ -3,9 +3,11 @@
 
 declare( strict_types = 1 );
 
-namespace Modele\Representation;
-
 include_once "/src/modele/Representation/Tournoi.php";
+
+use Modele\Representation\Evenement;
+use Modele\Representation\Adresse;
+use Modele\Representation\Tournoi;
 
 use PHPUnit\Framework\TestCase;
 

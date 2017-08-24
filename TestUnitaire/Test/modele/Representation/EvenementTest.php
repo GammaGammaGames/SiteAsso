@@ -3,9 +3,10 @@
 
 declare( strict_types = 1 );
 
-namespace Modele\Representation;
-
 include_once "/src/modele/Representation/Evenement.php";
+
+use Modele\Representation\Adresse;
+use Modele\Representation\Evenement;
 
 use PHPUnit\Framework\TestCase;
 

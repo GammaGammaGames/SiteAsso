@@ -3,9 +3,9 @@
 
 declare( strict_types = 1 );
 
-namespace Modele\Representation;
-
 include_once "/src/modele/Representation/Adresse.php";
+
+use Modele\Representation\Adresse;
 
 use PHPUnit\Framework\TestCase;
 
