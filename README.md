@@ -52,3 +52,9 @@ make clean; ./configure --clean
 ```sh
 make unitaire_php
 ```
+
+## Générer la documentation
+
+```sh
+make generer_doc
+```

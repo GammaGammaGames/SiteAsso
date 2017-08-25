@@ -1,2 +1,3 @@
 # Ignorer les infos sensible lié à docker
 Docker/
+Dump_BDD/
