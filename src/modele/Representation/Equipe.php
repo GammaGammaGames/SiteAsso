@@ -169,6 +169,10 @@ class Equipe extends RepresentationAvecId
      * */
     public function set_capitaine( Joueur $captain ) : void
     {
+        if ( ! $this->peut_ajouter_joueur( $captain ) )
+        {
+            throw new \Exception( "Le capitaine ne doit pas être présent dans la liste des joueurs." );
+        }
         $this->capitaine = $captain;
     }
 
@@ -192,9 +196,9 @@ class Equipe extends RepresentationAvecId
     public function set_nb_places_non_reserve( int $nb_places_non_reserve ) : void
     {
         // Le captain ne peut pas faire parti des places libres
-        if ( $nb_places_non_reserve > $tournoi->get_nb_joueurs_par_equipe - 1 )
+        if ( $nb_places_non_reserve > $this->tournoi->get_nb_joueurs_par_equipe() - 1 )
         {
-            throw new Exception( "Le nombre de places libre excède le nombre de places dans l'équipe." );
+            throw new \Exception( "Le nombre de places libre excède le nombre de places dans l'équipe." );
         }
         $this->nb_places_non_reserve = $nb_places_non_reserve;
     }
@@ -223,7 +227,7 @@ class Equipe extends RepresentationAvecId
             throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
         // Le capitaine ne fait pas partit des joueurs
-        $nb_j_invte_imax = $tournoi->get_nb_joueurs_par_equipe - ( 1 + $this->nb_places_non_reserve );
+        $nb_j_invte_imax = $this->tournoi->get_nb_joueurs_par_equipe() - ( 1 + $this->nb_places_non_reserve );
         if ( sizeof( $this->liste_joueurs_invite ) < $nb_j_invte_imax )
         {
             $this->liste_joueurs_invite[] = $joueur;
@@ -242,7 +246,7 @@ class Equipe extends RepresentationAvecId
      * */
     public function ajouter_joueur_non_reserve( Joueur $joueur ) : void
     {
-        if ( verifier_peut_ajouter_joueur( $joueur ) === false )
+        if ( $this->peut_ajouter_joueur( $joueur ) === false )
         {
             throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
@@ -265,15 +269,19 @@ class Equipe extends RepresentationAvecId
      * */
     public function supprimer_joueur( Joueur $joueur ) : void
     {
+        if ( $joueur === $this->capitaine )
+        {
+            throw new \Exception( "Le capitaine ne peut pas être supprimé." );
+        }
         $present_i = in_array( $joueur, $this->liste_joueurs_invite );
         $present_l = in_array( $joueur, $this->liste_joueurs_petites_annonces );
         if ( $present_i === true )
         {
-            supprimer_joueur_invite( $joueur );
+            $this->supprimer_joueur_invite( $joueur );
         }
         elseif ( $present_l === true )
         {
-            supprimer_joueur_non_reserve( $joueur );
+            $this->supprimer_joueur_non_reserve( $joueur );
         }
         else
         {
@@ -293,6 +301,13 @@ class Equipe extends RepresentationAvecId
         $debogage = "<p>Débogage de Equipe</p>";
 
         $debogage .= "<ul>";
+        $debogage .= "<li>id                         = $this->id</li>";
+        $debogage .= "<li>nom                        = $this->nom</li>";
+        $debogage .= "<li>nombres places non reservé = $this->nb_places_non_reserve</li>";
+        $debogage .= "<li><h5>Capitaine</h5></li>";
+        $debogage .= "<li>$this->capitaine</li>";
+        $debogage .= "<li><h5>Tournoi</h5></li>";
+        $debogage .= "<li>$this->tournoi</li>";
         $debogage .= "<li></li>";
         $debogage .= "</ul>";
 
@@ -353,13 +368,13 @@ class Equipe extends RepresentationAvecId
      *
      * @param  Joueur $joueur
      * Le joueur dont on veut vérifier la présence.
-     * @return boolean
+     * @return bool
      * Le joueur ne fait pas parti de l'équipe.
      * */
     protected function peut_ajouter_joueur( Joueur $joueur ) : bool
     {
-        $present = in_array( $joueur, $this->liste_joueurs_petites_annonces ) or in_array( $joueur, $this->liste_joueurs_petites_annonces );
-        return $joueur === $this->capitaine and ! $present;
+        $present = in_array( $joueur, $this->liste_joueurs_invite ) || in_array( $joueur, $this->liste_joueurs_petites_annonces );
+        return $joueur !== $this->capitaine && ! $present;
     }
 
 }
