@@ -103,6 +103,34 @@ class Equipe extends RepresentationAvecId
     }
 
     /**
+     * Permet de connaitre le nombre de places total
+     *
+     * @return int
+     * Le nombre de places dans l'équipe.
+     * */
+    public function get_nb_places_total() : int
+    {
+        return $this->tournoi->get_nb_joueurs_par_equipe();
+    }
+
+    /**
+     * Permet de connaitre le nombre de places réservé par le capitaine
+     * de l'équipe.
+     *
+     * @return int
+     * Le nombre de places réservé.
+     * */
+    public function get_nb_places_reserve() : int
+    {
+        if ( $this->tournoi->get_nb_joueurs_par_equipe() <= 0 )
+        {
+            return 0;
+        }
+        return $this->tournoi->get_nb_joueurs_par_equipe() -
+            ( 1 + $this->nb_places_ouverte );
+    }
+
+    /**
      * Permet de récupérer le nombre de places ouverte par le capitaine
      * de l'équipe.
      *

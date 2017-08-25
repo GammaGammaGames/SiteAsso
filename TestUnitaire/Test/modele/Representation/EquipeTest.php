@@ -53,6 +53,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( 0, $this->e->get_nb_places_total() );
+        $this->assertEquals( 0, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -68,6 +70,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( $id, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( 0, $this->e->get_nb_places_total() );
+        $this->assertEquals( 0, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -87,6 +91,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( 0, $this->e->get_nb_places_total() );
+        $this->assertEquals( 0, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -109,6 +115,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_reserve() );
@@ -135,6 +143,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -153,6 +163,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEquals( $nom, $this->e->get_nom() );
+        $this->assertEquals( 0, $this->e->get_nb_places_total() );
+        $this->assertEquals( 0, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -167,6 +179,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - 1, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -183,6 +197,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -211,6 +227,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - 1, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_reserve() );
@@ -245,6 +263,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j1, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - 1, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -279,6 +299,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -312,6 +334,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -329,6 +353,8 @@ class EquipeTest extends TestCase
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
         $this->e->set_nb_places_ouverte( $nb_places );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->e->ajouter_joueur_place_ouverte( $j );
 
@@ -349,6 +375,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j1, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - 1, $this->e->get_nb_places_reserve() );
         $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -383,6 +411,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -415,6 +445,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -443,6 +475,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -477,6 +511,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -513,6 +549,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -544,6 +582,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
@@ -571,6 +611,8 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
+        $this->assertEquals( $this->nb_places, $this->e->get_nb_places_total() );
+        $this->assertEquals( $this->nb_places - ( $nb_places + 1 ), $this->e->get_nb_places_reserve() );
         $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
         $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
