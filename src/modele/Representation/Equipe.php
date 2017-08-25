@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Jeudi 24 août[08] 2017
+// Dernière modification : Vendredi 25 août[08] 2017
 
 /**
  * Contient la représentation d'une équipe.
@@ -218,9 +218,9 @@ class Equipe extends RepresentationAvecId
      * */
     public function ajouter_joueur_invite( Joueur $joueur ) : void
     {
-        if ( verifier_peut_ajouter_joueur( $joueur ) === false )
+        if ( $this->peut_ajouter_joueur( $joueur ) === false )
         {
-            throw new Exception( "Le joueur est déjà présent dans l'équipe." );
+            throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
         // Le capitaine ne fait pas partit des joueurs
         $nb_j_invte_imax = $tournoi->get_nb_joueurs_par_equipe - ( 1 + $this->nb_places_non_reserve );
@@ -230,7 +230,7 @@ class Equipe extends RepresentationAvecId
         }
         else
         {
-            throw new Exception( "Nombre max de joueurs invité atteint" );
+            throw new \Exception( "Nombre max de joueurs invité atteint" );
         }
     }
 
@@ -244,7 +244,7 @@ class Equipe extends RepresentationAvecId
     {
         if ( verifier_peut_ajouter_joueur( $joueur ) === false )
         {
-            throw new Exception( "Le joueur est déjà présent dans l'équipe." );
+            throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
         $nb_j_max = $this->nb_places_non_reserve;
         if ( sizeof( $this->liste_joueurs_petites_annonces ) < $nb_j_max )
@@ -253,7 +253,7 @@ class Equipe extends RepresentationAvecId
         }
         else
         {
-            throw new Exception( "Nombre max de places de joueurs non réservé atteint" );
+            throw new \Exception( "Nombre max de places de joueurs non réservé atteint" );
         }
     }
 
@@ -277,7 +277,7 @@ class Equipe extends RepresentationAvecId
         }
         else
         {
-            throw new Exception( "Suppression impossible : Le joueur ne fait pas parti de l'équipe." );
+            throw new \Exception( "Suppression impossible : Le joueur ne fait pas parti de l'équipe." );
         }
     }
 
@@ -313,7 +313,7 @@ class Equipe extends RepresentationAvecId
         $position = array_search( $joueur, $this->liste_joueurs_invite );
         if ( $position === false )
         {
-            throw new Exception( "Suppression impossible : Le joueur n'a pas de place réservé." );
+            throw new \Exception( "Suppression impossible : Le joueur n'a pas de place réservé." );
         }
         else
         {
@@ -333,7 +333,7 @@ class Equipe extends RepresentationAvecId
         $position = array_search( $joueur, $this->liste_joueurs_petites_annonces );
         if ( $position === false )
         {
-            throw new Exception( "Suppression impossible : Le joueur n'a pas été recruté." );
+            throw new \Exception( "Suppression impossible : Le joueur n'a pas été recruté." );
         }
         else
         {
@@ -356,7 +356,7 @@ class Equipe extends RepresentationAvecId
      * @return boolean
      * Le joueur ne fait pas parti de l'équipe.
      * */
-    protected function verifier_peut_ajouter_joueur( Joueur $joueur ) : boolean
+    protected function peut_ajouter_joueur( Joueur $joueur ) : bool
     {
         $present = in_array( $joueur, $this->liste_joueurs_petites_annonces ) or in_array( $joueur, $this->liste_joueurs_petites_annonces );
         return $joueur === $this->capitaine and ! $present;
