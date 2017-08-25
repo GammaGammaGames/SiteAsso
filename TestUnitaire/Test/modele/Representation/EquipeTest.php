@@ -31,12 +31,13 @@ class EquipeTest extends TestCase
     protected $e;
     //Tournoi
     protected $t;
+    protected $nb_places = 5;
 
     protected function setUp() : void
     {
         // On a besoin de connaitre le nombre de joueur max par équipes
         $this->t = new Tournoi();
-        $this->t->set_nb_joueurs_par_equipe( 5 );
+        $this->t->set_nb_joueurs_par_equipe( $this->nb_places );
 
         $this->e = new Equipe();
     }
@@ -52,10 +53,10 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -67,10 +68,10 @@ class EquipeTest extends TestCase
         $this->assertEquals( $id, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -86,10 +87,10 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -102,16 +103,16 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
-        $this->e->ajouter_joueur_invite( $j );
+        $this->e->set_nb_places_ouverte( $nb_places );
+        $this->e->ajouter_joueur_place_reserve( $j );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
@@ -128,16 +129,16 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
-        $this->e->ajouter_joueur_non_reserve( $j );
+        $this->e->set_nb_places_ouverte( $nb_places );
+        $this->e->ajouter_joueur_place_ouverte( $j );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
@@ -152,10 +153,10 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEquals( $nom, $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( new Tournoi(), $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -166,35 +167,35 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
-    public function testChangerNbPlacesNonReserve() : void
+    public function testChangerNbPlacesOuverte() : void
     {
-        $nb = rand( 1, $this->t->get_nb_joueurs_par_equipe() - 1 );
+        $nb_places = rand( 1, $this->t->get_nb_joueurs_par_equipe() - 1 );
         $this->e->set_tournoi( $this->t );
-        $this->e->set_nb_places_non_reserve( $nb );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
-    public function testChangerNbPlacesException() : void
+    public function testChangerNbPlacesOuverteException() : void
     {
         $nb = rand( 1, 100 );
 
         $this->expectException( \Exception::class );
-        $this->e->set_nb_places_non_reserve( $nb );
+        $this->e->set_nb_places_ouverte( $nb );
     }
 
     public function testAjouterJoueurInvite() : void
@@ -205,15 +206,15 @@ class EquipeTest extends TestCase
         $j->set_nom( "Tas" );
 
         $this->e->set_tournoi( $this->t );
-        $this->e->ajouter_joueur_invite( $j );
+        $this->e->ajouter_joueur_place_reserve( $j );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -225,10 +226,10 @@ class EquipeTest extends TestCase
         $j->set_nom( "Tas" );
 
         $this->e->set_tournoi( $this->t );
-        $this->e->ajouter_joueur_invite( $j );
+        $this->e->ajouter_joueur_place_reserve( $j );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_invite( $j );
+        $this->e->ajouter_joueur_place_reserve( $j );
     }
 
     public function testJoueurInviteEstCapitainException() : void
@@ -244,14 +245,14 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j1, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_invite( $j1 );
+        $this->e->ajouter_joueur_place_reserve( $j1 );
     }
 
     public function testNombreMaxJoueursInviteException() : void
@@ -273,27 +274,27 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_invite( $j1 );
-        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_invite() );
+        $this->e->ajouter_joueur_place_reserve( $j1 );
+        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_places_reserve() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_invite( $j2 );
-        $this->assertEquals( array( $j1, $j2 ), $this->e->get_liste_joueurs_invite() );
+        $this->e->ajouter_joueur_place_reserve( $j2 );
+        $this->assertEquals( array( $j1, $j2 ), $this->e->get_liste_joueurs_places_reserve() );
         $this->assertEquals( 3, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_invite( $j3 );
+        $this->e->ajouter_joueur_place_reserve( $j3 );
     }
 
     public function testAjouterJoueurNonReserve() : void
@@ -305,16 +306,16 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
-        $this->e->ajouter_joueur_non_reserve( $j );
+        $this->e->set_nb_places_ouverte( $nb_places );
+        $this->e->ajouter_joueur_place_ouverte( $j );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -327,12 +328,12 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
-        $this->e->ajouter_joueur_non_reserve( $j );
+        $this->e->set_nb_places_ouverte( $nb_places );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
+        $this->e->ajouter_joueur_place_ouverte( $j );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_non_reserve( $j );
+        $this->e->ajouter_joueur_place_ouverte( $j );
     }
 
     public function testJoueurNonReserveEstCapitainException() : void
@@ -348,14 +349,14 @@ class EquipeTest extends TestCase
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $j1, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( 0, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( 0, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_non_reserve( $j1 );
+        $this->e->ajouter_joueur_place_ouverte( $j1 );
     }
 
     public function testNombreMaxJoueursNonReserveException() : void
@@ -377,27 +378,27 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_non_reserve( $j1 );
-        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_libre() );
+        $this->e->ajouter_joueur_place_ouverte( $j1 );
+        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_non_reserve( $j2 );
-        $this->assertEquals( array( $j1, $j2 ), $this->e->get_liste_joueurs_libre() );
+        $this->e->ajouter_joueur_place_ouverte( $j2 );
+        $this->assertEquals( array( $j1, $j2 ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 3, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_non_reserve( $j3 );
+        $this->e->ajouter_joueur_place_ouverte( $j3 );
     }
 
     public function testJoueurInvitePuisLibreException() : void
@@ -409,23 +410,23 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_invite( $j1 );
-        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_invite() );
+        $this->e->ajouter_joueur_place_reserve( $j1 );
+        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_places_reserve() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_non_reserve( $j1 );
+        $this->e->ajouter_joueur_place_ouverte( $j1 );
     }
 
     public function testJoueurLibrePuisInviteException() : void
@@ -437,23 +438,23 @@ class EquipeTest extends TestCase
 
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( new Joueur(), $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_non_reserve( $j1 );
-        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_libre() );
+        $this->e->ajouter_joueur_place_ouverte( $j1 );
+        $this->assertEquals( array( $j1 ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
-        $this->e->ajouter_joueur_invite( $j1 );
+        $this->e->ajouter_joueur_place_reserve( $j1 );
     }
 
     public function testSupprimerJoueurInvite()
@@ -471,24 +472,24 @@ class EquipeTest extends TestCase
         $this->e->set_capitaine( $c );
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_invite( $j );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_invite() );
+        $this->e->ajouter_joueur_place_reserve( $j );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_reserve() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->e->supprimer_joueur( $j );
         $this->assertEquals( $c, $this->e->get_capitaine() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -507,24 +508,24 @@ class EquipeTest extends TestCase
         $this->e->set_capitaine( $c );
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
-        $this->e->ajouter_joueur_non_reserve( $j );
-        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_libre() );
+        $this->e->ajouter_joueur_place_ouverte( $j );
+        $this->assertEquals( array( $j ), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 2, $this->e->get_nb_joueurs_inscrit() );
 
         $this->e->supprimer_joueur( $j );
         $this->assertEquals( $c, $this->e->get_capitaine() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
     }
 
@@ -538,15 +539,15 @@ class EquipeTest extends TestCase
         $this->e->set_capitaine( $c );
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
@@ -565,15 +566,15 @@ class EquipeTest extends TestCase
         $this->e->set_capitaine( $c );
         $this->e->set_tournoi( $this->t );
         $nb_places = 2;
-        $this->e->set_nb_places_non_reserve( $nb_places );
+        $this->e->set_nb_places_ouverte( $nb_places );
 
         $this->assertEquals( 0, $this->e->get_id() );
         $this->assertEquals( $c, $this->e->get_capitaine() );
         $this->assertEmpty( $this->e->get_nom() );
-        $this->assertEquals( $nb_places, $this->e->get_nb_places_non_reserve() );
+        $this->assertEquals( $nb_places, $this->e->get_nb_places_ouverte() );
         $this->assertEquals( $this->t, $this->e->get_tournoi() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_invite() );
-        $this->assertEquals( array(), $this->e->get_liste_joueurs_libre() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_reserve() );
+        $this->assertEquals( array(), $this->e->get_liste_joueurs_places_ouverte() );
         $this->assertEquals( 1, $this->e->get_nb_joueurs_inscrit() );
 
         $this->expectException( \Exception::class );
@@ -599,7 +600,7 @@ class EquipeTest extends TestCase
 
         $id = rand( 1, 100 );
         $nom = "Les Guépards";
-        $nb_places_non_reserve = 1;
+        $nb_places_ouverte = 1;
 
         $this->t->set_id( rand( 1, 100 ) );
         $this->t->set_nom( "Counter Strike" );
@@ -611,15 +612,15 @@ class EquipeTest extends TestCase
         $this->e->set_nom( $nom );
         $this->e->set_capitaine( $c );
         $this->e->set_tournoi( $this->t );
-        $this->e->set_nb_places_non_reserve( $nb_places_non_reserve );
-        $this->e->ajouter_joueur_invite( $j2 );
-        $this->e->ajouter_joueur_non_reserve( $j3 );
+        $this->e->set_nb_places_ouverte( $nb_places_ouverte );
+        $this->e->ajouter_joueur_place_reserve( $j2 );
+        $this->e->ajouter_joueur_place_ouverte( $j3 );
 
         $attendu = "<p>Débogage de Equipe</p>";
         $attendu .= "<ul>";
-        $attendu .= "<li>id                         = $id</li>";
-        $attendu .= "<li>nom                        = $nom</li>";
-        $attendu .= "<li>nombres places non reservé = $nb_places_non_reserve</li>";
+        $attendu .= "<li>id                     = $id</li>";
+        $attendu .= "<li>nom                    = $nom</li>";
+        $attendu .= "<li>nombres places ouverte = $nb_places_ouverte</li>";
         $attendu .= "<li><h5>Capitaine</h5></li>";
         $attendu .= "<li>$c</li>";
         $attendu .= "<li><h5>Tournoi</h5></li>";

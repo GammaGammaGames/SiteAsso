@@ -40,9 +40,11 @@ class Equipe extends RepresentationAvecId
 
     /**
      * @var int
-     * Le nombre de places non réservé dans l'équipe.
+     * Le nombre de places laissé ouverte par le capitaine de l'équipe.
+     * N'importe quel joueur peut postuler à une place ouverte.
+     * Le reste des places est par défaut reservé.
      * */
-    protected $nb_places_non_reserve = 0;
+    protected $nb_places_ouverte = 0;
 
     /**
      * @var Tournoi
@@ -54,14 +56,14 @@ class Equipe extends RepresentationAvecId
      * @var array[Joueur]
      * Les joueurs membres de l'équipe et invité par le capitaine.
      * */
-    protected $liste_joueurs_invite;
+    protected $liste_joueurs_places_reserve;
 
     /**
      * @var array[Joueur]
      * Les joueurs membre de l'équipe et qui ont été intégré
      * par petite annonce.
      * */
-    protected $liste_joueurs_petites_annonces;
+    protected $liste_joueurs_places_ouverte;
 
     /**
      * Construit une équipe vide.
@@ -70,8 +72,8 @@ class Equipe extends RepresentationAvecId
     {
         $this->capitaine = new Joueur();
         $this->tournoi = new Tournoi();
-        $this->liste_joueurs_invite = array();
-        $this->liste_joueurs_petites_annonces = array();
+        $this->liste_joueurs_places_reserve = array();
+        $this->liste_joueurs_places_ouverte = array();
     }
 
     // =============================== //
@@ -101,18 +103,19 @@ class Equipe extends RepresentationAvecId
     }
 
     /**
-     * Permet de récupérer le nombre de places non réservé de l'équipe.
+     * Permet de récupérer le nombre de places ouverte par le capitaine
+     * de l'équipe.
      *
      * @return int
-     * Le nombre de places non réservé de l'équipe.
+     * Le nombre de places ouverte de l'équipe.
      */
-    public function get_nb_places_non_reserve() : int
+    public function get_nb_places_ouverte() : int
     {
-        return $this->nb_places_non_reserve;
+        return $this->nb_places_ouverte;
     }
 
     /**
-     * Permet de récupérer le tournoi de l'équipe.
+     * Permet de récupérer le tournoi auquel participe l'équipe.
      *
      * @return Tournoi
      * Le tournoi auquel participe l'équipe.
@@ -123,26 +126,28 @@ class Equipe extends RepresentationAvecId
     }
 
     /**
-     * Permet de récupérer la liste des joueurs invité dans l'équipe.
+     * Permet de récupérer la liste des joueurs dont la places a été
+     * réservé par le capitaine dans l'équipe.
      *
      * @return array
-     * La liste des joueurs invité.
+     * La liste des joueurs avec places réservé.
      */
-    public function get_liste_joueurs_invite() : array
+    public function get_liste_joueurs_places_reserve() : array
     {
-        return $this->liste_joueurs_invite;
+        return $this->liste_joueurs_places_reserve;
     }
 
     /**
-     * Permet de récupérer la liste des joueurs libre de l'équipe.
+     * Permet de récupérer la liste des joueurs recruté dans des places
+     * laissé ouverte par le capitaine de l'équipe.
      *
      * @return array
      * La liste des joueurs qui ont été ajouté à l'équipe en passant
      * par les petites annonces.
      */
-    public function get_liste_joueurs_libre() : array
+    public function get_liste_joueurs_places_ouverte() : array
     {
-        return $this->liste_joueurs_petites_annonces;
+        return $this->liste_joueurs_places_ouverte;
     }
 
     /**
@@ -154,7 +159,8 @@ class Equipe extends RepresentationAvecId
     public function get_nb_joueurs_inscrit() : int
     {
         // On compte le capitaine
-        return 1 + sizeof( $this->liste_joueurs_invite ) + sizeof( $this->liste_joueurs_petites_annonces );
+        return 1 + sizeof( $this->liste_joueurs_places_reserve ) +
+            sizeof( $this->liste_joueurs_places_ouverte );
     }
 
     // =============================== //
@@ -188,19 +194,20 @@ class Equipe extends RepresentationAvecId
     }
 
     /**
-     * Permet de changer le nombre de places non réservé de l'équipe.
+     * Permet de changer le nombre de places ouverte par le capitaine
+     * de l'équipe.
      *
-     * @param int $nb_places_non_reserve
-     * Le nombre de places non réservé de l'équipe.
+     * @param int $nb_places_ouverte
+     * Le nombre de places ouverte de l'équipe.
      */
-    public function set_nb_places_non_reserve( int $nb_places_non_reserve ) : void
+    public function set_nb_places_ouverte( int $nb_places_ouverte ) : void
     {
-        // Le captain ne peut pas faire parti des places libres
-        if ( $nb_places_non_reserve > $this->tournoi->get_nb_joueurs_par_equipe() - 1 )
+        // Le capitaine ne peut pas faire parti des places libres
+        if ( $nb_places_ouverte > $this->tournoi->get_nb_joueurs_par_equipe() - 1 )
         {
-            throw new \Exception( "Le nombre de places libre excède le nombre de places dans l'équipe." );
+            throw new \Exception( "Le nombre de places ouverte excède le nombre de places dans l'équipe." );
         }
-        $this->nb_places_non_reserve = $nb_places_non_reserve;
+        $this->nb_places_ouverte = $nb_places_ouverte;
     }
 
     /**
@@ -218,19 +225,20 @@ class Equipe extends RepresentationAvecId
      * Ajoute un joueur à l'équipe. Ce joueur est invité par le capitaine.
      *
      * @param Joueur $joueur
-     * Le joueur invité par le capitaine à ajouter à l'équipe.
+     * Le joueur invité par le capitaine.
      * */
-    public function ajouter_joueur_invite( Joueur $joueur ) : void
+    public function ajouter_joueur_place_reserve( Joueur $joueur ) : void
     {
         if ( $this->peut_ajouter_joueur( $joueur ) === false )
         {
             throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
         // Le capitaine ne fait pas partit des joueurs
-        $nb_j_invte_imax = $this->tournoi->get_nb_joueurs_par_equipe() - ( 1 + $this->nb_places_non_reserve );
-        if ( sizeof( $this->liste_joueurs_invite ) < $nb_j_invte_imax )
+        $nb_j_invte_imax = $this->tournoi->get_nb_joueurs_par_equipe() -
+            ( 1 + $this->nb_places_ouverte );
+        if ( sizeof( $this->liste_joueurs_places_reserve ) < $nb_j_invte_imax )
         {
-            $this->liste_joueurs_invite[] = $joueur;
+            $this->liste_joueurs_places_reserve[] = $joueur;
         }
         else
         {
@@ -244,16 +252,16 @@ class Equipe extends RepresentationAvecId
      * @param Joueur $joueur
      * Le joueur recruté.
      * */
-    public function ajouter_joueur_non_reserve( Joueur $joueur ) : void
+    public function ajouter_joueur_place_ouverte( Joueur $joueur ) : void
     {
         if ( $this->peut_ajouter_joueur( $joueur ) === false )
         {
             throw new \Exception( "Le joueur est déjà présent dans l'équipe." );
         }
-        $nb_j_max = $this->nb_places_non_reserve;
-        if ( sizeof( $this->liste_joueurs_petites_annonces ) < $nb_j_max )
+        $nb_j_max = $this->nb_places_ouverte;
+        if ( sizeof( $this->liste_joueurs_places_ouverte ) < $nb_j_max )
         {
-            $this->liste_joueurs_petites_annonces[] = $joueur;
+            $this->liste_joueurs_places_ouverte[] = $joueur;
         }
         else
         {
@@ -273,15 +281,15 @@ class Equipe extends RepresentationAvecId
         {
             throw new \Exception( "Le capitaine ne peut pas être supprimé." );
         }
-        $present_i = in_array( $joueur, $this->liste_joueurs_invite );
-        $present_l = in_array( $joueur, $this->liste_joueurs_petites_annonces );
+        $present_i = in_array( $joueur, $this->liste_joueurs_places_reserve );
+        $present_l = in_array( $joueur, $this->liste_joueurs_places_ouverte );
         if ( $present_i === true )
         {
-            $this->supprimer_joueur_invite( $joueur );
+            $this->supprimer_joueur_places_reserve( $joueur );
         }
         elseif ( $present_l === true )
         {
-            $this->supprimer_joueur_non_reserve( $joueur );
+            $this->supprimer_joueur_place_ouverte( $joueur );
         }
         else
         {
@@ -301,9 +309,9 @@ class Equipe extends RepresentationAvecId
         $debogage = "<p>Débogage de Equipe</p>";
 
         $debogage .= "<ul>";
-        $debogage .= "<li>id                         = $this->id</li>";
-        $debogage .= "<li>nom                        = $this->nom</li>";
-        $debogage .= "<li>nombres places non reservé = $this->nb_places_non_reserve</li>";
+        $debogage .= "<li>id                     = $this->id</li>";
+        $debogage .= "<li>nom                    = $this->nom</li>";
+        $debogage .= "<li>nombres places ouverte = $this->nb_places_ouverte</li>";
         $debogage .= "<li><h5>Capitaine</h5></li>";
         $debogage .= "<li>$this->capitaine</li>";
         $debogage .= "<li><h5>Tournoi</h5></li>";
@@ -315,44 +323,43 @@ class Equipe extends RepresentationAvecId
 
     }
 
-    // Partie protégé ==========================================================
+    // Partie protégé =========================================================
 
     /**
-     * Supprime un joueur de l'équipe. Ce joueur doit avoir été invité.
+     * Supprime un joueur de l'équipe. Ce joueur doit avoir une place réservé.
      *
      * @param Joueur $joueur
      * Le joueur à supprimer.
      * */
-    protected function supprimer_joueur_invite( Joueur $joueur ) : void
+    protected function supprimer_joueur_places_reserve( Joueur $joueur ) : void
     {
-        $position = array_search( $joueur, $this->liste_joueurs_invite );
+        $position = array_search( $joueur, $this->liste_joueurs_places_reserve );
         if ( $position === false )
         {
             throw new \Exception( "Suppression impossible : Le joueur n'a pas de place réservé." );
         }
         else
         {
-            unset( $this->liste_joueurs_invite[$position] );
+            unset( $this->liste_joueurs_places_reserve[$position] );
         }
     }
 
     /**
-     * Supprime un joueur de l'équipe. Ce joueur doit avoir été recruté
-     * par petites annonces
+     * Supprime un joueur de l'équipe. Ce joueur doit avoir une place ouverte.
      *
      * @param Joueur $joueur
      * Le joueur à supprimer.
      * */
-    protected function supprimer_joueur_non_reserve( Joueur $joueur ) : void
+    protected function supprimer_joueur_place_ouverte( Joueur $joueur ) : void
     {
-        $position = array_search( $joueur, $this->liste_joueurs_petites_annonces );
+        $position = array_search( $joueur, $this->liste_joueurs_places_ouverte );
         if ( $position === false )
         {
             throw new \Exception( "Suppression impossible : Le joueur n'a pas été recruté." );
         }
         else
         {
-            unset( $this->liste_joueurs_petites_annonces[$position] );
+            unset( $this->liste_joueurs_places_ouverte[$position] );
         }
     }
 
@@ -361,9 +368,9 @@ class Equipe extends RepresentationAvecId
      *
      * Pour pouvoir être ajouté, il faut que le joueur ne soit :
      * <ul>
-     * <li>ni le capitain</li>
-     * <li>ni dans le groupe réservé</li>
-     * <li>ni dans le groupe laissé libre</li>
+     * <li>ni le capitaine</li>
+     * <li>ni dans le groupe de places réservé</li>
+     * <li>ni dans le groupe de places ouverte</li>
      * </ul>
      *
      * @param  Joueur $joueur
@@ -373,7 +380,8 @@ class Equipe extends RepresentationAvecId
      * */
     protected function peut_ajouter_joueur( Joueur $joueur ) : bool
     {
-        $present = in_array( $joueur, $this->liste_joueurs_invite ) || in_array( $joueur, $this->liste_joueurs_petites_annonces );
+        $present = in_array( $joueur, $this->liste_joueurs_places_reserve ) ||
+            in_array( $joueur, $this->liste_joueurs_places_ouverte );
         return $joueur !== $this->capitaine && ! $present;
     }
 
