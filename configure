@@ -782,19 +782,15 @@ then
         message_attention "Vous allez supprimer la configuration générée aléatoirement"
         if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
         then
-            printf >&2 "\n"
-            supprimer_logs_conf
             if supprimer_fichiers_mysql_genere
             then
                 printf >&2 "\n"
                 supprimer_configuration
-                if rm -r -- "${FICHIERS_GENERE}"
-                then
-                    exit "${EXIT_SUCCES}"
-                else
-                    message_erreur "Le dossier de fichier généré n'a pas pu être supprimé"
-                    exit "${E_ANNULATION}"
-                fi
+                supprimer_logs_conf
+                separateur_section "Suppression du dossier Docker"
+                supprimer_dossier "${FICHIERS_GENERE}"
+                printf >&2 "\n"
+                exit "${EXIT_SUCCES}"
             else
                 printf >&2 "\n"
                 exit "${E_ANNULATION}"
