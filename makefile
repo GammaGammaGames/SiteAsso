@@ -38,10 +38,6 @@ all: run
 .PHONY: run
 run: run_mysql run_php run_nginx
 
-# Permet de redémarrer seulement le container nginx
-.PHONY: restart_nginx
-restart_nginx: stop_nginx run_nginx
-
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
 .PHONY: reload
@@ -224,9 +220,3 @@ dump_bdd:
 	docker exec $(Mysql_Nom_Container) sh -c \
 		'exec mysqldump --all-databases -uroot -p"$(Mysql_Mdp_Root)"' \
 		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
-
-# Stop proprement le container nginx le supprime ainsi que son volume lié
-.PHONY: stop_nginx
-stop_nginx:
-	-docker stop $(Nginx_Nom_Container)
-	-docker rm --volumes $(Nginx_Nom_Container)
