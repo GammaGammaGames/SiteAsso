@@ -796,13 +796,13 @@ then
                     exit "${E_ANNULATION}"
                 fi
             else
-                message_avertissement "Suppression annulée"
+                printf >&2 "\n"
                 exit "${E_ANNULATION}"
             fi
             printf >&2 "\n"
         else
             printf >&2 "\n"
-            message_avertissement "Suppression annulé"
+            printf >&2 "Suppression annulé\n"
             printf >&2 "\n"
             exit "${E_ANNULATION}"
         fi
@@ -828,7 +828,7 @@ else
         printf >&2 "\n"
     else
         printf >&2 "\n"
-        message_avertissement "Génération annulée"
+        printf >&2 "Génération annulée\n"
         printf >&2 "\n"
         exit "${E_ANNULATION}"
     fi
@@ -852,7 +852,7 @@ then
         fi
     else
         printf >&2 "\n"
-        message_avertissement "La configuration MySql ne sera pas re-générée"
+        printf >&2 "La configuration MySql ne sera pas re-générée\n"
     fi
     printf >&2 "\n"
 else
