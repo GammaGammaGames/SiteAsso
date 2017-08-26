@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Jeudi 24 août[08] 2017
+// Dernière modification : Samedi 26 août[08] 2017
 
 /**
  * Classe mère de tous les objets avec un id de la BDD.
@@ -13,7 +13,7 @@ declare( strict_types = 1 );
 
 namespace Modele\Representation;
 
-include_once "/src/modele/Representation/RepresentationBDD.php";
+include_once "/var/www/html/modele/Representation/RepresentationBDD.php";
 
 /**
  * Toutes les classes qui représentent un objet de la base avec un id unique

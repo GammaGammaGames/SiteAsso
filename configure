@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Mercredi 16 août[08] 2017
+# Dernière modification : Samedi 26 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -210,104 +210,58 @@ trap 'maj_taille' WINCH
 # {{{  Définition des couleurs     #
 ####################################
 
-NEUTRE=""
-M_GRAS=""
-D_SOUL=""
-F_SOUL=""
-INVERS=""
-M__DIM=""
+NEUTRE="" M_GRAS="" D_SOUL="" F_SOUL="" INVERS="" M__DIM=""
 
-# Création des couleurs du front et du back
-declare -a COULEURS=()
 # Vérification de l'existence de la commande tput           #{{{
 if test_cmd_exist tput
 then
+    [[ `tput colors 2>/dev/null` -ge 8 ]] &&
+        declare -r NB_COULEURS=`tput colors` || declare -r NB_COULEURS=0
 
-    if [[ `tput colors 2>/dev/null` -ge 8 ]]
-    then
-        declare -r NB_COULEURS=`tput colors`
-    else
-        declare -r NB_COULEURS=0
-    fi
-
-    declare -r NEUTRE="`tput sgr 0`"
-
-    declare -r M_GRAS="`tput bold`"
-
-    declare -r D_SOUL="`tput smul`"
-    declare -r F_SOUL="`tput rmul`"
-
-    declare -r INVERS="`tput rev`"
-
-    declare -r M__DIM="`tput dim`"
-
-    declare -i POSITION=0
-    for i in 'f' 'b'
-    do
-        COMM="tput seta${i}"
-        for j in `seq 0 15`
-        do
-            COULEURS[$((j + POSITION))]="`${COMM} ${j}`"
-        done
-        POSITION=$((POSITION + 16))
-    done
-
+    declare -r NEUTRE="`tput sgr 0`" M_GRAS="`tput bold`" D_SOUL="`tput smul`"
+    declare -r F_SOUL="`tput rmul`"  INVERS="`tput rev`"  M__DIM="`tput dim`"
 else
-
-    for i in `seq 0 31`
-    do
-        COULEURS[${i}]=""
-    done
-
+    declare -r NB_COULEURS=0
 fi
 
 #}}}
 
-# Couleurs normale                          #{{{
-declare -r C___NOIR="${COULEURS[0]}"        # Noir
-declare -r C__ROUGE="${COULEURS[1]}"        # Rouge
-declare -r C___VERT="${COULEURS[2]}"        # Vert
-declare -r C__JAUNE="${COULEURS[3]}"        # Jaune
-declare -r C___BLEU="${COULEURS[4]}"        # Bleu
-declare -r C_VIOLET="${COULEURS[5]}"        # Violet
-declare -r C___CYAN="${COULEURS[6]}"        # Cyan
-declare -r C__BLANC="${COULEURS[7]}"        # Blanc
+# Définition des couleurs                   #{{{
+if [[ "${NB_COULEURS}" -gt 0 ]]
+then
+    declare -r C___NOIR="`tput setaf 0`" C__ROUGE="`tput setaf 1`"
+    declare -r C___VERT="`tput setaf 2`" C__JAUNE="`tput setaf 3`"
+    declare -r C___BLEU="`tput setaf 4`" C_VIOLET="`tput setaf 5`"
+    declare -r C___CYAN="`tput setaf 6`" C__BLANC="`tput setaf 7`"
 
-#}}}
+    declare -r C___INOIR="`tput setaf 8`"  C__IROUGE="`tput setaf 9`"
+    declare -r C___IVERT="`tput setaf 10`" C__IJAUNE="`tput setaf 11`"
+    declare -r C___IBLEU="`tput setaf 12`" C_IVIOLET="`tput setaf 13`"
+    declare -r C___ICYAN="`tput setaf 14`" C__IBLANC="`tput setaf 15`"
 
-# Haute intensité                           #{{{
-declare -r C___INOIR="${COULEURS[8]}"       # Noir
-declare -r C__IROUGE="${COULEURS[9]}"       # Rouge
-declare -r C___IVERT="${COULEURS[10]}"      # Vert
-declare -r C__IJAUNE="${COULEURS[11]}"      # Jaune
-declare -r C___IBLEU="${COULEURS[12]}"      # Bleu
-declare -r C_IVIOLET="${COULEURS[13]}"      # Violet
-declare -r C___ICYAN="${COULEURS[14]}"      # Cyan
-declare -r C__IBLANC="${COULEURS[15]}"      # Blanc
+    declare -r C_SUR___NOIR="`tput setab 0`" C_SUR__ROUGE="`tput setab 1`"
+    declare -r C_SUR___VERT="`tput setab 2`" C_SUR__JAUNE="`tput setab 3`"
+    declare -r C_SUR___BLEU="`tput setab 4`" C_SUR_VIOLET="`tput setab 5`"
+    declare -r C_SUR___CYAN="`tput setab 6`" C_SUR__BLANC="`tput setab 7`"
 
-#}}}
+    declare -r C_SUR___INOIR="`tput setab 8`" C_SUR__IROUGE="`tput setab 9`"
+    declare -r C_SUR___IVERT="`tput setab 10`" C_SUR__IJAUNE="`tput setab 11`"
+    declare -r C_SUR___IBLEU="`tput setab 12`" C_SUR_IVIOLET="`tput setab 13`"
+    declare -r C_SUR___ICYAN="`tput setab 14`" C_SUR__IBLANC="`tput setab 15`"
+else
+    # Les couleurs sont mises à vide si tput n'est pas installé
+    declare -r C___NOIR="" C__ROUGE="" C___VERT="" C__JAUNE=""
+    declare -r C___BLEU="" C_VIOLET="" C___CYAN="" C__BLANC=""
 
-# Couleur de fond                           #{{{
-declare -r C_SUR___NOIR="${COULEURS[16]}"   # Noir
-declare -r C_SUR__ROUGE="${COULEURS[17]}"   # Rouge
-declare -r C_SUR___VERT="${COULEURS[18]}"   # Vert
-declare -r C_SUR__JAUNE="${COULEURS[19]}"   # Jaune
-declare -r C_SUR___BLEU="${COULEURS[20]}"   # Bleu
-declare -r C_SUR_VIOLET="${COULEURS[21]}"   # Violet
-declare -r C_SUR___CYAN="${COULEURS[22]}"   # Cyan
-declare -r C_SUR__BLANC="${COULEURS[23]}"   # Blanc
+    declare -r C___INOIR="" C__IROUGE="" C___IVERT="" C__IJAUNE=""
+    declare -r C___IBLEU="" C_IVIOLET="" C___ICYAN="" C__IBLANC=""
 
-#}}}
+    declare -r C_SUR___NOIR="" C_SUR__ROUGE="" C_SUR___VERT="" C_SUR__JAUNE=""
+    declare -r C_SUR___BLEU="" C_SUR_VIOLET="" C_SUR___CYAN="" C_SUR__BLANC=""
 
-# Couleur de fond haute intensité           #{{{
-declare -r C_SUR___INOIR="${COULEURS[24]}"  # Noir
-declare -r C_SUR__IROUGE="${COULEURS[25]}"  # Rouge
-declare -r C_SUR___IVERT="${COULEURS[26]}"  # Vert
-declare -r C_SUR__IJAUNE="${COULEURS[27]}"  # Jaune
-declare -r C_SUR___IBLEU="${COULEURS[28]}"  # Bleu
-declare -r C_SUR_IVIOLET="${COULEURS[29]}"  # Violet
-declare -r C_SUR___ICYAN="${COULEURS[30]}"  # Cyan
-declare -r C_SUR__IBLANC="${COULEURS[31]}"  # Blanc
+    declare -r C_SUR___INOIR="" C_SUR__IROUGE="" C_SUR___IVERT="" C_SUR__IJAUNE=""
+    declare -r C_SUR___IBLEU="" C_SUR_IVIOLET="" C_SUR___ICYAN="" C_SUR__IBLANC=""
+fi
 
 #}}}
 
@@ -369,6 +323,7 @@ declare -r LOGS_PHP="${FICHIERS_GENERE}/logs_php"
 declare -r LOGS_NGINX="${FICHIERS_GENERE}/logs_nginx"
 declare -r CONF_PHP_GENERE="${FICHIERS_GENERE}/conf_php"
 declare -r LOGS_PHPUNIT="${FICHIERS_GENERE}/logs_phpunit"
+declare -r FICHIER_PORT_NGINX="${FICHIERS_GENERE}/port_nginx.conf"
 
 # fonction generer_chaine                   {{{
 generer_chaine()
@@ -395,6 +350,7 @@ generer_chaine()
             ch0="`date +%s`${$}${RANDOM}"
         else
             afficher_erreur "La commande" "date" "n'est pas disponible"
+            printf >&2 "\n"
             exit "${E_COMMANDE_INCONNUE}"
         fi
 
@@ -407,6 +363,7 @@ generer_chaine()
             ch1=`echo "${ch0}" | md5sum | md5sum`
         else
             afficher_erreur "Les commandes" "md5" "et" "md5sum" "ne sont pas disponible"
+            printf >&2 "\n"
             exit "${E_COMMANDE_INCONNUE}"
         fi
 
@@ -436,6 +393,7 @@ configurer_nom_mdp_bdd ()
         declare -r mdp_root="${2}"
     else
         afficher_erreur "Trop d'arguments"
+        printf >&2 "\n"
         exit "${E_CONFIG_MDP}"
     fi
 
@@ -465,6 +423,23 @@ configurer_chemin_absolu()
     separateur_section "Configuration du chemin absolu"
     printf >&2 "Génération du fichier de chemin absolu\n"
     printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
+    message_ok
+}
+
+# }}}
+
+# fonction configurer_port_serveur_nginx    {{{
+configurer_port_serveur_nginx()
+{
+    separateur_section "Configuration du port d'écoute du serveur nginx."
+    printf >&2 "Génération du fichier de numéro de port\n"
+    declare -i NUM_PORT=80
+    # Si erreur alors pas de processus qui utilise port 80
+    if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+    then
+        NUM_PORT=8080
+    fi
+    printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
     message_ok
 }
 
@@ -527,6 +502,7 @@ supprimer_fichier()
         else
             afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
         fi
     fi
@@ -556,6 +532,7 @@ supprimer_dossier()
         else
             afficher_erreur "Le dossier" "${dossier_cible}" "ne vous appartient pas"
             message_erreur
+            printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
         fi
     fi
@@ -566,10 +543,14 @@ supprimer_dossier()
 # fonction supprimer_logs_conf              {{{
 supprimer_logs_conf()
 {
+    separateur_section "Suppression des logs et configurations"
     supprimer_dossier "${LOGS_PHP}"
     supprimer_dossier "${LOGS_NGINX}"
     supprimer_dossier "${CONF_PHP_GENERE}"
     supprimer_dossier "${LOGS_PHPUNIT}"
+    supprimer_fichier "${FICHIER_PORT_NGINX}"
+    supprimer_fichier "${FICHIER_PATH_SOURCES}"
+    printf >&2 "\n"
 }
 
 # }}}
@@ -578,13 +559,11 @@ supprimer_logs_conf()
 supprimer_configuration()
 {
     separateur_section "Suppression configuration MYSQL"
-    printf >&2 "\n"
     supprimer_fichier "${FICHIER_MDP_ROOT_MYSQL}"
     supprimer_fichier "${FICHIER_NOM_MYSQL}"
     supprimer_fichier "${FICHIER_MDP_MYSQL}"
     supprimer_fichier "${FICHIER_BDD_MYSQL}"
     printf >&2 "\n"
-    supprimer_fichier "${FICHIER_PATH_SOURCES}"
 }
 
 # }}}
@@ -592,43 +571,72 @@ supprimer_configuration()
 # fonction supprimer_fichiers_mysql_genere  {{{
 supprimer_fichiers_mysql_genere()
 {
+    printf >&2 "\n"
+    separateur_section "Suppression de la BDD"
     if [[ -d "${FICHIERS_MYSQL}" ]]
     then
+        message_avertissement "Il est possible de réaliser une "
+        printf >&2 "sauvegarde des bases de données avant la suppression.\n"
+        printf >&2 "Pour effectuer celle-ci, annulez la suppression et lancez\n"
+        printf >&2 "manuellement la commande : ${C_SUR___NOIR} \$${C__JAUNE}make dump_bdd ${NEUTRE}\n"
         printf >&2 "\n"
-        separateur_section "Suppression de la BDD"
-        printf >&2 "\n"
+
         message_attention "Toute suppression est définitive !"
         if demander_utilisateur "Voulez vous supprimer les BDD déjà configuré par MySql ?"
         then
             printf >&2 "\n"
-            message_avertissement "Vous pouvez sauvegarder les BDD avant de les supprimer."
-            if demander_utilisateur "Voulez vous sauvegarder les données avant suppression ?"
-            then
-                printf >&2 "Dump de la BDD en cours\n"
-                make dump_bdd
-                message_ok
-            else
-                message_avertissement "Pas de sauvegarde"
-            fi
-            printf >&2 "\n"
-            printf >&2 "Suppression du dossier ${M_GRAS}${C_VIOLET}"
-            printf >&2 "${FICHIERS_MYSQL} ${NEUTRE}\n"
             supprimer_dossier "${FICHIERS_MYSQL}"
         else
             printf >&2 "\n"
-            message_avertissement "Suppression annulée"
-            printf >&2 "Les bases de données actuelles seront conservées\n"
-            printf >&2 "Ainsi que les fichiers de configurations de MySql\n"
+            printf >&2 "Suppression annulée.\n"
+            printf >&2 "Les bases de données actuelles seront conservées,\n"
+            printf >&2 "ainsi que les fichiers de configurations de MySql\n"
             return 1
         fi
     else
         printf >&2 "Pas de BDD à supprimer\n"
-        printf >&2 "\n"
+        message_ok
     fi
     return 0
 }
 
 # }}}
+
+# fonction verifier_logiciels_installe      {{{
+verifier_logiciels_installe()
+{
+    if ! test_cmd_exist docker
+    then
+        message_erreur "Configuration inutilisable"
+        printf >&2 "${C_VIOLET}${M_GRAS}Docker ${C__ROUGE}n'est pas installé sur "
+        printf >&2 "votre système ! \nLes différents serveur ne pourront pas être"
+        printf >&2 " lancé.${NEUTRE}\n"
+        printf >&2 "\n"
+        exit "${E_PROG_DOCKER_ABSENT}"
+    fi
+
+    # Vérifie l'existence de la commande make
+    if test_cmd_exist make
+    then
+        # Vérifie le numéro de version de make
+        if ! make -v | grep -q "GNU Make 4.*" 2>/dev/null
+        then
+            message_avertissement "GNUmake n'est pas installé."
+            printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
+            printf >&2 "GNUmake 4.x est recommandé pour exécuter les makefile.\n"
+            printf >&2 "\n"
+        fi
+    else
+        message_erreur "Le lancement du serveur ne pourra pas se faire"
+        printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
+        printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
+        printf >&2 "pour continuer.${NEUTRE}\n"
+        printf >&2 "\n"
+        exit "${E_PROG_MAKE_ABSENT}"
+    fi
+}
+
+#}}}
 
 # fonction générales de fonctionnement      {{{
 separateur_section()
@@ -644,12 +652,7 @@ message_ok()
 message_erreur()
 {
     printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} ERREUR ${NEUTRE} "
-    if [[ "${#}" -gt 0 ]]
-    then
-        echo >&2 "${*}"
-    else
-        printf >&2 "\n"
-    fi
+    [[ "${#}" -gt 0 ]] && echo >&2 "${*}" || printf >&2 "\n"
 }
 
 message_attention()
@@ -669,7 +672,7 @@ demander_utilisateur()
     printf >&2 "${1} (o/n)\n"
     while read -r -n 1 -s reponse
     do
-        [[ "${reponse}" = [Oo] ]] && return 0
+        [[ "${reponse}" = [OoYy] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
     done
 }
@@ -680,12 +683,12 @@ demander_utilisateur()
 afficher_aide()
 {
     declare -r NOM_SCRIPT=`basename "${0}"`
-    printf "${NOM_SCRIPT} [-hc][-p mdp_root_mysql]\n"
-    printf "    -h --help\n        Affiche l'aide et quitte\n"
-    printf "    -p --password\n        Permet de régler le mot "
-    printf "de passe root de mysql\n"
-    printf "    -c --clean\n        Supprime tout les fichiers "
-    printf "généré automatiquement\n"
+    printf >&2 "${NOM_SCRIPT} [-hc][-p mdp_root_mysql]\n"
+    printf >&2 "    -h --help\n        Affiche l'aide et quitte\n"
+    printf >&2 "    -p --password\n        Permet de régler le mot "
+    printf >&2 "de passe root de mysql\n"
+    printf >&2 "    -c --clean\n        Supprime tout les fichiers "
+    printf >&2 "généré automatiquement\n"
 }
 
 traitement_option_p()
@@ -702,8 +705,7 @@ traitement_option_p()
 # {{{            Gestion des options               #
 ####################################################
 
-declare OPTION_MDP_ROOT=""
-declare CLEAN="keep"
+OPTION_MDP_ROOT="" CLEAN="keep"
 
 #  Affiche l'aide si aucun arguments n'est donné
 #if [[ "${#}" -eq 3 ]]
@@ -787,33 +789,7 @@ fi
 #                   Exécution                     #
 ###################################################
 
-if ! test_cmd_exist docker
-then
-    message_erreur "Configuration inutilisable"
-    printf >&2 "${C_VIOLET}${M_GRAS}Docker ${C__ROUGE}n'est pas installé sur "
-    printf >&2 "votre système ! \nLes différents serveur ne pourront pas être"
-    printf >&2 " lancé.${NEUTRE}\n"
-    exit "${E_PROG_DOCKER_ABSENT}"
-fi
-
-# Vérifie l'existence de la commande make
-if test_cmd_exist make
-then
-    # Vérifie le numéro de version de make
-    if ! make -v | grep -q "GNU Make 4.*" 2>/dev/null
-    then
-        message_avertissement "GNUmake n'est pas installé."
-        printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
-        printf >&2 "GNUmake 4.x est recommandé pour exécuter les makefile.\n"
-        printf >&2 "\n"
-    fi
-else
-    message_erreur "Le lancement du serveur ne pourra pas se faire"
-    printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
-    printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
-    printf >&2 "pour continuer.${NEUTRE}\n"
-    exit "${E_PROG_MAKE_ABSENT}"
-fi
+verifier_logiciels_installe
 
 # Suppression de tous les fichiers généré
 if [[ "${CLEAN}" == "clean" ]]
@@ -825,31 +801,30 @@ then
         message_attention "Vous allez supprimer la configuration générée aléatoirement"
         if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
         then
-            printf >&2 "\n"
-            supprimer_logs_conf
             if supprimer_fichiers_mysql_genere
             then
                 printf >&2 "\n"
                 supprimer_configuration
-                if rm -r -- "${FICHIERS_GENERE}"
-                then
-                    exit "${EXIT_SUCCES}"
-                else
-                    message_erreur "Le dossier de fichier généré n'a pas pu être supprimé"
-                    exit "${E_ANNULATION}"
-                fi
+                supprimer_logs_conf
+                separateur_section "Suppression du dossier Docker"
+                supprimer_dossier "${FICHIERS_GENERE}"
+                printf >&2 "\n"
+                exit "${EXIT_SUCCES}"
             else
-                message_avertissement "Suppression annulée"
+                printf >&2 "\n"
                 exit "${E_ANNULATION}"
             fi
+            printf >&2 "\n"
         else
             printf >&2 "\n"
-            message_avertissement "Suppression annulé"
+            printf >&2 "Suppression annulé\n"
+            printf >&2 "\n"
             exit "${E_ANNULATION}"
         fi
     else
         printf >&2 "Aucun fichier généré à supprimer\n"
         message_ok
+        printf >&2 "\n"
         exit "${EXIT_SUCCES}"
     fi
 fi
@@ -868,7 +843,8 @@ else
         printf >&2 "\n"
     else
         printf >&2 "\n"
-        message_avertissement "Génération annulée"
+        printf >&2 "Génération annulée\n"
+        printf >&2 "\n"
         exit "${E_ANNULATION}"
     fi
 fi
@@ -876,15 +852,16 @@ fi
 configurer_chemin_absolu
 printf >&2 "\n"
 
+configurer_port_serveur_nginx
+printf >&2 "\n"
+
 GENERER='n'
 # Si MySql à déjà généré une BDD on demande à l'utilisateur si il veut
 # la supprimer
 if [[ -d "${FICHIERS_MYSQL}" ]]
 then
-    message_attention "MySql à déjà configuré une BDD avec un utilisateur"
-    printf >&2 "Pour pouvoir générer à nouveau la configuration \n"
-    printf >&2 "MySql vous devez supprimer la BDD actuelle.\n"
-    printf >&2 "Il vous sera demandé de la sauvegarder avant.\n"
+    message_attention "MySql a déjà configuré une BDD pour un utilisateur."
+    printf >&2 "Pour pouvoir générer une nouvelle configuration vous devez supprimer la BDD actuelle.\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
         if supprimer_fichiers_mysql_genere
@@ -893,7 +870,7 @@ then
         fi
     else
         printf >&2 "\n"
-        message_avertissement "La configuration MySql ne sera pas re-générée"
+        printf >&2 "La configuration MySql ne sera pas re-générée\n"
     fi
     printf >&2 "\n"
 else

@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Jeudi 03 août[08] 2017
+# Dernière modification : Mercredi 23 août[08] 2017
 
 # On notifie si le mot de passe de MySql a été changé
 ifeq ($(Mysql_Mdp_Root), mdptropbiensecuretavumagueule)
@@ -22,4 +22,87 @@ endif
 
 ifeq ($(Mysql_Nom_Bdd), )
     $(error "Vous devez configurer un nom de BDD pour MySql avec ./configure")
+endif
+
+# ------------------------------------------------------- #
+# Vérifie si les containers sont construit ou en fonction #
+# ------------------------------------------------------- #
+
+# Vérifie si l'image MySql tourne
+ifeq ($(shell docker ps --quiet --filter "name=$(Mysql_Nom_Container)" ), )
+    ifeq ($(shell docker ps --quiet --all --filter "name=$(Mysql_Nom_Container)"), )
+        #$(info "Le container MySql sera construit.")
+        Start_Ou_Run_Mysql	= run_mysql
+    else
+        #$(info "La machine MySql sera démarrée depuis le container existant.")
+        Start_Ou_Run_Mysql	= start_mysql
+        EXISTE_MYSQL="err"
+    endif
+else
+    Start_Ou_Run_Mysql	= info_mysql
+    ERROR_MYSQL="err"
+endif
+
+# Vérifie si l'image PHP tourne
+ifeq ($(shell docker ps --quiet --filter "name=$(Php_Nom_Container)" ), )
+    ifeq ($(shell docker ps --quiet --all --filter "name=$(Php_Nom_Container)"), )
+        #$(info "Le container PHP sera construit.")
+        Start_Ou_Run_Php	= run_php
+    else
+        #$(info "La machine PHP sera démarrée depuis le container existant.")
+        Start_Ou_Run_Php	= start_php
+        EXISTE_PHP="err"
+    endif
+else
+    Start_Ou_Run_Php	= info_php
+    ERROR_PHP="err"
+endif
+
+# Vérifie si l'image NginX tourne
+ifeq ($(shell docker ps --quiet --filter "name=$(Nginx_Nom_Container)" ), )
+    ifeq ($(shell docker ps --quiet --all --filter "name=$(Nginx_Nom_Container)"), )
+        #$(info "Le container NginX sera construit.")
+        Start_Ou_Run_Nginx	= run_nginx
+    else
+        #$(info "La machine NginX sera démarrée depuis le container existant.")
+        Start_Ou_Run_Nginx	= start_nginx
+        EXISTE_NGINX="err"
+    endif
+else
+    Start_Ou_Run_Nginx	= info_nginx
+    ERROR_NGINX="err"
+endif
+
+# -------------------------------------------------------- #
+# Vérifie l'état des containers avant de permettre les run #
+# -------------------------------------------------------- #
+
+# Vérifie si le container MySql est déjà lancé
+.PHONY: verifier_mysql
+verifier_mysql:
+ifdef ERROR_MYSQL
+	$(error "Un container MySql est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_MYSQL
+	$(error "Un container MySql a déjà été construit.")
+endif
+
+# Vérifie si le container PHP est déjà lancé
+.PHONY: verifier_php
+verifier_php:
+ifdef ERROR_PHP
+	$(error "Un container PHP est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_PHP
+	$(error "Un container PHP a dèjà été construit.")
+endif
+
+# Vérifie si le container NginX est déjà lancé
+.PHONY: verifier_nginx
+verifier_nginx:
+ifdef ERROR_NGINX
+	$(error "Un container NginX est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_NGINX
+	$(error "Un container NginX a déjà été construit.")
 endif

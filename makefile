@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mercredi 16 août[08] 2017
+# Dernière modification : Samedi 26 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -9,15 +9,11 @@ SHELL		= /bin/sh
 
 srcdir		= .
 
-# Stoppe toutes les machines virtuelles en cours.
-.PHONY: stop
-stop:
-	-docker stop `docker ps --quiet`
-
-# Stoppe les machines virtuel et les supprimes toutes
-.PHONY: clean
-clean: stop
-	-docker rm --force --volumes `docker ps --all --quiet`
+# Supprime les containers qui ont été stoppé et les images intermédiaires
+.PHONY: nettoyage
+nettoyage:
+	-docker rm --volumes `docker ps --all --quiet --filter "status=exited"`
+	-docker rmi `docker images --quiet --filter "dangling=true"`
 
 ifeq ($(wildcard Docker/*), )
     $(error "Vous devez générer la configuration avec ./configure")
@@ -28,21 +24,53 @@ include ./makefile.conf
 # Vérifications automatique de la configuration
 include ./makefile.checks
 
+# Stoppe toutes les machines virtuelles en cours.
+.PHONY: stop
+stop:
+	-docker stop $(Nginx_Nom_Container)
+	-docker stop $(Php_Nom_Container)
+	-docker stop $(Mysql_Nom_Container)
+
+# Stoppe les machines virtuel et les supprimes toutes
+.PHONY: clean
+clean: stop
+	-docker rm --force --volumes $(Nginx_Nom_Container)
+	-docker rm --force --volumes $(Php_Nom_Container)
+	-docker rm --force --volumes $(Mysql_Nom_Container)
+
 .PHONY: all
-all: run
+all: run_ou_start
+
+.PHONY: run_ou_start
+run_ou_start: $(Start_Ou_Run_Mysql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
+
+# Affiche un avertissement si les docker sont déjà en cours d'exécution
+.PHONY: info_mysql
+info_mysql:
+	$(warning "Le container MySql est déjà en cours d'exécution.")
+
+.PHONY: info_php
+info_php:
+	$(warning "Le container  PHP  est déjà en cours d'exécution.")
+
+.PHONY: info_nginx
+info_nginx:
+	$(warning "Le container NginX est déjà en cours d'exécution.")
+
+# --------------------------------- #
 
 .PHONY: run
 run: run_mysql run_php run_nginx
-
-# Permet de redémarrer seulement le container nginx
-.PHONY: restart_nginx
-restart_nginx: stop_nginx run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
 .PHONY: reload
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
+
+# ---------------------------------------- #
+# Construction et démarrage des conteneurs #
+# ---------------------------------------- #
 
 # La construction de l'image n'est lancée que si elle n'existe pas.
 .PHONY: construire_php
@@ -51,10 +79,6 @@ ifeq ($(shell docker images -q $(Nom_Php_Construit) ), )
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
 endif
 
-# ---------------------------------------- #
-# Construction et démarrage des conteneurs #
-# ---------------------------------------- #
-
 # Démarrage de la BDD avec une configuration particulière :
 # - un mdp pour root
 # - Une base de données
@@ -62,7 +86,7 @@ endif
 # - le mot de passe de cet utilisateur
 # - Les scripts pour peupler la BDD
 .PHONY: run_mysql
-run_mysql:
+run_mysql: verifier_mysql
 	docker run --detach \
 		--publish $(Mysql_Port_Exterieur):$(Mysql_Port_Interne) \
 		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
@@ -82,17 +106,17 @@ run_mysql:
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
 .PHONY: run_php
-run_php: construire_php
+run_php: verifier_php construire_php
 	docker run --detach \
 		--publish $(Php_Port_Exterieur):$(Php_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
-		-v $(Php_Volume_Ext):$(Php_Volume_Int):ro \
+		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
 		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
 		-v $(Php_Php_Ini_Externe):$(Php_Php_Ini_Interne):ro \
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
 		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
-		--name $(Php_Nom_Container) $(Nom_Php_Construit)
+		--name $(Php_Nom_Container) $(Nom_Php_Construit):latest
 	@echo "──────────────────────────────────"
 	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
 	@echo "──────────────────────────────────"
@@ -101,13 +125,14 @@ run_php: construire_php
 # un accès au sources du site; et des logs accessible sans avoir à
 # se connecter au docker.
 .PHONY: run_nginx
-run_nginx:
+run_nginx: verifier_nginx
 	docker run --detach \
 		--publish $(Nginx_Port_Externe):$(Nginx_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Nginx_Site_Externe):$(Nginx_Site_Interne):ro \
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
+		-v $(Nginx_Conf_Global_Ext):$(Nginx_Conf_Global_Int):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
@@ -125,14 +150,23 @@ start: start_mysql start_php start_nginx
 
 .PHONY: start_mysql
 start_mysql:
+	@echo "──────────────────"
+	@echo "Démarrage de MySql"
+	@echo "──────────────────"
 	docker start $(Mysql_Nom_Container)
 
 .PHONY: start_php
 start_php:
+	@echo "────────────────"
+	@echo "Démarrage de PHP"
+	@echo "────────────────"
 	docker start $(Php_Nom_Container)
 
 .PHONY: start_nginx
 start_nginx:
+	@echo "──────────────────"
+	@echo "Démarrage de NginX"
+	@echo "──────────────────"
 	docker start $(Nginx_Nom_Container)
 
 # ------------------------------------- #
@@ -181,7 +215,7 @@ logs_nginx:
 unitaire_php:
 	docker run --rm \
 		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
-		-v $(PhpUnit_Src_Externe):$(PhpUnit_Src_Interne):ro \
+		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
 		phpunit/phpunit -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
@@ -209,6 +243,7 @@ generer_doc: construire_doc
 		$(Nom_Doc_Php_Construit) -c $(Documentation_Src_Int)/phpdoc.xml
 	@echo "───────────────────────────"
 	@echo "Documentation généré dans : [$(Documentation_Res_Ext)]"
+	@echo "Page d'accueil : file://$(Documentation_Res_Ext)/index.html"
 	@echo "───────────────────────────"
 
 # --------------------------------- #
@@ -216,12 +251,7 @@ generer_doc: construire_doc
 # Permet de créer un dump des bases de données
 .PHONY: dump_bdd
 dump_bdd:
+	mkdir -p $(Chemin_Repo)/Dump_BDD/
 	docker exec $(Mysql_Nom_Container) sh -c \
-		'exec mysqldump --all-databases -uroot -p"$(Mysql_Mdp_Root)"' \
+		'exec mysqldump --databases $(Mysql_Nom_Bdd) -uroot -p"$(Mysql_Mdp_Root)"' \
 		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
-
-# Stop proprement le container nginx le supprime ainsi que son volume lié
-.PHONY: stop_nginx
-stop_nginx:
-	-docker stop $(Nginx_Nom_Container)
-	-docker rm --volumes $(Nginx_Nom_Container)
