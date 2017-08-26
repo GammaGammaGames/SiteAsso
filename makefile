@@ -9,20 +9,6 @@ SHELL		= /bin/sh
 
 srcdir		= .
 
-# Stoppe toutes les machines virtuelles en cours.
-.PHONY: stop
-stop:
-	-docker stop $(Nginx_Nom_Container)
-	-docker stop $(Php_Nom_Container)
-	-docker stop $(Mysql_Nom_Container)
-
-# Stoppe les machines virtuel et les supprimes toutes
-.PHONY: clean
-clean: stop
-	-docker rm --force --volumes $(Nginx_Nom_Container)
-	-docker rm --force --volumes $(Php_Nom_Container)
-	-docker rm --force --volumes $(Mysql_Nom_Container)
-
 # Supprime les containers qui ont été stoppé et les images intermédiaires
 .PHONY: nettoyage
 nettoyage:
@@ -37,6 +23,20 @@ endif
 include ./makefile.conf
 # Vérifications automatique de la configuration
 include ./makefile.checks
+
+# Stoppe toutes les machines virtuelles en cours.
+.PHONY: stop
+stop:
+	-docker stop $(Nginx_Nom_Container)
+	-docker stop $(Php_Nom_Container)
+	-docker stop $(Mysql_Nom_Container)
+
+# Stoppe les machines virtuel et les supprimes toutes
+.PHONY: clean
+clean: stop
+	-docker rm --force --volumes $(Nginx_Nom_Container)
+	-docker rm --force --volumes $(Php_Nom_Container)
+	-docker rm --force --volumes $(Mysql_Nom_Container)
 
 .PHONY: all
 all: run_ou_start
