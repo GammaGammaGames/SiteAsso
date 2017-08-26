@@ -323,6 +323,7 @@ declare -r LOGS_PHP="${FICHIERS_GENERE}/logs_php"
 declare -r LOGS_NGINX="${FICHIERS_GENERE}/logs_nginx"
 declare -r CONF_PHP_GENERE="${FICHIERS_GENERE}/conf_php"
 declare -r LOGS_PHPUNIT="${FICHIERS_GENERE}/logs_phpunit"
+declare -r FICHIER_PORT_NGINX="${FICHIERS_GENERE}/port_nginx.conf"
 
 # fonction generer_chaine                   {{{
 generer_chaine()
@@ -422,6 +423,17 @@ configurer_chemin_absolu()
     separateur_section "Configuration du chemin absolu"
     printf >&2 "Génération du fichier de chemin absolu\n"
     printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
+    message_ok
+}
+
+# }}}
+
+# fonction configurer_port_serveur_nginx    {{{
+configurer_port_serveur_nginx()
+{
+    separateur_section "Configuration du port d'écoute du serveur nginx."
+    printf >&2 "Génération du fichier de numéro de port\n"
+    printf "80" > "${FICHIER_PORT_NGINX}"
     message_ok
 }
 
@@ -530,6 +542,7 @@ supprimer_logs_conf()
     supprimer_dossier "${LOGS_NGINX}"
     supprimer_dossier "${CONF_PHP_GENERE}"
     supprimer_dossier "${LOGS_PHPUNIT}"
+    supprimer_fichier "${FICHIER_PORT_NGINX}"
     supprimer_fichier "${FICHIER_PATH_SOURCES}"
     printf >&2 "\n"
 }
@@ -831,6 +844,9 @@ else
 fi
 
 configurer_chemin_absolu
+printf >&2 "\n"
+
+configurer_port_serveur_nginx
 printf >&2 "\n"
 
 GENERER='n'
