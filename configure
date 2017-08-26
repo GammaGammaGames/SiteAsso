@@ -631,7 +631,7 @@ demander_utilisateur()
     printf >&2 "${1} (o/n)\n"
     while read -r -n 1 -s reponse
     do
-        [[ "${reponse}" = [Oo] ]] && return 0
+        [[ "${reponse}" = [OoYy] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
     done
 }
