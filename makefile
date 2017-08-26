@@ -23,6 +23,12 @@ clean: stop
 	-docker rm --force --volumes $(Php_Nom_Container)
 	-docker rm --force --volumes $(Mysql_Nom_Container)
 
+# Supprime les containers qui ont été stoppé et les images intermédiaires
+.PHONY: nettoyage
+nettoyage:
+	-docker rm --volumes `docker ps --all --quiet --filter "status=exited"`
+	-docker rmi `docker images --quiet --filter "dangling=true"`
+
 ifeq ($(wildcard Docker/*), )
     $(error "Vous devez générer la configuration avec ./configure")
 endif
