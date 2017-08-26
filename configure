@@ -349,6 +349,7 @@ generer_chaine()
             ch0="`date +%s`${$}${RANDOM}"
         else
             afficher_erreur "La commande" "date" "n'est pas disponible"
+            printf >&2 "\n"
             exit "${E_COMMANDE_INCONNUE}"
         fi
 
@@ -361,6 +362,7 @@ generer_chaine()
             ch1=`echo "${ch0}" | md5sum | md5sum`
         else
             afficher_erreur "Les commandes" "md5" "et" "md5sum" "ne sont pas disponible"
+            printf >&2 "\n"
             exit "${E_COMMANDE_INCONNUE}"
         fi
 
@@ -390,6 +392,7 @@ configurer_nom_mdp_bdd ()
         declare -r mdp_root="${2}"
     else
         afficher_erreur "Trop d'arguments"
+        printf >&2 "\n"
         exit "${E_CONFIG_MDP}"
     fi
 
@@ -481,6 +484,7 @@ supprimer_fichier()
         else
             afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas"
             message_erreur
+            printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
         fi
     fi
@@ -510,6 +514,7 @@ supprimer_dossier()
         else
             afficher_erreur "Le dossier" "${dossier_cible}" "ne vous appartient pas"
             message_erreur
+            printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
         fi
     fi
@@ -520,10 +525,13 @@ supprimer_dossier()
 # fonction supprimer_logs_conf              {{{
 supprimer_logs_conf()
 {
+    separateur_section "Suppression des logs et configurations"
     supprimer_dossier "${LOGS_PHP}"
     supprimer_dossier "${LOGS_NGINX}"
     supprimer_dossier "${CONF_PHP_GENERE}"
     supprimer_dossier "${LOGS_PHPUNIT}"
+    supprimer_fichier "${FICHIER_PATH_SOURCES}"
+    printf >&2 "\n"
 }
 
 # }}}
@@ -532,13 +540,11 @@ supprimer_logs_conf()
 supprimer_configuration()
 {
     separateur_section "Suppression configuration MYSQL"
-    printf >&2 "\n"
     supprimer_fichier "${FICHIER_MDP_ROOT_MYSQL}"
     supprimer_fichier "${FICHIER_NOM_MYSQL}"
     supprimer_fichier "${FICHIER_MDP_MYSQL}"
     supprimer_fichier "${FICHIER_BDD_MYSQL}"
     printf >&2 "\n"
-    supprimer_fichier "${FICHIER_PATH_SOURCES}"
 }
 
 # }}}
@@ -546,6 +552,8 @@ supprimer_configuration()
 # fonction supprimer_fichiers_mysql_genere  {{{
 supprimer_fichiers_mysql_genere()
 {
+    printf >&2 "\n"
+    separateur_section "Suppression de la BDD"
     if [[ -d "${FICHIERS_MYSQL}" ]]
     then
         printf >&2 "\n"
@@ -577,7 +585,7 @@ supprimer_fichiers_mysql_genere()
         fi
     else
         printf >&2 "Pas de BDD à supprimer\n"
-        printf >&2 "\n"
+        message_ok
     fi
     return 0
 }
@@ -656,8 +664,7 @@ traitement_option_p()
 # {{{            Gestion des options               #
 ####################################################
 
-declare OPTION_MDP_ROOT=""
-declare CLEAN="keep"
+OPTION_MDP_ROOT="" CLEAN="keep"
 
 #  Affiche l'aide si aucun arguments n'est donné
 #if [[ "${#}" -eq 3 ]]
@@ -796,14 +803,17 @@ then
                 message_avertissement "Suppression annulée"
                 exit "${E_ANNULATION}"
             fi
+            printf >&2 "\n"
         else
             printf >&2 "\n"
             message_avertissement "Suppression annulé"
+            printf >&2 "\n"
             exit "${E_ANNULATION}"
         fi
     else
         printf >&2 "Aucun fichier généré à supprimer\n"
         message_ok
+        printf >&2 "\n"
         exit "${EXIT_SUCCES}"
     fi
 fi
@@ -823,6 +833,7 @@ else
     else
         printf >&2 "\n"
         message_avertissement "Génération annulée"
+        printf >&2 "\n"
         exit "${E_ANNULATION}"
     fi
 fi
