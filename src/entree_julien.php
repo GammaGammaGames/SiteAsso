@@ -47,7 +47,6 @@ try
     if ($requete != "")
     {
         $val = explode ("/", $requete);
-    var_dump( $val );
 
         $nb_arg = count( $val );
         if ($nb_arg >= 1)
@@ -60,8 +59,13 @@ try
         }
     }
 
+    $debut = $_SERVER["HTTP_HOST"];
+    $debut_adresse = "http://$debut";
     if ($affichage === "complet")
     {
+        echo ("<ul>");
+        echo ("    <li><a href='$debut_adresse/' >Accueil</a>");
+        echo ("</ul>");
         $tableau = $s->fetchAll();
 
         foreach ($tableau as $e)
@@ -73,6 +77,9 @@ try
     }
     elseif ($affichage === "position")
     {
+        echo ("<ul>");
+        echo ("    <li><a href='$debut_adresse/' >Accueil</a>");
+        echo ("</ul>");
         $tableau = $s->fetchAll();
         echo ("<p>");
         var_dump ($tableau[$pos]);
@@ -80,17 +87,26 @@ try
     }
     elseif ($affichage === "jolie")
     {
+        echo ("<ul>");
+        echo ("    <li><a href='$debut_adresse/' >Accueil</a>");
+        echo ("</ul>");
         $s->fetchAll( PDO::FETCH_FUNC, "afficher_base" );
     }
-    else
+    elseif ($affichage === "")
     {
-        $debut = $_SERVER["HTTP_HOST"];
-        $debut_adresse = "http://$debut";
         echo ("<ul>");
         echo ("    <li><a href='$debut_adresse/complet' >var dump de la base</a></li>");
         echo ("    <li><a href='$debut_adresse/position/6' >Afficher item 6</a></li>");
         echo ("    <li><a href='$debut_adresse/jolie' >Affichage lisible</a></li>");
+        echo ("    <li><a href='$debut_adresse/iebfzej' >Page inconnue</a></li>");
         echo ("</ul>");
+    }
+    else
+    {
+        echo ("<ul>");
+        echo ("    <li><a href='$debut_adresse/' >Accueil</a>");
+        echo ("</ul>");
+        echo( "<h1>404</h1>" );
     }
 
 }
