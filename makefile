@@ -232,6 +232,7 @@ generer_doc: construire_doc
 # Permet de créer un dump des bases de données
 .PHONY: dump_bdd
 dump_bdd:
+	mkdir -p $(Chemin_Repo)/Dump_BDD/
 	docker exec $(Mysql_Nom_Container) sh -c \
-		'exec mysqldump --all-databases -uroot -p"$(Mysql_Mdp_Root)"' \
+		'exec mysqldump --databases $(Mysql_Nom_Bdd) -uroot -p"$(Mysql_Mdp_Root)"' \
 		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
