@@ -213,6 +213,7 @@ generer_doc: construire_doc
 		$(Nom_Doc_Php_Construit) -c $(Documentation_Src_Int)/phpdoc.xml
 	@echo "───────────────────────────"
 	@echo "Documentation généré dans : [$(Documentation_Res_Ext)]"
+	@echo "Page d'accueil : file://$(Documentation_Res_Ext)/index.html"
 	@echo "───────────────────────────"
 
 # --------------------------------- #
