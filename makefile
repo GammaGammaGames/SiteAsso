@@ -50,16 +50,16 @@ run: run_mysql run_php run_nginx
 reload:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
+# ---------------------------------------- #
+# Construction et démarrage des conteneurs #
+# ---------------------------------------- #
+
 # La construction de l'image n'est lancée que si elle n'existe pas.
 .PHONY: construire_php
 construire_php:
 ifeq ($(shell docker images -q $(Nom_Php_Construit) ), )
 	docker build --tag $(Nom_Php_Construit) $(srcdir)/Fichiers_Configuration
 endif
-
-# ---------------------------------------- #
-# Construction et démarrage des conteneurs #
-# ---------------------------------------- #
 
 # Démarrage de la BDD avec une configuration particulière :
 # - un mdp pour root
@@ -98,7 +98,7 @@ run_php: construire_php
 		-v $(Php_Php_Ini_Externe):$(Php_Php_Ini_Interne):ro \
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
 		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
-		--name $(Php_Nom_Container) $(Nom_Php_Construit)
+		--name $(Php_Nom_Container) $(Nom_Php_Construit):latest
 	@echo "──────────────────────────────────"
 	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
 	@echo "──────────────────────────────────"
@@ -131,14 +131,23 @@ start: start_mysql start_php start_nginx
 
 .PHONY: start_mysql
 start_mysql:
+	@echo "──────────────────"
+	@echo "Démarrage de MySql"
+	@echo "──────────────────"
 	docker start $(Mysql_Nom_Container)
 
 .PHONY: start_php
 start_php:
+	@echo "────────────────"
+	@echo "Démarrage de PHP"
+	@echo "────────────────"
 	docker start $(Php_Nom_Container)
 
 .PHONY: start_nginx
 start_nginx:
+	@echo "──────────────────"
+	@echo "Démarrage de NginX"
+	@echo "──────────────────"
 	docker start $(Nginx_Nom_Container)
 
 # ------------------------------------- #
