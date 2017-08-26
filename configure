@@ -642,12 +642,12 @@ demander_utilisateur()
 afficher_aide()
 {
     declare -r NOM_SCRIPT=`basename "${0}"`
-    printf "${NOM_SCRIPT} [-hc][-p mdp_root_mysql]\n"
-    printf "    -h --help\n        Affiche l'aide et quitte\n"
-    printf "    -p --password\n        Permet de régler le mot "
-    printf "de passe root de mysql\n"
-    printf "    -c --clean\n        Supprime tout les fichiers "
-    printf "généré automatiquement\n"
+    printf >&2 "${NOM_SCRIPT} [-hc][-p mdp_root_mysql]\n"
+    printf >&2 "    -h --help\n        Affiche l'aide et quitte\n"
+    printf >&2 "    -p --password\n        Permet de régler le mot "
+    printf >&2 "de passe root de mysql\n"
+    printf >&2 "    -c --clean\n        Supprime tout les fichiers "
+    printf >&2 "généré automatiquement\n"
 }
 
 traitement_option_p()
