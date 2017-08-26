@@ -132,6 +132,7 @@ run_nginx: verifier_nginx
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Nginx_Site_Externe):$(Nginx_Site_Interne):ro \
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
+		-v $(Nginx_Conf_Global_Ext):$(Nginx_Conf_Global_Int):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
 		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \

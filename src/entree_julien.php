@@ -47,14 +47,15 @@ try
     if ($requete != "")
     {
         $val = explode ("/", $requete);
+    var_dump( $val );
 
         $nb_arg = count( $val );
         if ($nb_arg >= 1)
         {
-            $affichage = $val[0];
+            $affichage = $val[1];
             if ($affichage === "position" and $nb_arg >= 2)
             {
-                $pos = $val[1];
+                $pos = $val[2];
             }
         }
     }
@@ -84,7 +85,7 @@ try
     else
     {
         $debut = $_SERVER["HTTP_HOST"];
-        $debut_adresse = "http://$debut/gamma";
+        $debut_adresse = "http://$debut";
         echo ("<ul>");
         echo ("    <li><a href='$debut_adresse/complet' >var dump de la base</a></li>");
         echo ("    <li><a href='$debut_adresse/position/6' >Afficher item 6</a></li>");
@@ -93,7 +94,7 @@ try
     }
 
 }
-catch(PDOException $e) {
+catch(Exception $e) {
     $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
     die($msg);
 }
