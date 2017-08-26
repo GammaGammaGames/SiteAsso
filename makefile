@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mercredi 16 août[08] 2017
+# Dernière modification : Samedi 26 août[08] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -12,12 +12,16 @@ srcdir		= .
 # Stoppe toutes les machines virtuelles en cours.
 .PHONY: stop
 stop:
-	-docker stop `docker ps --quiet`
+	-docker stop $(Nginx_Nom_Container)
+	-docker stop $(Php_Nom_Container)
+	-docker stop $(Mysql_Nom_Container)
 
 # Stoppe les machines virtuel et les supprimes toutes
 .PHONY: clean
 clean: stop
-	-docker rm --force --volumes `docker ps --all --quiet`
+	-docker rm --force --volumes $(Nginx_Nom_Container)
+	-docker rm --force --volumes $(Php_Nom_Container)
+	-docker rm --force --volumes $(Mysql_Nom_Container)
 
 ifeq ($(wildcard Docker/*), )
     $(error "Vous devez générer la configuration avec ./configure")
