@@ -433,7 +433,13 @@ configurer_port_serveur_nginx()
 {
     separateur_section "Configuration du port d'écoute du serveur nginx."
     printf >&2 "Génération du fichier de numéro de port\n"
-    printf "80" > "${FICHIER_PORT_NGINX}"
+    declare -i NUM_PORT=80
+    # Si erreur alors pas de processus qui utilise port 80
+    if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+    then
+        NUM_PORT=8080
+    fi
+    printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
     message_ok
 }
 
