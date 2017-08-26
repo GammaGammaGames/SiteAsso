@@ -1,9 +1,9 @@
 <?php
-// Dernière modification : Jeudi 24 août[08] 2017
+// Dernière modification : Samedi 26 août[08] 2017
 
 declare( strict_types = 1 );
 
-include_once "/src/modele/Representation/Tournoi.php";
+include_once "/var/www/html/modele/Representation/Tournoi.php";
 
 use Modele\Representation\Evenement;
 use Modele\Representation\Adresse;

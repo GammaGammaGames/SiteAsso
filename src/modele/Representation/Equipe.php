@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Vendredi 25 août[08] 2017
+// Dernière modification : Samedi 26 août[08] 2017
 
 /**
  * Contient la représentation d'une équipe.
@@ -13,9 +13,9 @@ declare( strict_types = 1 );
 
 namespace Modele\Representation;
 
-include_once "/src/modele/Representation/RepresentationAvecId.php";
-include_once "/src/modele/Representation/Joueur.php";
-include_once "/src/modele/Representation/Tournoi.php";
+include_once "/var/www/html/modele/Representation/RepresentationAvecId.php";
+include_once "/var/www/html/modele/Representation/Joueur.php";
+include_once "/var/www/html/modele/Representation/Tournoi.php";
 
 /**
  * Représente une équipe avec son capitaine et ses joueurs.

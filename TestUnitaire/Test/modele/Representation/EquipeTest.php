@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Vendredi 25 août[08] 2017
+// Dernière modification : Samedi 26 août[08] 2017
 
 /**
  * Tests unitaires de la classe Equipe
@@ -11,7 +11,7 @@
 
 declare( strict_types = 1 );
 
-include_once "/src/modele/Representation/Equipe.php";
+include_once "/var/www/html/modele/Representation/Equipe.php";
 
 use Modele\Representation\Equipe;
 use Modele\Representation\Joueur;

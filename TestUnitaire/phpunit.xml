@@ -31,11 +31,11 @@
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
-            <directory suffix = ".php">/src</directory>
+            <directory suffix = ".php">/var/www/html</directory>
             <exclude>
-                <file>/src/entree_julien.php</file>
-                <file>/src/entree_josselin.php</file>
-                <file>/src/index.php</file>
+                <file>/var/www/html/entree_julien.php</file>
+                <file>/var/www/html/entree_josselin.php</file>
+                <file>/var/www/html/index.php</file>
             </exclude>
         </whitelist>
     </filter>
