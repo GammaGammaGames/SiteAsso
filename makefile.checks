@@ -72,3 +72,37 @@ else
     Start_Ou_Run_Nginx	= info_nginx
     ERROR_NGINX="err"
 endif
+
+# -------------------------------------------------------- #
+# Vérifie l'état des containers avant de permettre les run #
+# -------------------------------------------------------- #
+
+# Vérifie si le container MySql est déjà lancé
+.PHONY: verifier_mysql
+verifier_mysql:
+ifdef ERROR_MYSQL
+	$(error "Un container MySql est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_MYSQL
+	$(error "Un container MySql a déjà été construit.")
+endif
+
+# Vérifie si le container PHP est déjà lancé
+.PHONY: verifier_php
+verifier_php:
+ifdef ERROR_PHP
+	$(error "Un container PHP est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_PHP
+	$(error "Un container PHP a dèjà été construit.")
+endif
+
+# Vérifie si le container NginX est déjà lancé
+.PHONY: verifier_nginx
+verifier_nginx:
+ifdef ERROR_NGINX
+	$(error "Un container NginX est déjà en cours d'exécution.")
+endif
+ifdef EXISTE_NGINX
+	$(error "Un container NginX a déjà été construit.")
+endif

@@ -86,7 +86,7 @@ endif
 # - le mot de passe de cet utilisateur
 # - Les scripts pour peupler la BDD
 .PHONY: run_mysql
-run_mysql:
+run_mysql: verifier_mysql
 	docker run --detach \
 		--publish $(Mysql_Port_Exterieur):$(Mysql_Port_Interne) \
 		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
@@ -106,7 +106,7 @@ run_mysql:
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
 # les fichiers php du site et lié à la base de données.
 .PHONY: run_php
-run_php: construire_php
+run_php: verifier_php construire_php
 	docker run --detach \
 		--publish $(Php_Port_Exterieur):$(Php_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
@@ -125,7 +125,7 @@ run_php: construire_php
 # un accès au sources du site; et des logs accessible sans avoir à
 # se connecter au docker.
 .PHONY: run_nginx
-run_nginx:
+run_nginx: verifier_nginx
 	docker run --detach \
 		--publish $(Nginx_Port_Externe):$(Nginx_Port_Interne) \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
