@@ -39,7 +39,25 @@ include ./makefile.conf
 include ./makefile.checks
 
 .PHONY: all
-all: run
+all: run_ou_start
+
+.PHONY: run_ou_start
+run_ou_start: $(Start_Ou_Run_Mysql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
+
+# Affiche un avertissement si les docker sont déjà en cours d'exécution
+.PHONY: info_mysql
+info_mysql:
+	$(warning "Le container MySql est déjà en cours d'exécution.")
+
+.PHONY: info_php
+info_php:
+	$(warning "Le container  PHP  est déjà en cours d'exécution.")
+
+.PHONY: info_nginx
+info_nginx:
+	$(warning "Le container NginX est déjà en cours d'exécution.")
+
+# --------------------------------- #
 
 .PHONY: run
 run: run_mysql run_php run_nginx
