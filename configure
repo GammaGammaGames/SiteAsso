@@ -575,8 +575,8 @@ supprimer_fichiers_mysql_genere()
     separateur_section "Suppression de la BDD"
     if [[ -d "${FICHIERS_MYSQL}" ]]
     then
-        message_avertissement "Il est possible de réaliser une "
-        printf >&2 "sauvegarde des bases de données avant la suppression.\n"
+        printf >&2 "Il est possible de réaliser une sauvegarde \n"
+        printf >&2 "des bases de données avant la suppression.\n"
         printf >&2 "Pour effectuer celle-ci, annulez la suppression et lancez\n"
         printf >&2 "manuellement la commande : ${C_SUR___NOIR} \$${C__JAUNE}make dump_bdd ${NEUTRE}\n"
         printf >&2 "\n"
