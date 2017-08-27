@@ -456,7 +456,7 @@ creer_fichier_config_php()
 
     printf >&2 "Écriture du fichier de configuration php\n"
 
-    printf "<?php\n" > "${FICHIER}"
+    printf "<?php\n\n" > "${FICHIER}"
     printf "define( 'MYSQL_HOST', 'mysql_serveur' );\n" >> "${FICHIER}"
     printf "define( 'MYSQL_PORT', '3306' );\n" >> "${FICHIER}"
 
@@ -472,7 +472,7 @@ creer_fichier_config_php()
     printf "`head -n1 ${FICHIER_MDP_MYSQL} | tr -d '\n*'`" >> "${FICHIER}"
     printf "' );\n" >> "${FICHIER}"
 
-    printf "?>\n" >> "${FICHIER}"
+    printf "\n" >> "${FICHIER}"
 
     message_ok
 
