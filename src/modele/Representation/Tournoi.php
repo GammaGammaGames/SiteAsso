@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Lundi 28 août[08] 2017
 
 /**
  * Contient la représentation d'un tournoi.
@@ -38,7 +38,7 @@ class Tournoi extends RepresentationAvecId
     protected $nom = "";
 
     /**
-     * @var string
+     * @var \DateTime
      * La date et heure de début.
      * */
     protected $debut = "";
@@ -61,6 +61,7 @@ class Tournoi extends RepresentationAvecId
     public function __construct()
     {
         $this->evenement = new Evenement();
+        $this->debut = new \DateTime( "1970-01-01" );
     }
 
     // =============================== //
@@ -92,10 +93,10 @@ class Tournoi extends RepresentationAvecId
     /**
      * Permet de récupérer le debut du Tournoi
      *
-     * @return string
+     * @return \DateTime
      * La date et l'heure de début du tournoi au format international.
      */
-    public function get_debut() : string
+    public function get_debut() : \DateTime
     {
         return $this->debut;
     }
@@ -151,10 +152,10 @@ class Tournoi extends RepresentationAvecId
     /**
      * Permet de changer le debut du Tournoi
      *
-     * @param string $debut
+     * @param \DateTime $debut
      * La date et l'heure de début du tournoi au format international.
      */
-    public function set_debut( string $debut ) : void
+    public function set_debut( \DateTime $debut ) : void
     {
         $this->debut = $debut;
     }
@@ -191,11 +192,12 @@ class Tournoi extends RepresentationAvecId
     {
 
         $debogage = "<p>Débogage du Tournoi</p>";
+        $date = $this->debut->format( \DateTime::W3C );
 
         $debogage .= "<ul>";
         $debogage .= "<li>id                    = $this->id</li>";
         $debogage .= "<li>nom                   = $this->nom</li>";
-        $debogage .= "<li>debut                 = $this->debut</li>";
+        $debogage .= "<li>debut                 = $date</li>";
         $debogage .= "<li>nb joueurs max        = $this->nb_joueurs</li>";
         $debogage .= "<li>nb joueurs par équipe = $this->nb_joueurs_par_equipe</li>";
         $debogage .= "<li>$this->evenement</li>";
