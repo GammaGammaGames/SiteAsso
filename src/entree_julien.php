@@ -110,7 +110,8 @@ try
     }
 
 }
-catch(Exception $e) {
+catch(Exception $e)
+{
     $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
     die($msg);
 }

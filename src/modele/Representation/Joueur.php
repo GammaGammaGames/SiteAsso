@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Lundi 28 août[08] 2017
 
 /**
  * Stock les données d'un joueur en provenance de la BDD.
@@ -49,10 +49,10 @@ class Joueur extends RepresentationAvecId
     protected $prenom = "";
 
     /**
-     * @var string
+     * @var \DateTime
      * La date de naissance du joueur.
      * */
-    protected $anniv = "";
+    protected $anniv;
 
     /**
      * @var string
@@ -66,6 +66,7 @@ class Joueur extends RepresentationAvecId
     public function __construct()
     {
         $this->adresse = new Adresse();
+        $this->anniv = new \DateTime( "1970-01-01" );
     }
 
     // =============================== //
@@ -119,10 +120,10 @@ class Joueur extends RepresentationAvecId
     /**
      * Récupère la date de naissance du joueur.
      *
-     * @return string
+     * @return \DateTime
      * La date de naissance du joueur
      * */
-    public function get_anniv() : string
+    public function get_anniv() : \DateTime
     {
         return $this->anniv;
     }
@@ -189,10 +190,10 @@ class Joueur extends RepresentationAvecId
     /**
      * Modifie la date de naissance du joueur.
      *
-     * @param string $anniv
+     * @param \DateTime $anniv
      * La date de naissance du joueur.
      * */
-    public function set_anniv( string $anniv ) : void
+    public function set_anniv( \DateTime $anniv ) : void
     {
         $this->anniv = $anniv;
     }
@@ -218,6 +219,7 @@ class Joueur extends RepresentationAvecId
     {
 
         $debogage = "<p>Débogage de Joueur</p>";
+        $date = $this->anniv->format( \DateTime::W3C );
 
         $debogage .= "<ul>";
         $debogage .= "<li>id          = $this->id</li>";
@@ -225,7 +227,7 @@ class Joueur extends RepresentationAvecId
         $debogage .= "<li>tel         = $this->tel</li>";
         $debogage .= "<li>nom         = $this->nom</li>";
         $debogage .= "<li>prenom      = $this->prenom</li>";
-        $debogage .= "<li>anniv       = $this->anniv</li>";
+        $debogage .= "<li>anniv       = $date</li>";
         $debogage .= "<li>$this->adresse</li>";
         $debogage .= "</ul>";
 
