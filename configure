@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Samedi 26 août[08] 2017
+# Dernière modification : Jeudi 31 août[08] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -526,7 +526,8 @@ supprimer_dossier()
                 message_ok
             else
                 afficher_erreur "Le dossier " "${dossier_cible}" \
-                    " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+                    " ne peut pas être supprimé vérifiez que vous " \
+                    "avez les droits sur le contenu et le dossier"
                 message_erreur
             fi
         else
@@ -578,7 +579,8 @@ supprimer_fichiers_mysql_genere()
         printf >&2 "Il est possible de réaliser une sauvegarde \n"
         printf >&2 "des bases de données avant la suppression.\n"
         printf >&2 "Pour effectuer celle-ci, annulez la suppression et lancez\n"
-        printf >&2 "manuellement la commande : ${C_SUR___NOIR} \$${C__JAUNE}make dump_bdd ${NEUTRE}\n"
+        printf >&2 "manuellement la commande : ${C_SUR___NOIR}" \
+            "\$${C__JAUNE}make dump_bdd${NEUTRE}\n"
         printf >&2 "\n"
 
         message_attention "Toute suppression est définitive !"
@@ -830,12 +832,14 @@ then
 fi
 
 separateur_section "Génération de la configuration"
-printf >&2 "\n"
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
 # supprimer
 if [[ ! -d "${FICHIERS_GENERE}" ]]
 then
+    printf >&2 "Création du dossier ${M_GRAS}${C_VIOLET}"
+    printf >&2 "${FICHIERS_GENERE}${NEUTRE}\n"
     mkdir -- "${FICHIERS_GENERE}"
+    printf >&2 "\n"
 else
     message_attention "Une configuration existe déjà"
     if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
@@ -861,7 +865,8 @@ GENERER='n'
 if [[ -d "${FICHIERS_MYSQL}" ]]
 then
     message_attention "MySql a déjà configuré une BDD pour un utilisateur."
-    printf >&2 "Pour pouvoir générer une nouvelle configuration vous devez supprimer la BDD actuelle.\n"
+    printf >&2 "Pour pouvoir générer une nouvelle configuration \n"
+    printf >&2 "vous devez supprimer la BDD actuelle.\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
         if supprimer_fichiers_mysql_genere
