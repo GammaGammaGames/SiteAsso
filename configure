@@ -458,7 +458,7 @@ creer_fichier_config_php()
     printf >&2 "Écriture du fichier de configuration php\n"
 
     printf "<?php\n\n" > "${FICHIER}"
-    printf "define( 'MYSQL_HOST', 'mysql_serveur' );\n" >> "${FICHIER}"
+    printf "define( 'MYSQL_HOST', 'db' );\n" >> "${FICHIER}"
     printf "define( 'MYSQL_PORT', '3306' );\n" >> "${FICHIER}"
 
     printf "define( 'MYSQL_DB', '" >> "${FICHIER}"
@@ -580,8 +580,8 @@ supprimer_fichiers_mysql_genere()
         printf >&2 "Il est possible de réaliser une sauvegarde \n"
         printf >&2 "des bases de données avant la suppression.\n"
         printf >&2 "Pour effectuer celle-ci, annulez la suppression et lancez\n"
-        printf >&2 "manuellement la commande : ${C_SUR___NOIR}" \
-            "\$${C__JAUNE}make dump_bdd${NEUTRE}\n"
+        printf >&2 "manuellement la commande : ${C_SUR___NOIR}"
+        printf >&2 "\$${C__JAUNE}make dump_bdd${NEUTRE}\n"
         printf >&2 "\n"
 
         message_attention "Toute suppression est définitive !"
@@ -809,8 +809,7 @@ then
                 printf >&2 "\n"
                 supprimer_configuration
                 supprimer_logs_conf
-                separateur_section "Suppression du dossier " \
-                    "${M_GRAS}${C_VIOLET}${DOSSIER_TEMPORAIRE}${NEUTRE}"
+                separateur_section "Suppression du dossier ${DOSSIER_TEMPORAIRE}"
                 supprimer_dossier "${FICHIERS_GENERE}"
                 printf >&2 "\n"
                 exit "${EXIT_SUCCES}"
