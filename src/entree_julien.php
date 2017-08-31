@@ -158,6 +158,8 @@ if ( $affichage !== "404" )
 {
     echo ( "<h1>Contenu des variables GET POST REQUEST</h1>\n" );
 
+    echo ( "<span id='testFonc'>Clique sur moi</span>" );
+
     echo ( "<p>\n" );
     echo ( "GET : " );
     var_dump ( $_GET );
@@ -170,8 +172,6 @@ if ( $affichage !== "404" )
     echo ( "REQUEST : " );
     var_dump ( $_REQUEST );
     echo ( "\n</p>\n" );
-
-    echo ( "<span id='testFonc'>Clique sur moi</span>" );
 
     echo ( "<script src='/reagencementElements.js' ></script>" );
 }

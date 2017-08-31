@@ -1,11 +1,15 @@
 /*
  * Dernière modification : Vendredi 01 septembre[09] 2017
  * */
+html
+{
+    min-height: 100vh;
+}
+
 body
 {
     margin: 0;
     padding: 0;
-    min-height: 100vh;
     max-width: 1000px;
     margin: auto;
     background: lightsteelblue;
