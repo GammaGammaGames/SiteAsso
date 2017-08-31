@@ -13,12 +13,8 @@ function afficher_base( $id, $nom, $categorie, $nb )
     echo ( "</ul>\n" );
 }
 
-echo ( "<h1>Les driver PDO</h1>\n" );
-
-echo ( "<p>\n" );
-echo ( "Driver disponible avec pdo : \n" );
-print_r( PDO::getAvailableDrivers() );
-echo ( "</p>\n" );
+$affichage = "";
+$pos = 0;
 
 echo ( "<h1>Résultat de l'exécution de la requête</h1>\n" );
 
@@ -42,9 +38,6 @@ try
 
     // Récupération de la requête de l'utilisateur
     $requete = $_GET["req"]?? "accueil";
-
-    $affichage = "";
-    $pos = 0;
 
     if ( $requete !== "accueil" )
     {
@@ -151,6 +144,15 @@ catch ( Exception $e )
     $affichage = "404";
 }
 
+if ( $affichage !== "404" )
+{
+    echo ( "<h1>Les driver PDO</h1>\n" );
+
+    echo ( "<p>\n" );
+    echo ( "Driver disponible avec pdo : \n" );
+    print_r( PDO::getAvailableDrivers() );
+    echo ( "</p>\n" );
+}
 
 if ( $affichage !== "404" )
 {
