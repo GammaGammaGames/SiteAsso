@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mercredi 23 août[08] 2017
+# Dernière modification : Jeudi 31 août[08] 2017
 
 # On notifie si le mot de passe de MySql a été changé
 ifeq ($(Mysql_Mdp_Root), mdptropbiensecuretavumagueule)
@@ -105,4 +105,10 @@ ifdef ERROR_NGINX
 endif
 ifdef EXISTE_NGINX
 	$(error "Un container NginX a déjà été construit.")
+endif
+
+.PHONY: verifier_mysql_unitaire
+verifier_mysql_unitaire:
+ifeq ($(shell docker ps --quiet --filter "name=$(Mysql_U_Nom_Cont)" ), )
+	$(error "Lancez le container $(Mysql_U_Nom_Cont) avant avec : make unitaire_mysql" )
 endif

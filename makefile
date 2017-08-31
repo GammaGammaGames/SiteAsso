@@ -31,6 +31,7 @@ stop:
 	-docker stop $(Nginx_Nom_Container)
 	-docker stop $(Php_Nom_Container)
 	-docker stop $(Mysql_Nom_Container)
+	-docker stop  $(Mysql_U_Nom_Cont)
 
 # Stoppe les machines virtuel et les supprimes toutes
 .PHONY: clean
@@ -38,6 +39,7 @@ clean: stop
 	-docker rm --force --volumes $(Nginx_Nom_Container)
 	-docker rm --force --volumes $(Php_Nom_Container)
 	-docker rm --force --volumes $(Mysql_Nom_Container)
+	-docker rm --force --volumes $(Mysql_U_Nom_Cont)
 
 .PHONY: all
 all: run_ou_start
@@ -212,12 +214,31 @@ logs_nginx:
 #    Exécuter les tests unitaire    #
 # --------------------------------- #
 
+.PHONY: unitaire_mysql
+unitaire_mysql:
+	docker run --detach \
+		--publish $(Mysql_U_Port_Exterieur):$(Mysql_U_Port_Interne) \
+		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
+		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
+		--env MYSQL_USER='$(Mysql_Utilisateur)' \
+		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
+		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
+		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
+		-v $(Mysql_U_Volume_Ext):$(Mysql_Volume_Int) \
+		--name $(Mysql_U_Nom_Cont) mysql:latest
+
 .PHONY: unitaire_php
-unitaire_php:
+unitaire_php: verifier_mysql_unitaire
 	-docker run --rm \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
 		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
+		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
+		--link $(Mysql_U_Nom_Cont):$(Php_Nom_Interne_Mysql) \
 		phpunit/phpunit -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
