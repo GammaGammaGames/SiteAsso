@@ -5,7 +5,7 @@ declare( strict_types = 1 );
 <!-- vim: set foldmethod=indent: -->
 <!-- Squelette de page html -->
 <!--
-    Dernière modification : Jeudi 31 août[08] 2017
+    Dernière modification : Vendredi 01 septembre[09] 2017
 -->
 <html lang='fr'>
 <head>
@@ -14,10 +14,8 @@ declare( strict_types = 1 );
     <title>
         Gamma
     </title>
-    <!--
-    <link type='text/css' rel='stylesheet' href='nom.css' />
-    <link rel='shortcut icon' href='iconeOnglet/image.png' />
-    -->
+    <link type='text/css' rel='stylesheet' href='/style.css' />
+    <link type='image/png' rel='shortcut icon' href='/favicon.png' />
 </head>
 <body>
 <?php
