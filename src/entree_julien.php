@@ -46,7 +46,7 @@ try
     $affichage = "";
     $pos = 0;
 
-    if ( $requete != "accueil" )
+    if ( $requete !== "accueil" )
     {
         $val = explode ( "/", $requete );
 
@@ -57,7 +57,7 @@ try
         }
         if ( $nb_arg > 2 )
         {
-            if ( $affichage === "position" and $nb_arg === 3 )
+            if ( $affichage === "position" && $nb_arg === 3 )
             {
                 $pos = $val[2] - 1;
             }
@@ -136,30 +136,36 @@ try
     }
     else
     {
-        echo ( "<ul>\n" );
-        echo ( "    <li><a href='$debut_adresse/' >Accueil</a></li>\n" );
-        echo ( "</ul>\n" );
+        echo( "<ul>\n" );
+        echo( "    <li><a href='$debut_adresse/' >Accueil</a></li>\n" );
+        echo( "</ul>\n" );
         echo( "<h1>404</h1>\n" );
+        $affichage = "404";
     }
 
 }
 catch ( Exception $e )
 {
     $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
-    die( $msg );
+    echo ( $msg );
+    $affichage = "404";
 }
 
-echo ( "<h1>Contenu des variables GET POST REQUEST</h1>\n" );
 
-echo ( "<p>\n" );
-echo ( "GET : " );
-var_dump ( $_GET );
-echo ( "\n</p>\n" );
-echo ( "<p>\n" );
-echo ( "POST : " );
-var_dump ( $_POST );
-echo ( "\n</p>\n" );
-echo ( "<p>\n" );
-echo ( "REQUEST : " );
-var_dump ( $_REQUEST );
-echo ( "\n</p>\n" );
+if ( $affichage !== "404" )
+{
+    echo ( "<h1>Contenu des variables GET POST REQUEST</h1>\n" );
+
+    echo ( "<p>\n" );
+    echo ( "GET : " );
+    var_dump ( $_GET );
+    echo ( "\n</p>\n" );
+    echo ( "<p>\n" );
+    echo ( "POST : " );
+    var_dump ( $_POST );
+    echo ( "\n</p>\n" );
+    echo ( "<p>\n" );
+    echo ( "REQUEST : " );
+    var_dump ( $_REQUEST );
+    echo ( "\n</p>\n" );
+}
