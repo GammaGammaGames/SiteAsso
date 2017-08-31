@@ -312,7 +312,8 @@ exit "${ERREUR}"' ERR
 ####################################################
 
 declare -r POSITIONSCRIPT="`pwd`"
-declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/Docker"
+declare -r DOSSIER_TEMPORAIRE="Temporaire"
+declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/${DOSSIER_TEMPORAIRE}"
 declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
 declare -r FICHIER_MDP_ROOT_MYSQL="${FICHIERS_GENERE}/mdp_root_mysql.conf"
 declare -r FICHIER_NOM_MYSQL="${FICHIERS_GENERE}/mysql_nom_user.conf"
@@ -808,7 +809,8 @@ then
                 printf >&2 "\n"
                 supprimer_configuration
                 supprimer_logs_conf
-                separateur_section "Suppression du dossier Docker"
+                separateur_section "Suppression du dossier " \
+                    "${M_GRAS}${C_VIOLET}${DOSSIER_TEMPORAIRE}${NEUTRE}"
                 supprimer_dossier "${FICHIERS_GENERE}"
                 printf >&2 "\n"
                 exit "${EXIT_SUCCES}"
