@@ -40,4 +40,61 @@ class BenevoleTest extends TestCase
         $this->assertEquals( new Evenement(), $this->b->get_evenement() );
     }
 
+    public function testChangerJoueur()
+    {
+        $j = new Joueur();
+        $j->set_id( rand( 1, 100 ) );
+        $j->set_nom( "Baradur" );
+        $j->set_prenom( "Yirtim" );
+
+        $this->b->set_joueur( $j );
+
+        $this->assertEquals( $j, $this->b->get_joueur() );
+        $this->assertEquals( new Evenement(), $this->b->get_evenement() );
+    }
+
+    public function testChangerEvenement()
+    {
+        $e = new Evenement();
+        $e->set_id( rand( 1, 100 ) );
+        $e->set_nom( "Hooltar" );
+
+        $this->b->set_evenement( $e );
+
+        $this->assertEquals( new Joueur(), $this->b->get_joueur() );
+        $this->assertEquals( $e, $this->b->get_evenement() );
+    }
+
+    /**
+     * L'affichage pour le debogage.
+     *
+     * @return string
+     * Toutes les données mise en forme.
+     * */
+    public function testAffichageDeboguage()
+    {
+        $j = new Joueur();
+        $j->set_id( rand( 1, 100 ) );
+        $j->set_nom( "Baradur" );
+        $j->set_prenom( "Yirtim" );
+
+        $this->b->set_joueur( $j );
+
+        $e = new Evenement();
+        $e->set_id( rand( 1, 100 ) );
+        $e->set_nom( "Hooltar" );
+
+        $this->b->set_evenement( $e );
+
+        $attendu = "<p>Débogage de Benevoles</p>";
+
+        $attendu .= "<ul>";
+        $attendu .= "<li>$j</li>";
+        $attendu .= "<li>$e</li>";
+        $attendu .= "</ul>";
+
+        $this->assertEquals( $attendu, $this->b->__toString() );
+
+    }
+
 }
