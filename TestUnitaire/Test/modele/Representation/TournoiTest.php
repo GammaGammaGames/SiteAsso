@@ -1,7 +1,15 @@
 <?php
-// Dernière modification : Lundi 28 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
 
 declare( strict_types = 1 );
+
+/**
+ * Tests unitaires de la classe Tournoi.
+ *
+ * @author PIVARD Julien
+ * @license GPL-v3
+ * @version 0.1
+ * */
 
 include_once "/var/www/html/modele/Representation/Tournoi.php";
 
@@ -11,11 +19,6 @@ use Modele\Representation\Tournoi;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * @license GPL-v3
- * @version 0.1
- * */
 class TournoiTest extends TestCase
 {
 

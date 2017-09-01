@@ -1,8 +1,8 @@
 <?php
-// Dernière modification : Lundi 28 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
 
 /**
- * Tests unitaires de la classe Equipe
+ * Tests unitaires de la classe Equipe.
  *
  * @author PIVARD Julien
  * @license GPL-v3
@@ -19,11 +19,6 @@ use Modele\Representation\Tournoi;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * @license GPL-v3
- * @version 0.1
- * */
 class EquipeTest extends TestCase
 {
 

@@ -1,5 +1,13 @@
 <?php
-// Dernière modification : Lundi 28 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
+
+/**
+ * Tests unitaires de la classe Joueur.
+ *
+ * @author PIVARD Julien
+ * @license GPL-v3
+ * @version 0.1
+ * */
 
 declare( strict_types = 1 );
 
@@ -10,9 +18,6 @@ use Modele\Representation\Joueur;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * */
 class JoueursTest extends TestCase
 {
 
