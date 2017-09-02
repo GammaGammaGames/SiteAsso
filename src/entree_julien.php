@@ -180,5 +180,17 @@ if ( $affichage !== "404" )
     var_dump ( $_REQUEST );
     echo ( "\n</p>\n" );
 
+    echo ( "<p>\n" );
+    echo ( "Test de chargement après coup d'images : " );
+    echo ( "\n</p>\n" );
+    /*l'image se trouve dans src/img*/
+    echo( "<img alt='Base64 pixel transparent' src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D' data-src='/img/test.jpg' />" );
+
+    /*
+     * Pour charger depuis les serveur de google. Pas fan si les serveurs tombent en rade alors script plus accessible.
+    echo( "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>" );
+     */
+    echo( "<script src='/jquery.min.js'></script>" );
+    echo( "<script src='/jquery.unveil.js' ></script>" );
     echo ( "<script src='/reagencementElements.js' ></script>" );
 }

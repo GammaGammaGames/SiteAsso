@@ -23,4 +23,8 @@ function test()
     xhr.send();
 }
 
+$(document).ready(function () {
+    $("img").unveil();
+});
+
 document.getElementById( "testFonc" ).addEventListener( "click", test, false );
