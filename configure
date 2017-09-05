@@ -672,11 +672,12 @@ message_avertissement()
 
 demander_utilisateur()
 {
-    printf >&2 "${1} (o/n)\n"
-    while read -r -n 1 -s reponse
+    while true
     do
+        read -r -s -n 1 -p "${1} (o/n) : " reponse
         [[ "${reponse}" = [OoYy] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
+        printf "\r"
     done
 }
 
