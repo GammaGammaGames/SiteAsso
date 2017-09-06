@@ -192,5 +192,5 @@ if ( $affichage !== "404" )
      */
     echo( "<script src='/jquery.min.js'></script>" );
     echo( "<script src='/jquery.unveil.js' ></script>" );
-    echo ( "<script src='/reagencementElements.js' ></script>" );
+    echo ( "<script src='/testJavaScript.js' ></script>" );
 }
