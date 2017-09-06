@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Mardi 05 septembre[09] 2017
+# Dernière modification : Mercredi 06 septembre[09] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -315,6 +315,7 @@ declare -r POSITIONSCRIPT="`pwd`"
 declare -r DOSSIER_TEMPORAIRE="Temporaire"
 declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/${DOSSIER_TEMPORAIRE}"
 declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
+declare -r FICHIERS_MYSQL_UNITAIRE="${FICHIERS_GENERE}/MySql_Unit"
 declare -r FICHIER_MDP_ROOT_MYSQL="${FICHIERS_GENERE}/mdp_root_mysql.conf"
 declare -r FICHIER_NOM_MYSQL="${FICHIERS_GENERE}/mysql_nom_user.conf"
 declare -r FICHIER_MDP_MYSQL="${FICHIERS_GENERE}/mysql_mdp_user.conf"
@@ -589,6 +590,7 @@ supprimer_fichiers_mysql_genere()
         then
             printf >&2 "\n"
             supprimer_dossier "${FICHIERS_MYSQL}"
+            supprimer_dossier "${FICHIERS_MYSQL_UNITAIRE}"
         else
             printf >&2 "\n"
             printf >&2 "Suppression annulée.\n"
@@ -675,6 +677,7 @@ demander_utilisateur()
     while true
     do
         read -r -s -n 1 -p "${1} (o/n) : " reponse
+        [[ "${reponse}" = [NnOoYy] ]] && printf "${reponse}\n"
         [[ "${reponse}" = [OoYy] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
         printf "\r"
@@ -799,7 +802,6 @@ verifier_logiciels_installe
 if [[ "${CLEAN}" == "clean" ]]
 then
     separateur_section "Suppression configuration"
-    printf >&2 "\n"
     if [[ -d "${FICHIERS_GENERE}" ]]
     then
         message_attention "Vous allez supprimer la configuration générée aléatoirement"
@@ -826,6 +828,7 @@ then
             exit "${E_ANNULATION}"
         fi
     else
+        printf >&2 "\n"
         printf >&2 "Aucun fichier généré à supprimer\n"
         message_ok
         printf >&2 "\n"
