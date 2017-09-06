@@ -442,6 +442,7 @@ configurer_port_serveur_nginx()
         NUM_PORT=8080
     fi
     printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
+    printf >&2 "        Numéro de port choisi : ${NUM_PORT}\n"
     message_ok
 }
 
