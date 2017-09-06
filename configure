@@ -312,7 +312,7 @@ exit "${ERREUR}"' ERR
 ####################################################
 
 declare -r POSITIONSCRIPT="`pwd`"
-declare -r DOSSIER_TEMPORAIRE="Temporaire"
+declare -r DOSSIER_TEMPORAIRE="Fichiers_Généré_Par_Script"
 declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/${DOSSIER_TEMPORAIRE}"
 declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
 declare -r FICHIERS_MYSQL_UNITAIRE="${FICHIERS_GENERE}/MySql_Unit"

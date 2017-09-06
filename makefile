@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Jeudi 31 août[08] 2017
+# Dernière modification : Mercredi 06 septembre[09] 2017
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -15,7 +15,7 @@ nettoyage:
 	-docker rm --volumes `docker ps --all --quiet --filter "status=exited"`
 	-docker rmi `docker images --quiet --filter "dangling=true"`
 
-Nom_D_Tmp		:= Temporaire
+Nom_D_Tmp		:= Fichiers_Généré_Par_Script
 ifeq ($(wildcard $(Nom_D_Tmp)/*), )
     $(error "Vous devez générer la configuration avec ./configure")
 endif
