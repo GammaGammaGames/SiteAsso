@@ -189,6 +189,10 @@ if ( $affichage !== "404" )
     echo( "src='data:image/gif;base64," );
     echo( "R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'" );
     echo( " data-src='$nom_fichier' />\n" );
+    echo( "<noscript>\n" );
+    echo( "    <img id='img_async_no_js' alt='Image si pas de js'" );
+    echo( " src='$nom_fichier' />\n" );
+    echo( "</noscript>\n" );
     /*
      * Pour charger depuis les serveur de google. Pas fan si les serveurs tombent en rade alors script plus accessible.
     echo( "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>" );
