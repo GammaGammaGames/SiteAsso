@@ -1,5 +1,5 @@
 /*
- * Dernière modification : Vendredi 01 septembre[09] 2017
+ * Dernière modification : Vendredi 15 septembre[09] 2017
  * */
 html
 {
@@ -13,6 +13,12 @@ body
     max-width: 1000px;
     margin: auto;
     background: lightsteelblue;
+}
+
+#img_async, #img_async_no_js
+{
+    max-width: 1000px;
+    width: 100%;
 }
 
 a:link      /*Liens non visité*/

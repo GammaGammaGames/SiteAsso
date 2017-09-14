@@ -184,8 +184,11 @@ if ( $affichage !== "404" )
     echo ( "Test de chargement après coup d'images : " );
     echo ( "\n</p>\n" );
     /*l'image se trouve dans src/img*/
-    echo( "<img alt='Base64 pixel transparent' src='data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D' data-src='/img/test.jpg' />" );
-
+    $nom_fichier = '/img/test.jpg';
+    echo( "<img id='img_async' alt='Base64 pixel transparent' " );
+    echo( "src='data:image/gif;base64," );
+    echo( "R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D'" );
+    echo( " data-src='$nom_fichier' />\n" );
     /*
      * Pour charger depuis les serveur de google. Pas fan si les serveurs tombent en rade alors script plus accessible.
     echo( "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>" );
