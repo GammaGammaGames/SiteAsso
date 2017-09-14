@@ -64,7 +64,8 @@ try
 }
 catch ( Exception $e )
 {
-    $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine() . ' : ' . $e->getMessage();
+    $msg = 'ERREUR PDO dans ' . $e->getFile() . ' L.' . $e->getLine()
+        . ' : ' . $e->getMessage();
     echo ( $msg );
     $affichage = "404";
 }
@@ -136,10 +137,14 @@ elseif ( $affichage === "jolie" )
 elseif ( $affichage === "" )
 {
     echo ( "<ul>\n" );
-    echo ( "    <li><a href='$debut_adresse/complet' >var dump de la base</a></li>\n" );
-    echo ( "    <li><a href='$debut_adresse/position/6' >Afficher item 6</a></li>\n" );
-    echo ( "    <li><a href='$debut_adresse/jolie' >Affichage lisible</a></li>\n" );
-    echo ( "    <li><a href='$debut_adresse/iebfzej' >Page inconnue</a></li>\n" );
+    echo ( "    <li><a href='$debut_adresse/complet' >" );
+    echo ( "var dump de la base</a></li>\n" );
+    echo ( "    <li><a href='$debut_adresse/position/6' >" );
+    echo ( "Afficher item 6</a></li>\n" );
+    echo ( "    <li><a href='$debut_adresse/jolie' >" );
+    echo ( "Affichage lisible</a></li>\n" );
+    echo ( "    <li><a href='$debut_adresse/iebfzej' >" );
+    echo ( "Page inconnue</a></li>\n" );
     echo ( "</ul>\n" );
 }
 else
@@ -194,10 +199,11 @@ if ( $affichage !== "404" )
     echo( " src='$nom_fichier' />\n" );
     echo( "</noscript>\n" );
     /*
-     * Pour charger depuis les serveur de google. Pas fan si les serveurs tombent en rade alors script plus accessible.
+     * Pour charger depuis les serveur de google.
+     * Pas fan si les serveurs tombent en rade alors script plus accessible.
     echo( "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>" );
      */
-    echo( "<script src='/jquery.min.js'></script>" );
-    echo( "<script src='/jquery.unveil.js' ></script>" );
-    echo ( "<script src='/testJavaScript.js' ></script>" );
+    echo( "<script src='/jquery.min.js'></script>\n" );
+    echo( "<script src='/jquery.unveil.js' ></script>\n" );
+    echo ( "<script src='/testJavaScript.js' ></script>\n" );
 }
