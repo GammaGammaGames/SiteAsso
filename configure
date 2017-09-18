@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Mercredi 06 septembre[09] 2017
+# Dernière modification : Lundi 18 septembre[09] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -436,14 +436,21 @@ configurer_port_serveur_nginx()
     separateur_section "Configuration du port d'écoute du serveur nginx."
     printf >&2 "Génération du fichier de numéro de port\n"
     declare -i NUM_PORT=80
-    # Si erreur alors pas de processus qui utilise port 80
-    if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+    if test_cmd_exist lsof
     then
-        NUM_PORT=8080
+        # Si erreur alors pas de processus qui utilise port 80
+        if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+        then
+            NUM_PORT=8080
+        fi
+        printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
+        message_ok
+    else
+        printf >&2 "Impossible de connaitre les ports utilisé. "
+        printf >&2 "Port par défaut choisi\n"
+        message_erreur
     fi
-    printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
     printf >&2 "        Numéro de port choisi : ${NUM_PORT}\n"
-    message_ok
 }
 
 # }}}
