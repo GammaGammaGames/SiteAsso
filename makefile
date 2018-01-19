@@ -17,26 +17,26 @@ nettoyage:
 
 .PHONY: help
 help:
-	@echo "- all       : Démarre ou crée les VM pour démarrer le site."
+	@echo "- all         : Démarre ou crée les VM pour démarrer le site."
 	@echo "    - run_ou_start"
-	@echo "- run       : Démarre toutes les VM pour faire fonctionner le site."
+	@echo "- run         : Démarre toutes les VM pour faire fonctionner le site."
 	@echo "    - run_sql    : Spécifique à la VM mariadb"
 	@echo "    - run_php    : Spécifique à la VM php"
 	@echo "    - run_nginx  : Spécifique à la VM nginx"
-	@echo "- start     : Démarre les VM nécessaires au fonctionnement du site."
+	@echo "- start       : Démarre les VM nécessaires au fonctionnement du site."
 	@echo "    - start_sql   : Spécifique à la VM mariadb"
 	@echo "    - start_php   : Spécifique à la VM php"
 	@echo "    - start_nginx : Spécifique à la VM nginx"
-	@echo "- generer_doc    : Génère la documentation php de l'application"
+	@echo "- generer_doc : Génère la documentation php de l'application"
 	@echo
 	@echo "[ Tests unitaires ]"
-	@echo " - unitaire_sql   : Lance la VM destiné aux tests unitaires."
-	@echo " - unitaire_php   : Lance la VM des tests unitaires de php."
+	@echo " - run_unitaire_sql   : Lance la VM destiné aux tests unitaires."
+	@echo " - run_unitaire_php   : Lance la VM des tests unitaires de php."
 	@echo
 	@echo "[ Logs ]"
-	@echo " - logs_sql       : Affiche les logs de la VM mariadb"
-	@echo " - logs_php       : Affiche les logs de la VM php"
-	@echo " - logs_nginx     : Affiche les logs de la VM nginx"
+	@echo " - logs_sql   : Affiche les logs de la VM mariadb"
+	@echo " - logs_php   : Affiche les logs de la VM php"
+	@echo " - logs_nginx : Affiche les logs de la VM nginx"
 	@echo
 	@echo "[ Connection aux VM ]"
 	@echo " - connect_sql    : Connection à travers un bash à la VM mariadb"
@@ -51,7 +51,7 @@ help:
 	@echo "[ Autres ]"
 	@echo " - construire_php : Construit la VM php si elle n'existe pas déjà."
 	@echo " - construire_doc : Construit la VM de génération de la documentation php"
-	@echo " - reload_nginx : Force la VM nginx à recharger sa configuration."
+	@echo " - reload_nginx   : Force la VM nginx à recharger sa configuration."
 	@echo " - dump_bdd       : Réalise un dump de la base de données."
 
 
@@ -90,15 +90,15 @@ run_ou_start: $(Start_Ou_Run_Sql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
 # Affiche un avertissement si les docker sont déjà en cours d'exécution
 .PHONY: info_sql
 info_sql:
-	$(warning "Le container  Sql  est déjà en cours d'exécution.")
+	$(info "Le container  Sql  est déjà en cours d'exécution.")
 
 .PHONY: info_php
 info_php:
-	$(warning "Le container  PHP  est déjà en cours d'exécution.")
+	$(info "Le container  PHP  est déjà en cours d'exécution.")
 
 .PHONY: info_nginx
 info_nginx:
-	$(warning "Le container NginX est déjà en cours d'exécution.")
+	$(info "Le container NginX est déjà en cours d'exécution.")
 
 # --------------------------------- #
 
@@ -254,8 +254,8 @@ logs_nginx:
 #    Exécuter les tests unitaire    #
 # --------------------------------- #
 
-.PHONY: unitaire_sql
-unitaire_sql:
+.PHONY: run_unitaire_sql
+run_unitaire_sql:
 	docker run --detach \
 		--publish $(Sql_U_Port_Exterieur):$(Sql_U_Port_Interne) \
 		--env MYSQL_ROOT_PASSWORD='$(Sql_Mdp_Root)' \
@@ -269,8 +269,8 @@ unitaire_sql:
 		-v $(Sql_U_Volume_Ext):$(Sql_Volume_Int) \
 		--name $(Sql_U_Nom_Cont) $(Sql_Nom_Image):$(Sql_Version_Image)
 
-.PHONY: unitaire_php
-unitaire_php: verifier_sql_unitaire
+.PHONY: run_unitaire_php
+run_unitaire_php: verifier_sql_unitaire
 	-docker run --rm \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \

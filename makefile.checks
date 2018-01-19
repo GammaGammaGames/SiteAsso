@@ -110,5 +110,5 @@ endif
 .PHONY: verifier_sql_unitaire
 verifier_sql_unitaire:
 ifeq ($(shell docker ps --quiet --filter "name=$(Sql_U_Nom_Cont)" ), )
-	$(error "Lancez le container $(Sql_U_Nom_Cont) avant avec : make unitaire_sql" )
+	$(error "Lancez le container $(Sql_U_Nom_Cont) avant avec : make run_unitaire_sql" )
 endif
