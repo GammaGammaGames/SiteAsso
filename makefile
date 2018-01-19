@@ -30,8 +30,9 @@ help:
 	@echo "- generer_doc : Génère la documentation php de l'application"
 	@echo
 	@echo "[ Tests unitaires ]"
-	@echo " - run_unitaire_sql   : Lance la VM destiné aux tests unitaires."
-	@echo " - run_unitaire_php   : Lance la VM des tests unitaires de php."
+	@echo " - unitaire   : Lance les tests unitaires"
+	@echo "     - run_unitaire_sql   : Lance la VM destiné aux tests unitaires."
+	@echo "     - run_unitaire_php   : Lance la VM des tests unitaires de php."
 	@echo
 	@echo "[ Logs ]"
 	@echo " - logs_sql   : Affiche les logs de la VM mariadb"
@@ -254,6 +255,9 @@ logs_nginx:
 #    Exécuter les tests unitaire    #
 # --------------------------------- #
 
+.PHONY: unitaire
+unitaire: $(Start_Ou_Run_Sql_U) run_unitaire_php
+
 .PHONY: run_unitaire_sql
 run_unitaire_sql:
 	docker run --detach \
@@ -268,6 +272,17 @@ run_unitaire_sql:
 		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
 		-v $(Sql_U_Volume_Ext):$(Sql_Volume_Int) \
 		--name $(Sql_U_Nom_Cont) $(Sql_Nom_Image):$(Sql_Version_Image)
+
+.PHONY: start_unitaire_sql
+start_unitaire_sql:
+	@echo "───────────────────────────────────────"
+	@echo "Démarrage de MariaDB en tests unitaires"
+	@echo "───────────────────────────────────────"
+	docker start $(Sql_U_Nom_Cont)
+
+.PHONY: info_sql_unitaire
+info_sql_unitaire:
+	$(info "Le container de tests unitaire sql est déjà en cours d'exécution.")
 
 .PHONY: run_unitaire_php
 run_unitaire_php: verifier_sql_unitaire

@@ -22,17 +22,21 @@ make
 * Les fichiers généré par MariaDB sont écrit dans **Temporaire/MySql**
 * Les fichiers de log de php sont dans **Temporaire/logs_php**
 * Les fichiers de log de nginx sont dans **Temporaire/logs_nginx**
-* Les logs de sql sont accessible via **docker logs sql_serveur**
+* Les logs de sql sont accessible via **docker logs sql_serveur** ou
+  **make logs_sql**
 
 ## Stopper les conteneurs
 
-La configuration sera conservée
+Stoppe les conteneurs sans les supprimer. Quand la VM sera redémarré elle
+reprendra dans l'état de son arrêt.
 
 ```sh
 make stop
 ```
 
 ## Démarrer les conteneurs
+
+Démarre les conteneurs depuis des VM qui ont été précédemment stoppé.
 
 ```sh
 make start
@@ -51,8 +55,12 @@ make clean; ./configure --clean
 
 ## Lancer les tests uitaire
 
+Démarre la VM utilisé pour stocker la base de données de tests unitaires,
+puis lance les tests unitaires de php. Le lancement de la VM de BDD de
+tests unitaires peut prendre un certain temps.
+
 ```sh
-make unitaire_php
+make unitaire
 ```
 
 ## Générer la documentation

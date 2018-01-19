@@ -73,6 +73,21 @@ else
     ERROR_NGINX="err"
 endif
 
+# Vérifie si l'image Sql unitaire tourne
+ifeq ($(shell docker ps --quiet --filter "name=$(Sql_U_Nom_Cont)" ), )
+    ifeq ($(shell docker ps --quiet --all --filter "name=$(Sql_U_Nom_Cont)"), )
+        #$(info "Le container Sql sera construit.")
+        Start_Ou_Run_Sql_U	= run_unitaire_sql
+    else
+        #$(info "La machine Sql sera démarrée depuis le container existant.")
+        Start_Ou_Run_Sql_U	= start_unitaire_sql
+        EXISTE_SQL_U="err"
+    endif
+else
+    Start_Ou_Run_Sql_U	= info_sql_unitaire
+    ERROR_SQL_U="err"
+endif
+
 # -------------------------------------------------------- #
 # Vérifie l'état des containers avant de permettre les run #
 # -------------------------------------------------------- #
