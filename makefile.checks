@@ -1,46 +1,46 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Jeudi 31 août[08] 2017
+# Dernière modification : Vendredi 19 janvier[01] 2018
 
-# On notifie si le mot de passe de MySql a été changé
-ifeq ($(Mysql_Mdp_Root), mdptropbiensecuretavumagueule)
-    $(error Le mot de passe root de MySql doit être changé dans le fichier mdp_root_mysql.conf)
+# On notifie si le mot de passe de Sql a été changé
+ifeq ($(Sql_Mdp_Root), mdptropbiensecuretavumagueule)
+    $(error Le mot de passe root de Sql doit être changé dans le fichier mdp_root_sql.conf)
 endif
 
-# On notifie si le mot de passe de MySql a été changé
-ifeq ($(Mysql_Mdp_Root), )
-    $(error "Vous devez configurer un mot de passe root pour MySql avec ./configure")
+# On notifie si le mot de passe de Sql a été changé
+ifeq ($(Sql_Mdp_Root), )
+    $(error "Vous devez configurer un mot de passe root pour MariaDB avec ./configure")
 endif
 
-ifeq ($(Mysql_Utilisateur), )
-    $(error "Vous devez configurer un nom d'utilisateur pour MySql avec ./configure")
+ifeq ($(Sql_Utilisateur), )
+    $(error "Vous devez configurer un nom d'utilisateur pour MariaDB avec ./configure")
 endif
 
-ifeq ($(Mysql_Pass_Utilisateur), )
+ifeq ($(Sql_Pass_Utilisateur), )
     $(error "Vous devez configurer un mdp pour l'utilisateur avec ./configure")
 endif
 
-ifeq ($(Mysql_Nom_Bdd), )
-    $(error "Vous devez configurer un nom de BDD pour MySql avec ./configure")
+ifeq ($(Sql_Nom_Bdd), )
+    $(error "Vous devez configurer un nom de BDD pour MariaDB avec ./configure")
 endif
 
 # ------------------------------------------------------- #
 # Vérifie si les containers sont construit ou en fonction #
 # ------------------------------------------------------- #
 
-# Vérifie si l'image MySql tourne
-ifeq ($(shell docker ps --quiet --filter "name=$(Mysql_Nom_Container)" ), )
-    ifeq ($(shell docker ps --quiet --all --filter "name=$(Mysql_Nom_Container)"), )
-        #$(info "Le container MySql sera construit.")
-        Start_Ou_Run_Mysql	= run_mysql
+# Vérifie si l'image Sql tourne
+ifeq ($(shell docker ps --quiet --filter "name=$(Sql_Nom_Container)" ), )
+    ifeq ($(shell docker ps --quiet --all --filter "name=$(Sql_Nom_Container)"), )
+        #$(info "Le container Sql sera construit.")
+        Start_Ou_Run_Sql	= run_sql
     else
-        #$(info "La machine MySql sera démarrée depuis le container existant.")
-        Start_Ou_Run_Mysql	= start_mysql
-        EXISTE_MYSQL="err"
+        #$(info "La machine Sql sera démarrée depuis le container existant.")
+        Start_Ou_Run_Sql	= start_sql
+        EXISTE_SQL="err"
     endif
 else
-    Start_Ou_Run_Mysql	= info_mysql
-    ERROR_MYSQL="err"
+    Start_Ou_Run_Sql	= info_sql
+    ERROR_SQL="err"
 endif
 
 # Vérifie si l'image PHP tourne
@@ -77,14 +77,14 @@ endif
 # Vérifie l'état des containers avant de permettre les run #
 # -------------------------------------------------------- #
 
-# Vérifie si le container MySql est déjà lancé
-.PHONY: verifier_mysql
-verifier_mysql:
-ifdef ERROR_MYSQL
-	$(error "Un container MySql est déjà en cours d'exécution.")
+# Vérifie si le container Sql est déjà lancé
+.PHONY: verifier_sql
+verifier_sql:
+ifdef ERROR_SQL
+	$(error "Un container Sql est déjà en cours d'exécution.")
 endif
-ifdef EXISTE_MYSQL
-	$(error "Un container MySql a déjà été construit.")
+ifdef EXISTE_SQL
+	$(error "Un container Sql a déjà été construit.")
 endif
 
 # Vérifie si le container PHP est déjà lancé
@@ -107,8 +107,8 @@ ifdef EXISTE_NGINX
 	$(error "Un container NginX a déjà été construit.")
 endif
 
-.PHONY: verifier_mysql_unitaire
-verifier_mysql_unitaire:
-ifeq ($(shell docker ps --quiet --filter "name=$(Mysql_U_Nom_Cont)" ), )
-	$(error "Lancez le container $(Mysql_U_Nom_Cont) avant avec : make unitaire_mysql" )
+.PHONY: verifier_sql_unitaire
+verifier_sql_unitaire:
+ifeq ($(shell docker ps --quiet --filter "name=$(Sql_U_Nom_Cont)" ), )
+	$(error "Lancez le container $(Sql_U_Nom_Cont) avant avec : make unitaire_sql" )
 endif

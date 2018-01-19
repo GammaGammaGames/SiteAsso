@@ -30,27 +30,27 @@ include ./makefile.checks
 stop:
 	-docker stop $(Nginx_Nom_Container)
 	-docker stop $(Php_Nom_Container)
-	-docker stop $(Mysql_Nom_Container)
-	-docker stop $(Mysql_U_Nom_Cont)
+	-docker stop $(Sql_Nom_Container)
+	-docker stop $(Sql_U_Nom_Cont)
 
 # Stoppe les machines virtuel et les supprimes toutes
 .PHONY: clean
 clean: stop
 	-docker rm --force --volumes $(Nginx_Nom_Container)
 	-docker rm --force --volumes $(Php_Nom_Container)
-	-docker rm --force --volumes $(Mysql_Nom_Container)
-	-docker rm --force --volumes $(Mysql_U_Nom_Cont)
+	-docker rm --force --volumes $(Sql_Nom_Container)
+	-docker rm --force --volumes $(Sql_U_Nom_Cont)
 
 .PHONY: all
 all: run_ou_start
 
 .PHONY: run_ou_start
-run_ou_start: $(Start_Ou_Run_Mysql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
+run_ou_start: $(Start_Ou_Run_Sql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
 
 # Affiche un avertissement si les docker sont déjà en cours d'exécution
-.PHONY: info_mysql
-info_mysql:
-	$(warning "Le container MySql est déjà en cours d'exécution.")
+.PHONY: info_sql
+info_sql:
+	$(warning "Le container  Sql  est déjà en cours d'exécution.")
 
 .PHONY: info_php
 info_php:
@@ -63,7 +63,7 @@ info_nginx:
 # --------------------------------- #
 
 .PHONY: run
-run: run_mysql run_php run_nginx
+run: run_sql run_php run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
@@ -88,22 +88,22 @@ endif
 # - l'utilisateur qui ne peut agir que sur cette base
 # - le mot de passe de cet utilisateur
 # - Les scripts pour peupler la BDD
-.PHONY: run_mysql
-run_mysql: verifier_mysql
+.PHONY: run_sql
+run_sql: verifier_sql
 	docker run --detach \
-		--publish $(Mysql_Port_Exterieur):$(Mysql_Port_Interne) \
-		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
-		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
-		--env MYSQL_USER='$(Mysql_Utilisateur)' \
-		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
+		--publish $(Sql_Port_Exterieur):$(Sql_Port_Interne) \
+		--env MYSQL_ROOT_PASSWORD='$(Sql_Mdp_Root)' \
+		--env MYSQL_DATABASE='$(Sql_Nom_Bdd)' \
+		--env MYSQL_USER='$(Sql_Utilisateur)' \
+		--env MYSQL_PASSWORD='$(Sql_Pass_Utilisateur)' \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
-		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
-		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
-		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
-		--name $(Mysql_Nom_Container) mysql:latest
+		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
+		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
+		-v $(Sql_Volume_Ext):$(Sql_Volume_Int) \
+		--name $(Sql_Nom_Container) mariadb:10.3
 	@echo "──────────────────────────────────────────"
-	@echo "Les bases de données seront écrites dans : [$(Mysql_Volume_Ext)] "
+	@echo "Les bases de données seront écrites dans : [$(Sql_Volume_Ext)] "
 	@echo "──────────────────────────────────────────"
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
@@ -115,10 +115,10 @@ run_php: verifier_php construire_php
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
-		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
+		-v $(Php_Config_Sql_Ext):$(Php_Config_Sql_Int):ro \
 		-v $(Php_Php_Ini_Externe):$(Php_Php_Ini_Interne):ro \
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
-		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
+		--link $(Sql_Nom_Container):$(Php_Nom_Interne_Sql) \
 		--name $(Php_Nom_Container) $(Nom_Php_Construit):latest
 	@echo "──────────────────────────────────"
 	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
@@ -137,7 +137,7 @@ run_nginx: verifier_nginx
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
 		-v $(Nginx_Conf_Global_Ext):$(Nginx_Conf_Global_Int):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
-		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
+		--link $(Sql_Nom_Container):$(Nginx_Nom_Interne_Sql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
 		--name $(Nginx_Nom_Container) nginx:stable-alpine
 	@echo "──────────────────────────────────────"
@@ -149,14 +149,14 @@ run_nginx: verifier_nginx
 # -------------------------------------- #
 
 .PHONY: start
-start: start_mysql start_php start_nginx
+start: start_sql start_php start_nginx
 
-.PHONY: start_mysql
-start_mysql:
-	@echo "──────────────────"
-	@echo "Démarrage de MySql"
-	@echo "──────────────────"
-	docker start $(Mysql_Nom_Container)
+.PHONY: start_sql
+start_sql:
+	@echo "────────────────────"
+	@echo "Démarrage de MariaDB"
+	@echo "────────────────────"
+	docker start $(Sql_Nom_Container)
 
 .PHONY: start_php
 start_php:
@@ -176,10 +176,10 @@ start_nginx:
 # Connections à un conteneur déjà lancé #
 # ------------------------------------- #
 
-# Pour se connecter au docker mysql lancé en daemon
-.PHONY: connect_mysql
-connect_mysql:
-	docker exec --interactive --tty $(Mysql_Nom_Container) /bin/sh
+# Pour se connecter au docker sql lancé en daemon
+.PHONY: connect_sql
+connect_sql:
+	docker exec --interactive --tty $(Sql_Nom_Container) /bin/sh
 
 # Pour se connecter au docker php lancé en daemon
 .PHONY: connect_php
@@ -195,10 +195,10 @@ connect_nginx:
 # Consulter les logs des conteneurs #
 # --------------------------------- #
 
-# Pour pouvoir inspecter facilement le container mysql en cours d'exécution
-.PHONY: logs_mysql
-logs_mysql:
-	docker logs $(Mysql_Nom_Container)
+# Pour pouvoir inspecter facilement le container sql en cours d'exécution
+.PHONY: logs_sql
+logs_sql:
+	docker logs $(Sql_Nom_Container)
 
 # Pour pouvoir inspecter facilement le container php en cours d'exécution
 .PHONY: logs_php
@@ -214,31 +214,31 @@ logs_nginx:
 #    Exécuter les tests unitaire    #
 # --------------------------------- #
 
-.PHONY: unitaire_mysql
-unitaire_mysql:
+.PHONY: unitaire_sql
+unitaire_sql:
 	docker run --detach \
-		--publish $(Mysql_U_Port_Exterieur):$(Mysql_U_Port_Interne) \
-		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
-		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
-		--env MYSQL_USER='$(Mysql_Utilisateur)' \
-		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
+		--publish $(Sql_U_Port_Exterieur):$(Sql_U_Port_Interne) \
+		--env MYSQL_ROOT_PASSWORD='$(Sql_Mdp_Root)' \
+		--env MYSQL_DATABASE='$(Sql_Nom_Bdd)' \
+		--env MYSQL_USER='$(Sql_Utilisateur)' \
+		--env MYSQL_PASSWORD='$(Sql_Pass_Utilisateur)' \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
-		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
-		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
-		-v $(Mysql_U_Volume_Ext):$(Mysql_Volume_Int) \
-		--name $(Mysql_U_Nom_Cont) mysql:latest
+		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
+		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
+		-v $(Sql_U_Volume_Ext):$(Sql_Volume_Int) \
+		--name $(Sql_U_Nom_Cont) mariadb:10.3
 
 .PHONY: unitaire_php
-unitaire_php: verifier_mysql_unitaire
+unitaire_php: verifier_sql_unitaire
 	-docker run --rm \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
 		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
-		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
+		-v $(Php_Config_Sql_Ext):$(Php_Config_Sql_Int):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
-		--link $(Mysql_U_Nom_Cont):$(Php_Nom_Interne_Mysql) \
+		--link $(Sql_U_Nom_Cont):$(Php_Nom_Interne_Sql) \
 		phpunit/phpunit -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
@@ -274,6 +274,6 @@ generer_doc: construire_doc
 .PHONY: dump_bdd
 dump_bdd:
 	mkdir -p $(Chemin_Repo)/Dump_BDD/
-	docker exec $(Mysql_Nom_Container) sh -c \
-		'exec mysqldump --databases $(Mysql_Nom_Bdd) -uroot -p"$(Mysql_Mdp_Root)"' \
+	docker exec $(Sql_Nom_Container) sh -c \
+		'exec mysqldump --databases $(Sql_Nom_Bdd) -uroot -p"$(Sql_Mdp_Root)"' \
 		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql
