@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Mercredi 06 septembre[09] 2017
+# Dernière modification : Vendredi 19 janvier[01] 2018
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -31,7 +31,7 @@ stop:
 	-docker stop $(Nginx_Nom_Container)
 	-docker stop $(Php_Nom_Container)
 	-docker stop $(Mysql_Nom_Container)
-	-docker stop  $(Mysql_U_Nom_Cont)
+	-docker stop $(Mysql_U_Nom_Cont)
 
 # Stoppe les machines virtuel et les supprimes toutes
 .PHONY: clean
@@ -67,8 +67,8 @@ run: run_mysql run_php run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
-.PHONY: reload
-reload:
+.PHONY: reload_nginx
+reload_nginx:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
 # ---------------------------------------- #
