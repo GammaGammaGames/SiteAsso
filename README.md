@@ -6,8 +6,8 @@ Prérequis :
 
 ## Premier démarrage
 
-Pour générer automatiquement la configuration des containers mysql et php.
-Les fichiers de configurations seront écrits dans le dossier
+Pour générer automatiquement la configuration des containers mariadb et
+php. Les fichiers de configurations seront écrits dans le dossier
 **Temporaire**.
 
 ```sh
@@ -19,10 +19,10 @@ Puis pour lancer les containers.
 ```sh
 make
 ```
-* Les fichiers généré par MySql sont écrit dans **Temporaire/MySql**
+* Les fichiers généré par MariaDB sont écrit dans **Temporaire/MySql**
 * Les fichiers de log de php sont dans **Temporaire/logs_php**
 * Les fichiers de log de nginx sont dans **Temporaire/logs_nginx**
-* Les logs de mysql sont accessible via **docker logs mysql_serveur**
+* Les logs de sql sont accessible via **docker logs sql_serveur**
 
 ## Stopper les conteneurs
 
