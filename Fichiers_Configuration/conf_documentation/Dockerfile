@@ -1,7 +1,7 @@
 # vim: set nospell:
 # docker build -t nomcontainer .
 
-FROM php:alpine
+FROM php:7.2.1-alpine
 MAINTAINER PIVARD Julien <pivardjulien@gmail.com>
 
 # Based on https://hub.docker.com/r/instrumentisto/phpdoc/

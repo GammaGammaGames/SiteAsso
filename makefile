@@ -141,7 +141,7 @@ run_sql: verifier_sql
 		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
 		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
 		-v $(Sql_Volume_Ext):$(Sql_Volume_Int) \
-		--name $(Sql_Nom_Container) mariadb:10.3
+		--name $(Sql_Nom_Container) $(Sql_Nom_Image):$(Sql_Version_Image)
 	@echo "──────────────────────────────────────────"
 	@echo "Les bases de données seront écrites dans : [$(Sql_Volume_Ext)] "
 	@echo "──────────────────────────────────────────"
@@ -179,7 +179,7 @@ run_nginx: verifier_nginx
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
 		--link $(Sql_Nom_Container):$(Nginx_Nom_Interne_Sql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
-		--name $(Nginx_Nom_Container) nginx:stable-alpine
+		--name $(Nginx_Nom_Container) $(Nginx_Nom_Image):$(Nginx_Version_Image)
 	@echo "──────────────────────────────────────"
 	@echo "Les logs de nginx seront écrits dans : [$(Nginx_Log_Externe)] "
 	@echo "──────────────────────────────────────"
@@ -267,7 +267,7 @@ unitaire_sql:
 		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
 		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
 		-v $(Sql_U_Volume_Ext):$(Sql_Volume_Int) \
-		--name $(Sql_U_Nom_Cont) mariadb:10.3
+		--name $(Sql_U_Nom_Cont) $(Sql_Nom_Image):$(Sql_Version_Image)
 
 .PHONY: unitaire_php
 unitaire_php: verifier_sql_unitaire
@@ -279,7 +279,7 @@ unitaire_php: verifier_sql_unitaire
 		-v $(Php_Config_Sql_Ext):$(Php_Config_Sql_Int):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
 		--link $(Sql_U_Nom_Cont):$(Php_Nom_Interne_Sql) \
-		phpunit/phpunit -c ./phpunit.xml
+		$(PhpUnit_Nom_Image):$(PhpUnit_Version_Image) -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
 	@echo "La couverture des tests unitaires : file://$(PhpUnit_Logs_Externe)/coverage/index.html"

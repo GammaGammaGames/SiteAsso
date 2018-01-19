@@ -1,3 +1,6 @@
 # Ignorer les infos sensible lié à docker
 Fichiers_Généré_Par_Script/
 Dump_BDD/
+*.png
+*.svg
+*.jpg
