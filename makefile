@@ -15,6 +15,46 @@ nettoyage:
 	-docker rm --volumes `docker ps --all --quiet --filter "status=exited"`
 	-docker rmi `docker images --quiet --filter "dangling=true"`
 
+.PHONY: help
+help:
+	@echo "- all       : Démarre ou crée les VM pour démarrer le site."
+	@echo "    - run_ou_start"
+	@echo "- run       : Démarre toutes les VM pour faire fonctionner le site."
+	@echo "    - run_sql    : Spécifique à la VM mariadb"
+	@echo "    - run_php    : Spécifique à la VM php"
+	@echo "    - run_nginx  : Spécifique à la VM nginx"
+	@echo "- start     : Démarre les VM nécessaires au fonctionnement du site."
+	@echo "    - start_sql   : Spécifique à la VM mariadb"
+	@echo "    - start_php   : Spécifique à la VM php"
+	@echo "    - start_nginx : Spécifique à la VM nginx"
+	@echo "- generer_doc    : Génère la documentation php de l'application"
+	@echo
+	@echo "[ Tests unitaires ]"
+	@echo " - unitaire_sql   : Lance la VM destiné aux tests unitaires."
+	@echo " - unitaire_php   : Lance la VM des tests unitaires de php."
+	@echo
+	@echo "[ Logs ]"
+	@echo " - logs_sql       : Affiche les logs de la VM mariadb"
+	@echo " - logs_php       : Affiche les logs de la VM php"
+	@echo " - logs_nginx     : Affiche les logs de la VM nginx"
+	@echo
+	@echo "[ Connection aux VM ]"
+	@echo " - connect_sql    : Connection à travers un bash à la VM mariadb"
+	@echo " - connect_php    : Connection à travers un bash à la VM php"
+	@echo " - connect_nginx  : Connection à travers un bash à la VM nginx"
+	@echo
+	@echo "[ Arret et suppression ]"
+	@echo " - nettoyage : Supprime les containers qui ont été stoppé et les images intermédiaires."
+	@echo " - stop      : Stop toutes les machines virtuelles en cours."
+	@echo " - clean     : Stop toutes les VM et les supprime."
+	@echo
+	@echo "[ Autres ]"
+	@echo " - construire_php : Construit la VM php si elle n'existe pas déjà."
+	@echo " - construire_doc : Construit la VM de génération de la documentation php"
+	@echo " - reload_nginx : Force la VM nginx à recharger sa configuration."
+	@echo " - dump_bdd       : Réalise un dump de la base de données."
+
+
 Nom_D_Tmp		:= Fichiers_Généré_Par_Script
 ifeq ($(wildcard $(Nom_D_Tmp)/*), )
     $(error "Vous devez générer la configuration avec ./configure")
