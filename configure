@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Lundi 18 septembre[09] 2017
+# Dernière modification : Samedi 20 janvier[01] 2018
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -406,13 +406,13 @@ configurer_nom_mdp_bdd ()
     declare -r mdp=`generer_chaine 2`
     declare -r bdd="${nom}"
 
-    printf >&2 "Génération du mdp de l'utilisateur mysql \n"
+    printf >&2 "Génération du mdp de l'utilisateur mysql... \n"
     printf "${mdp}" > "${FICHIER_MDP_MYSQL}"
     message_ok
-    printf >&2 "Génération du nom de l'utilisateur mysql \n"
+    printf >&2 "Génération du nom de l'utilisateur mysql... \n"
     printf "${nom}" > "${FICHIER_NOM_MYSQL}"
     message_ok
-    printf >&2 "Génération du nom de la BDD  dans  mysql \n"
+    printf >&2 "Génération du nom de la BDD  dans  mysql... \n"
     printf "${bdd}" > "${FICHIER_BDD_MYSQL}"
     message_ok
 }
@@ -423,7 +423,7 @@ configurer_nom_mdp_bdd ()
 configurer_chemin_absolu()
 {
     separateur_section "Configuration du chemin absolu"
-    printf >&2 "Génération du fichier de chemin absolu\n"
+    printf >&2 "Génération du fichier de chemin absolu...\n"
     printf "${POSITIONSCRIPT}" > "${FICHIER_PATH_SOURCES}"
     message_ok
 }
@@ -434,7 +434,7 @@ configurer_chemin_absolu()
 configurer_port_serveur_nginx()
 {
     separateur_section "Configuration du port d'écoute du serveur nginx."
-    printf >&2 "Génération du fichier de numéro de port\n"
+    printf >&2 "Génération du fichier de numéro de port...\n"
     declare -i NUM_PORT=80
     if test_cmd_exist lsof
     then
@@ -447,7 +447,7 @@ configurer_port_serveur_nginx()
         message_ok
     else
         printf >&2 "Impossible de connaitre les ports utilisé. "
-        printf >&2 "Port par défaut choisi\n"
+        printf >&2 "Port par défaut choisi :\n"
         message_erreur
     fi
     printf >&2 "        Numéro de port choisi : ${NUM_PORT}\n"
@@ -506,11 +506,11 @@ supprimer_fichier()
                 message_ok
             else
                 afficher_erreur "Le fichier " "${fichier_cible}" \
-                    " ne peut pas être supprimé. Vérifiez que vous avez les droits dessus"
+                    " ne peut pas être supprimé. Vérifiez que vous avez les droits dessus !"
                 message_erreur
             fi
         else
-            afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas"
+            afficher_erreur "Le fichier" "${fichier_cible}" "ne vous appartient pas !"
             message_erreur
             printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
@@ -537,11 +537,11 @@ supprimer_dossier()
             else
                 afficher_erreur "Le dossier " "${dossier_cible}" \
                     " ne peut pas être supprimé vérifiez que vous " \
-                    "avez les droits sur le contenu et le dossier"
+                    "avez les droits sur le contenu et le dossier !"
                 message_erreur
             fi
         else
-            afficher_erreur "Le dossier" "${dossier_cible}" "ne vous appartient pas"
+            afficher_erreur "Le dossier" "${dossier_cible}" "ne vous appartient pas !"
             message_erreur
             printf >&2 "\n"
             exit "${E_PROPRIO_FICHIER}"
@@ -620,7 +620,7 @@ verifier_logiciels_installe()
 {
     if ! test_cmd_exist docker
     then
-        message_erreur "Configuration inutilisable"
+        message_erreur "Configuration inutilisable !"
         printf >&2 "${C_VIOLET}${M_GRAS}Docker ${C__ROUGE}n'est pas installé sur "
         printf >&2 "votre système ! \nLes différents serveur ne pourront pas être"
         printf >&2 " lancé.${NEUTRE}\n"
@@ -634,13 +634,13 @@ verifier_logiciels_installe()
         # Vérifie le numéro de version de make
         if ! make -v | grep -q "GNU Make 4.*" 2>/dev/null
         then
-            message_avertissement "GNUmake n'est pas installé."
+            message_avertissement "GNUmake n'est pas installé !"
             printf >&2 "Les makefile peuvent ne pas fonctionner correctement.\n"
-            printf >&2 "GNUmake 4.x est recommandé pour exécuter les makefile.\n"
+            printf >&2 "GNUmake 4.x est recommandé.\n"
             printf >&2 "\n"
         fi
     else
-        message_erreur "Le lancement du serveur ne pourra pas se faire"
+        message_erreur "Le lancement du serveur ne pourra pas se faire !"
         printf >&2 "${M_GRAS}${C__ROUGE}Veuillez installer ${C_VIOLET}"
         printf >&2 "make${C__ROUGE} ou ${C_VIOLET}gnumake${C__ROUGE} "
         printf >&2 "pour continuer.${NEUTRE}\n"
@@ -812,7 +812,7 @@ then
     separateur_section "Suppression configuration"
     if [[ -d "${FICHIERS_GENERE}" ]]
     then
-        message_attention "Vous allez supprimer la configuration générée aléatoirement"
+        message_attention "Vous allez supprimer la configuration générée aléatoirement !"
         if demander_utilisateur "Voulez vous vraiment supprimer la configuration ?"
         then
             if supprimer_fichiers_mysql_genere
@@ -854,7 +854,7 @@ then
     mkdir -- "${FICHIERS_GENERE}"
     printf >&2 "\n"
 else
-    message_attention "Une configuration existe déjà"
+    message_attention "Une configuration existe déjà !"
     if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
     then
         printf >&2 "\n"
