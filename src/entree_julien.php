@@ -218,7 +218,7 @@ if ( $affichage !== "404" )
      * Pas fan si les serveurs tombent en rade alors script plus accessible.
     echo( "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>" );
      */
-    echo( "<script src='/jquery.min.js'></script>\n" );
-    echo( "<script src='/jquery.unveil.js' ></script>\n" );
-    echo ( "<script src='/testJavaScript.js' ></script>\n" );
+    echo( "<script src='/ecmascript/jquery.min.js'></script>\n" );
+    echo( "<script src='/ecmascript/jquery.unveil.js' ></script>\n" );
+    echo ( "<script src='/ecmascript/testJavaScript.js' ></script>\n" );
 }
