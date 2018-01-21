@@ -184,6 +184,21 @@ if ( $affichage !== "404" )
     echo ( "REQUEST : " );
     var_dump ( $_REQUEST );
     echo ( "\n</p>\n" );
+    $requete = $_GET["req"]?? "accueil";
+    echo ( "<p>\n" );
+    echo ( "Découpage : " );
+    $val = explode ('/', $requete);
+    $i = 0;
+    echo ("<ul>");
+    foreach ($val as $e)
+    {
+        echo ("<li>");
+        echo ("[$i] : [$e]");
+        echo ("</li>");
+        $i++;
+    }
+    echo ("</ul>");
+    echo ( "\n</p>\n" );
 
     echo ( "<p>\n" );
     echo ( "Test de chargement après coup d'images : " );
