@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Vendredi 19 janvier[01] 2018
+# Dernière modification : Samedi 20 janvier[01] 2018
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -297,8 +297,8 @@ run_unitaire_php: verifier_sql_unitaire
 		$(PhpUnit_Nom_Image):$(PhpUnit_Version_Image) -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
-	@echo "La couverture des tests unitaires : file://$(PhpUnit_Logs_Externe)/coverage/index.html"
-	@echo "Résumé html des tests réussi et raté : file://$(PhpUnit_Logs_Externe)/logs/dox.html"
+	@echo "La couverture des tests unitaires         : file://$(PhpUnit_Logs_Externe)/coverage/index.html"
+	@echo "Résumé html des tests réussi et raté      : file://$(PhpUnit_Logs_Externe)/logs/dox.html"
 	@echo "───────────────────────────────────────────"
 
 # --------------------------------- #
