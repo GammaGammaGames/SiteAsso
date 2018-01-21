@@ -91,15 +91,15 @@ run_ou_start: $(Start_Ou_Run_Sql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
 # Affiche un avertissement si les docker sont déjà en cours d'exécution
 .PHONY: info_sql
 info_sql:
-	$(info "Le container  Sql  est déjà en cours d'exécution.")
+	$(info "Le conteneur  Sql  est déjà en cours d'exécution.")
 
 .PHONY: info_php
 info_php:
-	$(info "Le container  PHP  est déjà en cours d'exécution.")
+	$(info "Le conteneur  PHP  est déjà en cours d'exécution.")
 
 .PHONY: info_nginx
 info_nginx:
-	$(info "Le container NginX est déjà en cours d'exécution.")
+	$(info "Le conteneur NginX est déjà en cours d'exécution.")
 
 # --------------------------------- #
 
@@ -107,7 +107,7 @@ info_nginx:
 run: run_sql run_php run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
-# sans avoir à redémarrer le container.
+# sans avoir à redémarrer le conteneur.
 .PHONY: reload_nginx
 reload_nginx:
 	docker kill -s HUP $(Nginx_Nom_Container)
@@ -236,17 +236,17 @@ connect_nginx:
 # Consulter les logs des conteneurs #
 # --------------------------------- #
 
-# Pour pouvoir inspecter facilement le container sql en cours d'exécution
+# Pour pouvoir inspecter facilement le conteneur sql en cours d'exécution
 .PHONY: logs_sql
 logs_sql:
 	docker logs $(Sql_Nom_Container)
 
-# Pour pouvoir inspecter facilement le container php en cours d'exécution
+# Pour pouvoir inspecter facilement le conteneur php en cours d'exécution
 .PHONY: logs_php
 logs_php:
 	docker logs $(Php_Nom_Container)
 
-# Pour pouvoir inspecter facilement le container nginx en cours d'exécution
+# Pour pouvoir inspecter facilement le conteneur nginx en cours d'exécution
 .PHONY: logs_nginx
 logs_nginx:
 	docker logs $(Nginx_Nom_Container)
@@ -282,7 +282,7 @@ start_unitaire_sql:
 
 .PHONY: info_sql_unitaire
 info_sql_unitaire:
-	$(info "Le container de tests unitaire sql est déjà en cours d'exécution.")
+	$(info "Le conteneur de tests unitaire sql est déjà en cours d'exécution.")
 
 .PHONY: run_unitaire_php
 run_unitaire_php: verifier_sql_unitaire
