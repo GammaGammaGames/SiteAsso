@@ -1,5 +1,5 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Lundi 28 août[08] 2017
 
 /**
  * Représentation d'un évènement.
@@ -32,16 +32,16 @@ class Evenement extends RepresentationAvecId
     protected $nom = "";
 
     /**
-     * @var string
+     * @var \DateTime
      * La date de début de l'évènement.
      * */
-    protected $debut = "";
+    protected $debut;
 
     /**
-     * @var string
+     * @var \DateTime
      * La date de fin de l'évènement.
      * */
-    protected $fin = "";
+    protected $fin;
 
     /**
      * @var Adresse
@@ -55,6 +55,8 @@ class Evenement extends RepresentationAvecId
     public function __construct()
     {
         $this->adresse = new Adresse();
+        $this->debut = new \DateTime( "1970-01-01" );
+        $this->fin = new \DateTime( "1970-01-02" );
     }
 
     // =============================== //
@@ -75,10 +77,10 @@ class Evenement extends RepresentationAvecId
     /**
      * La date de début de l'évènement.
      *
-     * @return string
+     * @return \DateTime
      * La date de début.
      * */
-    public function get_date_debut() : string
+    public function get_date_debut() : \DateTime
     {
         return $this->debut;
     }
@@ -86,10 +88,10 @@ class Evenement extends RepresentationAvecId
     /**
      * La date de fin de l'évènement.
      *
-     * @return string
+     * @return \DateTime
      * La date de fin
      * */
-    public function get_date_fin() : string
+    public function get_date_fin() : \DateTime
     {
         return $this->fin;
     }
@@ -123,10 +125,10 @@ class Evenement extends RepresentationAvecId
     /**
      * Change la date de début de l'évènement.
      *
-     * @param string $date
+     * @param \DateTime $date
      * La date de début.
      * */
-    public function set_date_debut( string $date ) : void
+    public function set_date_debut( \DateTime $date ) : void
     {
         $this->debut = $date;
     }
@@ -134,10 +136,10 @@ class Evenement extends RepresentationAvecId
     /**
      * Change la date de fin de l'évènement.
      *
-     * @param string $date
+     * @param \DateTime $date
      * La date de fin
      * */
-    public function set_date_fin( string $date ) : void
+    public function set_date_fin( \DateTime $date ) : void
     {
         $this->fin = $date;
     }
@@ -162,12 +164,14 @@ class Evenement extends RepresentationAvecId
     {
 
         $debogage = "<p>Débogage de Evenement</p>";
+        $d = $this->debut->format( \DateTime::W3C );
+        $f = $this->fin->format( \DateTime::W3C );
 
         $debogage .= "<ul>";
         $debogage .= "<li>id            = $this->id</li>";
         $debogage .= "<li>nom           = $this->nom</li>";
-        $debogage .= "<li>date de début = $this->debut</li>";
-        $debogage .= "<li>date de fin   = $this->fin</li>";
+        $debogage .= "<li>date de début = $d</li>";
+        $debogage .= "<li>date de fin   = $f</li>";
         $debogage .= "<li>$this->adresse</li>";
         $debogage .= "</ul>";
 

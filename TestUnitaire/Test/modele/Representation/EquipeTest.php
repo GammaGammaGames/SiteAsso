@@ -1,8 +1,8 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
 
 /**
- * Tests unitaires de la classe Equipe
+ * Tests unitaires de la classe Equipe.
  *
  * @author PIVARD Julien
  * @license GPL-v3
@@ -19,11 +19,6 @@ use Modele\Representation\Tournoi;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * @license GPL-v3
- * @version 0.1
- * */
 class EquipeTest extends TestCase
 {
 
@@ -646,7 +641,6 @@ class EquipeTest extends TestCase
 
         $this->t->set_id( rand( 1, 100 ) );
         $this->t->set_nom( "Counter Strike" );
-        $this->t->set_debut( "2018/12/25-12:00" );
         $this->t->set_nb_joueurs( rand( 200, 400 ) );
         $this->t->set_nb_joueurs_par_equipe( 3 );
 

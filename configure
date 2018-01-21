@@ -2,7 +2,7 @@
 # vim:foldmethod=marker:foldlevel=0
 # Changer les droits avec chmod u+x fichier
 
-# Dernière modification : Samedi 26 août[08] 2017
+# Dernière modification : Lundi 18 septembre[09] 2017
 
 # Trouver les variables non sécurisé [^"]\$\{?[a-zA-Z0-9?*#][a-zA-Z0-9?*#_]*\}?[^"]?
 # Trouver les variables qui ne sont pas entouré d'accolades \$[a-zA-Z0-9?*#][a-zA-Z0-9*?#_]*
@@ -312,8 +312,10 @@ exit "${ERREUR}"' ERR
 ####################################################
 
 declare -r POSITIONSCRIPT="`pwd`"
-declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/Docker"
+declare -r DOSSIER_TEMPORAIRE="Fichiers_Généré_Par_Script"
+declare -r FICHIERS_GENERE="${POSITIONSCRIPT}/${DOSSIER_TEMPORAIRE}"
 declare -r FICHIERS_MYSQL="${FICHIERS_GENERE}/MySql"
+declare -r FICHIERS_MYSQL_UNITAIRE="${FICHIERS_GENERE}/MySql_Unit"
 declare -r FICHIER_MDP_ROOT_MYSQL="${FICHIERS_GENERE}/mdp_root_mysql.conf"
 declare -r FICHIER_NOM_MYSQL="${FICHIERS_GENERE}/mysql_nom_user.conf"
 declare -r FICHIER_MDP_MYSQL="${FICHIERS_GENERE}/mysql_mdp_user.conf"
@@ -434,13 +436,21 @@ configurer_port_serveur_nginx()
     separateur_section "Configuration du port d'écoute du serveur nginx."
     printf >&2 "Génération du fichier de numéro de port\n"
     declare -i NUM_PORT=80
-    # Si erreur alors pas de processus qui utilise port 80
-    if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+    if test_cmd_exist lsof
     then
-        NUM_PORT=8080
+        # Si erreur alors pas de processus qui utilise port 80
+        if lsof -i:"${NUM_PORT}" 2>/dev/null 1>/dev/null
+        then
+            NUM_PORT=8080
+        fi
+        printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
+        message_ok
+    else
+        printf >&2 "Impossible de connaitre les ports utilisé. "
+        printf >&2 "Port par défaut choisi\n"
+        message_erreur
     fi
-    printf "${NUM_PORT}" > "${FICHIER_PORT_NGINX}"
-    message_ok
+    printf >&2 "        Numéro de port choisi : ${NUM_PORT}\n"
 }
 
 # }}}
@@ -456,8 +466,8 @@ creer_fichier_config_php()
 
     printf >&2 "Écriture du fichier de configuration php\n"
 
-    printf "<?php\n" > "${FICHIER}"
-    printf "define( 'MYSQL_HOST', 'mysql_serveur' );\n" >> "${FICHIER}"
+    printf "<?php\n\n" > "${FICHIER}"
+    printf "define( 'MYSQL_HOST', 'db' );\n" >> "${FICHIER}"
     printf "define( 'MYSQL_PORT', '3306' );\n" >> "${FICHIER}"
 
     printf "define( 'MYSQL_DB', '" >> "${FICHIER}"
@@ -472,7 +482,7 @@ creer_fichier_config_php()
     printf "`head -n1 ${FICHIER_MDP_MYSQL} | tr -d '\n*'`" >> "${FICHIER}"
     printf "' );\n" >> "${FICHIER}"
 
-    printf "?>\n" >> "${FICHIER}"
+    printf "\n" >> "${FICHIER}"
 
     message_ok
 
@@ -526,7 +536,8 @@ supprimer_dossier()
                 message_ok
             else
                 afficher_erreur "Le dossier " "${dossier_cible}" \
-                    " ne peut pas être supprimé vérifiez que vous avez les droits sur le contenu et le dossier"
+                    " ne peut pas être supprimé vérifiez que vous " \
+                    "avez les droits sur le contenu et le dossier"
                 message_erreur
             fi
         else
@@ -575,10 +586,11 @@ supprimer_fichiers_mysql_genere()
     separateur_section "Suppression de la BDD"
     if [[ -d "${FICHIERS_MYSQL}" ]]
     then
-        message_avertissement "Il est possible de réaliser une "
-        printf >&2 "sauvegarde des bases de données avant la suppression.\n"
+        printf >&2 "Il est possible de réaliser une sauvegarde \n"
+        printf >&2 "des bases de données avant la suppression.\n"
         printf >&2 "Pour effectuer celle-ci, annulez la suppression et lancez\n"
-        printf >&2 "manuellement la commande : ${C_SUR___NOIR} \$${C__JAUNE}make dump_bdd ${NEUTRE}\n"
+        printf >&2 "manuellement la commande : ${C_SUR___NOIR}"
+        printf >&2 "\$${C__JAUNE}make dump_bdd${NEUTRE}\n"
         printf >&2 "\n"
 
         message_attention "Toute suppression est définitive !"
@@ -586,6 +598,7 @@ supprimer_fichiers_mysql_genere()
         then
             printf >&2 "\n"
             supprimer_dossier "${FICHIERS_MYSQL}"
+            supprimer_dossier "${FICHIERS_MYSQL_UNITAIRE}"
         else
             printf >&2 "\n"
             printf >&2 "Suppression annulée.\n"
@@ -657,23 +670,25 @@ message_erreur()
 
 message_attention()
 {
-    printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ! ${NEUTRE} "
+    printf >&2 "${C_SUR__ROUGE}${C__BLANC}${M_GRAS} Attention ${NEUTRE} "
     echo >&2 "${*}"
 }
 
 message_avertissement()
 {
-    printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} Avertissement ! ${NEUTRE} "
+    printf >&2 "${C_SUR__JAUNE}${C__BLANC}${M_GRAS} Avertissement ${NEUTRE} "
     echo >&2 "${*}"
 }
 
 demander_utilisateur()
 {
-    printf >&2 "${1} (o/n)\n"
-    while read -r -n 1 -s reponse
+    while true
     do
+        read -r -s -n 1 -p "${1} (o/n) : " reponse
+        [[ "${reponse}" = [NnOoYy] ]] && printf "${reponse}\n"
         [[ "${reponse}" = [OoYy] ]] && return 0
         [[ "${reponse}" = [Nn] ]] && return 1
+        printf "\r"
     done
 }
 
@@ -795,7 +810,6 @@ verifier_logiciels_installe
 if [[ "${CLEAN}" == "clean" ]]
 then
     separateur_section "Suppression configuration"
-    printf >&2 "\n"
     if [[ -d "${FICHIERS_GENERE}" ]]
     then
         message_attention "Vous allez supprimer la configuration générée aléatoirement"
@@ -806,7 +820,7 @@ then
                 printf >&2 "\n"
                 supprimer_configuration
                 supprimer_logs_conf
-                separateur_section "Suppression du dossier Docker"
+                separateur_section "Suppression du dossier ${DOSSIER_TEMPORAIRE}"
                 supprimer_dossier "${FICHIERS_GENERE}"
                 printf >&2 "\n"
                 exit "${EXIT_SUCCES}"
@@ -822,6 +836,7 @@ then
             exit "${E_ANNULATION}"
         fi
     else
+        printf >&2 "\n"
         printf >&2 "Aucun fichier généré à supprimer\n"
         message_ok
         printf >&2 "\n"
@@ -830,12 +845,14 @@ then
 fi
 
 separateur_section "Génération de la configuration"
-printf >&2 "\n"
 # Si une configuration existe déjà on demande à l'utilisateur si il veut la
 # supprimer
 if [[ ! -d "${FICHIERS_GENERE}" ]]
 then
+    printf >&2 "Création du dossier ${M_GRAS}${C_VIOLET}"
+    printf >&2 "${FICHIERS_GENERE}${NEUTRE}\n"
     mkdir -- "${FICHIERS_GENERE}"
+    printf >&2 "\n"
 else
     message_attention "Une configuration existe déjà"
     if demander_utilisateur "Êtes vous sur de vouloir la générer à nouveau ?"
@@ -861,7 +878,8 @@ GENERER='n'
 if [[ -d "${FICHIERS_MYSQL}" ]]
 then
     message_attention "MySql a déjà configuré une BDD pour un utilisateur."
-    printf >&2 "Pour pouvoir générer une nouvelle configuration vous devez supprimer la BDD actuelle.\n"
+    printf >&2 "Pour pouvoir générer une nouvelle configuration \n"
+    printf >&2 "vous devez supprimer la BDD actuelle.\n"
     if demander_utilisateur "Voulez vous générer une nouvelle configuration pour MySql ?"
     then
         if supprimer_fichiers_mysql_genere

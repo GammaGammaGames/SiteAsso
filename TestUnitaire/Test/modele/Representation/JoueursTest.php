@@ -1,5 +1,13 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
+
+/**
+ * Tests unitaires de la classe Joueur.
+ *
+ * @author PIVARD Julien
+ * @license GPL-v3
+ * @version 0.1
+ * */
 
 declare( strict_types = 1 );
 
@@ -10,22 +18,22 @@ use Modele\Representation\Joueur;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * */
 class JoueursTest extends TestCase
 {
 
     protected $j;
+    protected $an0;
 
     protected function setUp() : void
     {
         $this->j = new Joueur();
+        $this->an0 = new \DateTime( "1970-01-01" );
     }
 
     protected function tearDown() : void
     {
         $this->j = NULL;
+        $this->an0 = NULL;
     }
 
     public function testCreerJoueur() : void
@@ -35,7 +43,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
@@ -48,7 +56,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
@@ -61,7 +69,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
@@ -74,7 +82,7 @@ class JoueursTest extends TestCase
         $this->assertEquals( $attendu, $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
@@ -87,7 +95,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEquals( $attendu, $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
@@ -100,13 +108,13 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEquals( $attendu, $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( new Adresse(), $this->j->get_adresse() );
     }
 
     public function testChangerDateAnnivairsaire() : void
     {
-        $attendu = "1990/05/22";
+        $attendu = new \DateTime( "1990/05/22" );
         $this->j->set_anniv( $attendu );
         $this->assertEquals( 0, $this->j->get_id() );
         $this->assertEmpty( $this->j->get_email() );
@@ -131,7 +139,7 @@ class JoueursTest extends TestCase
         $this->assertEmpty( $this->j->get_tel() );
         $this->assertEmpty( $this->j->get_nom() );
         $this->assertEmpty( $this->j->get_prenom() );
-        $this->assertEmpty( $this->j->get_anniv() );
+        $this->assertEquals( $this->an0, $this->j->get_anniv() );
         $this->assertEquals( $attendu, $this->j->get_adresse() );
     }
 
@@ -142,7 +150,7 @@ class JoueursTest extends TestCase
         $tel = "+33677009988";
         $nom = "Half";
         $prenom = "Life";
-        $anniv = "1888/01/31";
+        $anniv = new \DateTime( "1888/01/31" );
         $adr = "42 Allée des nains";
         $ville = "Gattaca";
         $code = "40200";
@@ -154,6 +162,8 @@ class JoueursTest extends TestCase
         $adresse->set_code_postal( $code );
         $adresse->set_pays( $pays );
 
+        $a = $anniv->format( \DateTime::W3C );
+
         $attendu = "<p>Débogage de Joueur</p>";
         $attendu .= "<ul>";
         $attendu .= "<li>id          = $id</li>";
@@ -161,7 +171,7 @@ class JoueursTest extends TestCase
         $attendu .= "<li>tel         = $tel</li>";
         $attendu .= "<li>nom         = $nom</li>";
         $attendu .= "<li>prenom      = $prenom</li>";
-        $attendu .= "<li>anniv       = $anniv</li>";
+        $attendu .= "<li>anniv       = $a</li>";
         $attendu .= "<li>$adresse</li>";
         $attendu .= "</ul>";
 

@@ -1,7 +1,15 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
 
 declare( strict_types = 1 );
+
+/**
+ * Tests unitaires de la classe Tournoi.
+ *
+ * @author PIVARD Julien
+ * @license GPL-v3
+ * @version 0.1
+ * */
 
 include_once "/var/www/html/modele/Representation/Tournoi.php";
 
@@ -11,31 +19,29 @@ use Modele\Representation\Tournoi;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * @license GPL-v3
- * @version 0.1
- * */
 class TournoiTest extends TestCase
 {
 
     protected $t;
+    protected $an0;
 
     protected function setUp() : void
     {
         $this->t = new Tournoi();
+        $this->an0 = new \DateTime( "1970-01-01" );
     }
 
     protected function tearDown() : void
     {
         $this->t = NULL;
+        $this->an0 = NULL;
     }
 
     public function testCreerTournoi() : void
     {
         $this->assertEquals( 0, $this->t->get_id() );
         $this->assertEmpty( $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEmpty( $this->t->get_nb_joueurs() );
         $this->assertEmpty( $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( new Evenement(), $this->t->get_evenement() );
@@ -48,7 +54,7 @@ class TournoiTest extends TestCase
 
         $this->assertEquals( $attendu, $this->t->get_id() );
         $this->assertEmpty( $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEmpty( $this->t->get_nb_joueurs() );
         $this->assertEmpty( $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( new Evenement(), $this->t->get_evenement() );
@@ -61,7 +67,7 @@ class TournoiTest extends TestCase
 
         $this->assertEquals( 0, $this->t->get_id() );
         $this->assertEquals( $attendu, $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEmpty( $this->t->get_nb_joueurs() );
         $this->assertEmpty( $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( new Evenement(), $this->t->get_evenement() );
@@ -70,7 +76,7 @@ class TournoiTest extends TestCase
     public function testChangerDateDebut() : void
     {
 
-        $attendu = "2018/12/25-12:00";
+        $attendu = new \DateTime( "2018-12-25-12:00" );
         $this->t->set_debut( $attendu );
 
         $this->assertEquals( 0, $this->t->get_id() );
@@ -90,7 +96,7 @@ class TournoiTest extends TestCase
 
         $this->assertEquals( 0, $this->t->get_id() );
         $this->assertEmpty( $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEquals( $attendu, $this->t->get_nb_joueurs() );
         $this->assertEmpty( $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( new Evenement(), $this->t->get_evenement() );
@@ -105,7 +111,7 @@ class TournoiTest extends TestCase
 
         $this->assertEquals( 0, $this->t->get_id() );
         $this->assertEmpty( $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEmpty( $this->t->get_nb_joueurs() );
         $this->assertEquals( $attendu, $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( new Evenement(), $this->t->get_evenement() );
@@ -119,14 +125,12 @@ class TournoiTest extends TestCase
 
         $attendu->set_id( rand( 1, 100 ) );
         $attendu->set_nom( "Lan partie" );
-        $attendu->set_date_debut( "2000/02/12" );
-        $attendu->set_date_fin( "2000/02/14" );
 
         $this->t->set_evenement( $attendu );
 
         $this->assertEquals( 0, $this->t->get_id() );
         $this->assertEmpty( $this->t->get_nom() );
-        $this->assertEmpty( $this->t->get_debut() );
+        $this->assertEquals( $this->an0, $this->t->get_debut() );
         $this->assertEmpty( $this->t->get_nb_joueurs() );
         $this->assertEmpty( $this->t->get_nb_joueurs_par_equipe() );
         $this->assertEquals( $attendu, $this->t->get_evenement() );
@@ -144,13 +148,11 @@ class TournoiTest extends TestCase
         $evenement = new Evenement();
         $evenement->set_id( rand( 1, 100 ) );
         $evenement->set_nom( "Lan partie" );
-        $evenement->set_date_debut( "2000/02/12" );
-        $evenement->set_date_fin( "2000/02/14" );
         $evenement->set_adresse( $adr );
 
         $id = rand( 1, 100 );
         $nom = "Counter Strike";
-        $debut = "2018/12/25-12:00";
+        $debut = new \DateTime( "2018-12-25-12:00" );
         $nb_j = rand( 200, 400 );
         $nb_j_equipe = rand( 2, 10 );
         $this->t->set_id( $id );
@@ -160,11 +162,13 @@ class TournoiTest extends TestCase
         $this->t->set_nb_joueurs_par_equipe( $nb_j_equipe );
         $this->t->set_evenement( $evenement );
 
+        $d = $debut->format( \DateTime::W3C );
+
         $attendu = "<p>Débogage du Tournoi</p>";
         $attendu .= "<ul>";
         $attendu .= "<li>id                    = $id</li>";
         $attendu .= "<li>nom                   = $nom</li>";
-        $attendu .= "<li>debut                 = $debut</li>";
+        $attendu .= "<li>debut                 = $d</li>";
         $attendu .= "<li>nb joueurs max        = $nb_j</li>";
         $attendu .= "<li>nb joueurs par équipe = $nb_j_equipe</li>";
         $attendu .= "<li>$evenement</li>";

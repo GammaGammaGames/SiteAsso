@@ -1,6 +1,6 @@
 # vim: nofoldenable: list:
 # PIVARD Julien
-# Dernière modification : Samedi 26 août[08] 2017
+# Dernière modification : Vendredi 19 janvier[01] 2018
 
 SHELL		= /bin/sh
 .DEFAULT_GOAL	:= all
@@ -15,7 +15,49 @@ nettoyage:
 	-docker rm --volumes `docker ps --all --quiet --filter "status=exited"`
 	-docker rmi `docker images --quiet --filter "dangling=true"`
 
-ifeq ($(wildcard Docker/*), )
+.PHONY: help
+help:
+	@echo "- all         : Démarre ou crée les VM pour démarrer le site."
+	@echo "    - run_ou_start"
+	@echo "- run         : Démarre toutes les VM pour faire fonctionner le site."
+	@echo "    - run_sql    : Spécifique à la VM mariadb"
+	@echo "    - run_php    : Spécifique à la VM php"
+	@echo "    - run_nginx  : Spécifique à la VM nginx"
+	@echo "- start       : Démarre les VM nécessaires au fonctionnement du site."
+	@echo "    - start_sql   : Spécifique à la VM mariadb"
+	@echo "    - start_php   : Spécifique à la VM php"
+	@echo "    - start_nginx : Spécifique à la VM nginx"
+	@echo "- generer_doc : Génère la documentation php de l'application"
+	@echo
+	@echo "[ Tests unitaires ]"
+	@echo " - unitaire   : Lance les tests unitaires"
+	@echo "     - run_unitaire_sql   : Lance la VM destiné aux tests unitaires."
+	@echo "     - run_unitaire_php   : Lance la VM des tests unitaires de php."
+	@echo
+	@echo "[ Logs ]"
+	@echo " - logs_sql   : Affiche les logs de la VM mariadb"
+	@echo " - logs_php   : Affiche les logs de la VM php"
+	@echo " - logs_nginx : Affiche les logs de la VM nginx"
+	@echo
+	@echo "[ Connection aux VM ]"
+	@echo " - connect_sql    : Connection à travers un bash à la VM mariadb"
+	@echo " - connect_php    : Connection à travers un bash à la VM php"
+	@echo " - connect_nginx  : Connection à travers un bash à la VM nginx"
+	@echo
+	@echo "[ Arret et suppression ]"
+	@echo " - nettoyage : Supprime les containers qui ont été stoppé et les images intermédiaires."
+	@echo " - stop      : Stop toutes les machines virtuelles en cours."
+	@echo " - clean     : Stop toutes les VM et les supprime."
+	@echo
+	@echo "[ Autres ]"
+	@echo " - construire_php : Construit la VM php si elle n'existe pas déjà."
+	@echo " - construire_doc : Construit la VM de génération de la documentation php"
+	@echo " - reload_nginx   : Force la VM nginx à recharger sa configuration."
+	@echo " - dump_bdd       : Réalise un dump de la base de données."
+
+
+Nom_D_Tmp		:= Fichiers_Généré_Par_Script
+ifeq ($(wildcard $(Nom_D_Tmp)/*), )
     $(error "Vous devez générer la configuration avec ./configure")
 endif
 
@@ -29,43 +71,45 @@ include ./makefile.checks
 stop:
 	-docker stop $(Nginx_Nom_Container)
 	-docker stop $(Php_Nom_Container)
-	-docker stop $(Mysql_Nom_Container)
+	-docker stop $(Sql_Nom_Container)
+	-docker stop $(Sql_U_Nom_Cont)
 
 # Stoppe les machines virtuel et les supprimes toutes
 .PHONY: clean
 clean: stop
 	-docker rm --force --volumes $(Nginx_Nom_Container)
 	-docker rm --force --volumes $(Php_Nom_Container)
-	-docker rm --force --volumes $(Mysql_Nom_Container)
+	-docker rm --force --volumes $(Sql_Nom_Container)
+	-docker rm --force --volumes $(Sql_U_Nom_Cont)
 
 .PHONY: all
 all: run_ou_start
 
 .PHONY: run_ou_start
-run_ou_start: $(Start_Ou_Run_Mysql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
+run_ou_start: $(Start_Ou_Run_Sql) $(Start_Ou_Run_Php) $(Start_Ou_Run_Nginx)
 
 # Affiche un avertissement si les docker sont déjà en cours d'exécution
-.PHONY: info_mysql
-info_mysql:
-	$(warning "Le container MySql est déjà en cours d'exécution.")
+.PHONY: info_sql
+info_sql:
+	$(info "Le container  Sql  est déjà en cours d'exécution.")
 
 .PHONY: info_php
 info_php:
-	$(warning "Le container  PHP  est déjà en cours d'exécution.")
+	$(info "Le container  PHP  est déjà en cours d'exécution.")
 
 .PHONY: info_nginx
 info_nginx:
-	$(warning "Le container NginX est déjà en cours d'exécution.")
+	$(info "Le container NginX est déjà en cours d'exécution.")
 
 # --------------------------------- #
 
 .PHONY: run
-run: run_mysql run_php run_nginx
+run: run_sql run_php run_nginx
 
 # Permet de demander à nginx de relire ses fichiers de configurations
 # sans avoir à redémarrer le container.
-.PHONY: reload
-reload:
+.PHONY: reload_nginx
+reload_nginx:
 	docker kill -s HUP $(Nginx_Nom_Container)
 
 # ---------------------------------------- #
@@ -85,22 +129,22 @@ endif
 # - l'utilisateur qui ne peut agir que sur cette base
 # - le mot de passe de cet utilisateur
 # - Les scripts pour peupler la BDD
-.PHONY: run_mysql
-run_mysql: verifier_mysql
+.PHONY: run_sql
+run_sql: verifier_sql
 	docker run --detach \
-		--publish $(Mysql_Port_Exterieur):$(Mysql_Port_Interne) \
-		--env MYSQL_ROOT_PASSWORD='$(Mysql_Mdp_Root)' \
-		--env MYSQL_DATABASE='$(Mysql_Nom_Bdd)' \
-		--env MYSQL_USER='$(Mysql_Utilisateur)' \
-		--env MYSQL_PASSWORD='$(Mysql_Pass_Utilisateur)' \
+		--publish $(Sql_Port_Exterieur):$(Sql_Port_Interne) \
+		--env MYSQL_ROOT_PASSWORD='$(Sql_Mdp_Root)' \
+		--env MYSQL_DATABASE='$(Sql_Nom_Bdd)' \
+		--env MYSQL_USER='$(Sql_Utilisateur)' \
+		--env MYSQL_PASSWORD='$(Sql_Pass_Utilisateur)' \
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
-		-v $(Mysql_Config_Externe):$(Mysql_Config_Interne):ro \
-		-v $(Mysql_Init_Bdd_Externe):$(Mysql_Init_Bdd_Interne):ro \
-		-v $(Mysql_Volume_Ext):$(Mysql_Volume_Int) \
-		--name $(Mysql_Nom_Container) mysql:latest
+		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
+		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
+		-v $(Sql_Volume_Ext):$(Sql_Volume_Int) \
+		--name $(Sql_Nom_Container) $(Sql_Nom_Image):$(Sql_Version_Image)
 	@echo "──────────────────────────────────────────"
-	@echo "Les bases de données seront écrites dans : [$(Mysql_Volume_Ext)] "
+	@echo "Les bases de données seront écrites dans : [$(Sql_Volume_Ext)] "
 	@echo "──────────────────────────────────────────"
 
 # Démarrage du serveur php avec un accès en lecteur au dossier ou se trouvent
@@ -112,10 +156,10 @@ run_php: verifier_php construire_php
 		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
 		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
-		-v $(Php_Config_Mysql_Ext):$(Php_Config_Mysql_Int):ro \
+		-v $(Php_Config_Sql_Ext):$(Php_Config_Sql_Int):ro \
 		-v $(Php_Php_Ini_Externe):$(Php_Php_Ini_Interne):ro \
 		-v $(Php_Fichier_Log_Ext):$(Php_Fichier_Log_Int) \
-		--link $(Mysql_Nom_Container):$(Php_Nom_Interne_Mysql) \
+		--link $(Sql_Nom_Container):$(Php_Nom_Interne_Sql) \
 		--name $(Php_Nom_Container) $(Nom_Php_Construit):latest
 	@echo "──────────────────────────────────"
 	@echo "Les logs de php seront écrit dans : [$(Php_Fichier_Log_Ext)] "
@@ -134,9 +178,9 @@ run_nginx: verifier_nginx
 		-v $(Nginx_Config_Externe):$(Nginx_Config_Interne):ro \
 		-v $(Nginx_Conf_Global_Ext):$(Nginx_Conf_Global_Int):ro \
 		-v $(Nginx_Log_Externe):$(Nginx_Log_Interne) \
-		--link $(Mysql_Nom_Container):$(Nginx_Nom_Interne_Mysql) \
+		--link $(Sql_Nom_Container):$(Nginx_Nom_Interne_Sql) \
 		--link $(Php_Nom_Container):$(Nginx_Nom_Interne_Php) \
-		--name $(Nginx_Nom_Container) nginx:stable-alpine
+		--name $(Nginx_Nom_Container) $(Nginx_Nom_Image):$(Nginx_Version_Image)
 	@echo "──────────────────────────────────────"
 	@echo "Les logs de nginx seront écrits dans : [$(Nginx_Log_Externe)] "
 	@echo "──────────────────────────────────────"
@@ -146,14 +190,14 @@ run_nginx: verifier_nginx
 # -------------------------------------- #
 
 .PHONY: start
-start: start_mysql start_php start_nginx
+start: start_sql start_php start_nginx
 
-.PHONY: start_mysql
-start_mysql:
-	@echo "──────────────────"
-	@echo "Démarrage de MySql"
-	@echo "──────────────────"
-	docker start $(Mysql_Nom_Container)
+.PHONY: start_sql
+start_sql:
+	@echo "────────────────────"
+	@echo "Démarrage de MariaDB"
+	@echo "────────────────────"
+	docker start $(Sql_Nom_Container)
 
 .PHONY: start_php
 start_php:
@@ -173,10 +217,10 @@ start_nginx:
 # Connections à un conteneur déjà lancé #
 # ------------------------------------- #
 
-# Pour se connecter au docker mysql lancé en daemon
-.PHONY: connect_mysql
-connect_mysql:
-	docker exec --interactive --tty $(Mysql_Nom_Container) /bin/sh
+# Pour se connecter au docker sql lancé en daemon
+.PHONY: connect_sql
+connect_sql:
+	docker exec --interactive --tty $(Sql_Nom_Container) /bin/sh
 
 # Pour se connecter au docker php lancé en daemon
 .PHONY: connect_php
@@ -192,10 +236,10 @@ connect_nginx:
 # Consulter les logs des conteneurs #
 # --------------------------------- #
 
-# Pour pouvoir inspecter facilement le container mysql en cours d'exécution
-.PHONY: logs_mysql
-logs_mysql:
-	docker logs $(Mysql_Nom_Container)
+# Pour pouvoir inspecter facilement le container sql en cours d'exécution
+.PHONY: logs_sql
+logs_sql:
+	docker logs $(Sql_Nom_Container)
 
 # Pour pouvoir inspecter facilement le container php en cours d'exécution
 .PHONY: logs_php
@@ -211,13 +255,46 @@ logs_nginx:
 #    Exécuter les tests unitaire    #
 # --------------------------------- #
 
-.PHONY: unitaire_php
-unitaire_php:
-	docker run --rm \
+.PHONY: unitaire
+unitaire: $(Start_Ou_Run_Sql_U) run_unitaire_php
+
+.PHONY: run_unitaire_sql
+run_unitaire_sql:
+	docker run --detach \
+		--publish $(Sql_U_Port_Exterieur):$(Sql_U_Port_Interne) \
+		--env MYSQL_ROOT_PASSWORD='$(Sql_Mdp_Root)' \
+		--env MYSQL_DATABASE='$(Sql_Nom_Bdd)' \
+		--env MYSQL_USER='$(Sql_Utilisateur)' \
+		--env MYSQL_PASSWORD='$(Sql_Pass_Utilisateur)' \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
+		-v $(Sql_Config_Externe):$(Sql_Config_Interne):ro \
+		-v $(Sql_Init_Bdd_Externe):$(Sql_Init_Bdd_Interne):ro \
+		-v $(Sql_U_Volume_Ext):$(Sql_Volume_Int) \
+		--name $(Sql_U_Nom_Cont) $(Sql_Nom_Image):$(Sql_Version_Image)
+
+.PHONY: start_unitaire_sql
+start_unitaire_sql:
+	@echo "───────────────────────────────────────"
+	@echo "Démarrage de MariaDB en tests unitaires"
+	@echo "───────────────────────────────────────"
+	docker start $(Sql_U_Nom_Cont)
+
+.PHONY: info_sql_unitaire
+info_sql_unitaire:
+	$(info "Le container de tests unitaire sql est déjà en cours d'exécution.")
+
+.PHONY: run_unitaire_php
+run_unitaire_php: verifier_sql_unitaire
+	-docker run --rm \
+		-v $(Chemin_Localtime_Ext):$(Chemin_Localtime_Int):ro \
+		-v $(Time_Zone_Ext):$(Time_Zone_Int):ro \
 		-v $(PhpUnit_Src_Unit_Ext):$(PhpUnit_Src_Unit_Int):ro \
 		-v $(Php_Src_Ext):$(Php_Src_Int):ro \
+		-v $(Php_Config_Sql_Ext):$(Php_Config_Sql_Int):ro \
 		-v $(PhpUnit_Logs_Externe):$(PhpUnit_Logs_Interne) \
-		phpunit/phpunit -c ./phpunit.xml
+		--link $(Sql_U_Nom_Cont):$(Php_Nom_Interne_Sql) \
+		$(PhpUnit_Nom_Image):$(PhpUnit_Version_Image) -c ./phpunit.xml
 	@echo "───────────────────────────────────────────"
 	@echo "Les résultats détaillé des tests unitaire : [$(PhpUnit_Logs_Externe)] "
 	@echo "La couverture des tests unitaires : file://$(PhpUnit_Logs_Externe)/coverage/index.html"
@@ -252,6 +329,6 @@ generer_doc: construire_doc
 .PHONY: dump_bdd
 dump_bdd:
 	mkdir -p $(Chemin_Repo)/Dump_BDD/
-	docker exec $(Mysql_Nom_Container) sh -c \
-		'exec mysqldump --databases $(Mysql_Nom_Bdd) -uroot -p"$(Mysql_Mdp_Root)"' \
+	docker exec $(Sql_Nom_Container) sh -c \
+		'exec mysqldump --databases $(Sql_Nom_Bdd) -uroot -p"$(Sql_Mdp_Root)"' \
 		> $(Chemin_Repo)/Dump_BDD/bdd_site_asso_dump.sql

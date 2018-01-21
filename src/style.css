@@ -1,0 +1,39 @@
+/*
+ * Dernière modification : Vendredi 15 septembre[09] 2017
+ * */
+html
+{
+    min-height: 100vh;
+}
+
+body
+{
+    margin: 0;
+    padding: 0;
+    max-width: 1000px;
+    margin: auto;
+    background: lightsteelblue;
+}
+
+#img_async, #img_async_no_js
+{
+    max-width: 1000px;
+    width: 100%;
+}
+
+a:link      /*Liens non visité*/
+{
+    color: blue;
+}
+
+a:hover     /*Liens survolé par la souris*/
+{
+    color: green;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:visited   /*Liens déjà visité*/
+{
+    text-decoration: underline;
+}

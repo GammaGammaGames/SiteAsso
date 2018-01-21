@@ -1,5 +1,13 @@
 <?php
-// Dernière modification : Samedi 26 août[08] 2017
+// Dernière modification : Vendredi 01 septembre[09] 2017
+
+/**
+ * Tests unitaires de la classe Adresse.
+ *
+ * @author PIVARD Julien
+ * @license GPL-v3
+ * @version 0.1
+ * */
 
 declare( strict_types = 1 );
 
@@ -9,11 +17,6 @@ use Modele\Representation\Adresse;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * @author PIVARD Julien
- * @license GPL-v3
- * @version 0.1
- * */
 class AdresseTest extends TestCase
 {
 
